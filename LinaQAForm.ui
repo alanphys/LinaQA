@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LinaQAForm</class>
+ <widget class="QMainWindow" name="LinaQAForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>754</width>
+    <height>759</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>LinaQA</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="LinaQA.qrc">
+    <normaloff>:/Icons/Icons/linactoolkit.png</normaloff>:/Icons/Icons/linactoolkit.png</iconset>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>32</width>
+    <height>32</height>
+   </size>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Image</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="qlImage">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Open image here</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>DICOM tags</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QFrame" name="fsearchbar">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Filter DICOM tags:</string>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="qle_filter_tag"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="treeView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Reference</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="qlRef">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>754</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_Open"/>
+    <addaction name="action_Open_Ref"/>
+   </widget>
+   <widget class="QMenu" name="menu_Window">
+    <property name="title">
+     <string>&amp;Window</string>
+    </property>
+    <addaction name="action_Auto_Window"/>
+    <addaction name="action_Invert"/>
+   </widget>
+   <widget class="QMenu" name="menu_Analyse">
+    <property name="title">
+     <string>&amp;Analyse</string>
+    </property>
+    <addaction name="action_2DPhantoms"/>
+    <addaction name="action_CatPhan"/>
+    <addaction name="action_Machine_Logs"/>
+    <addaction name="action_Picket_Fence"/>
+    <addaction name="action_Starshot"/>
+    <addaction name="action_VMAT"/>
+    <addaction name="action_Winston_Lutz"/>
+    <addaction name="action_DICOM_tags"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_About"/>
+    <addaction name="action_PylinacH"/>
+    <addaction name="action_PyDicomH"/>
+   </widget>
+   <widget class="QMenu" name="menuE_xit">
+    <property name="title">
+     <string>E&amp;xit</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_Settings">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Window"/>
+   <addaction name="menu_Analyse"/>
+   <addaction name="menu_Settings"/>
+   <addaction name="menu_Help"/>
+   <addaction name="menuE_xit"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar_Left">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Open"/>
+   <addaction name="action_Open_Ref"/>
+   <addaction name="separator"/>
+   <addaction name="action_Auto_Window"/>
+   <addaction name="action_Invert"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_Right">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Exit"/>
+   <addaction name="action_Settings"/>
+   <addaction name="action_About"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_Side">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>150</width>
+     <height>32</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_CatPhan"/>
+   <addaction name="action_Picket_Fence"/>
+   <addaction name="action_VMAT"/>
+   <addaction name="action_2DPhantoms"/>
+   <addaction name="action_Machine_Logs"/>
+   <addaction name="action_Starshot"/>
+   <addaction name="action_Winston_Lutz"/>
+   <addaction name="separator"/>
+   <addaction name="action_DICOM_tags"/>
+   <addaction name="action_Gamma"/>
+  </widget>
+  <action name="action_Open">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/OpenImage.xpm</normaloff>:/Icons/Icons/OpenImage.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Image</string>
+   </property>
+  </action>
+  <action name="action_Open_Ref">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/OpenRef.xpm</normaloff>:/Icons/Icons/OpenRef.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;Ref</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Reference</string>
+   </property>
+  </action>
+  <action name="action_Auto_Window">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/AutoWindow.xpm</normaloff>:/Icons/Icons/AutoWindow.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Auto &amp;Window</string>
+   </property>
+  </action>
+  <action name="action_Invert">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/invert.xpm</normaloff>:/Icons/Icons/invert.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Invert</string>
+   </property>
+  </action>
+  <action name="action_CatPhan">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/catphan.png</normaloff>:/Icons/Icons/catphan.png</iconset>
+   </property>
+   <property name="text">
+    <string>CatPhan</string>
+   </property>
+   <property name="toolTip">
+    <string>Analyse CatPhan</string>
+   </property>
+  </action>
+  <action name="action_2DPhantoms">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/LasVegas.png</normaloff>:/Icons/Icons/LasVegas.png</iconset>
+   </property>
+   <property name="text">
+    <string>2D Phantoms</string>
+   </property>
+   <property name="toolTip">
+    <string>Analyse 2D Phantoms</string>
+   </property>
+  </action>
+  <action name="action_VMAT">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/vmat.xpm</normaloff>:/Icons/Icons/vmat.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>VMAT</string>
+   </property>
+   <property name="toolTip">
+    <string>Analyse VMAT parameters</string>
+   </property>
+  </action>
+  <action name="action_Machine_Logs">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/machinelog.png</normaloff>:/Icons/Icons/machinelog.png</iconset>
+   </property>
+   <property name="text">
+    <string>Machine Logs</string>
+   </property>
+   <property name="toolTip">
+    <string>Analyse machine logs</string>
+   </property>
+  </action>
+  <action name="action_Starshot">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/starshot.png</normaloff>:/Icons/Icons/starshot.png</iconset>
+   </property>
+   <property name="text">
+    <string>Starshot</string>
+   </property>
+   <property name="toolTip">
+    <string>Analyse starshot images</string>
+   </property>
+  </action>
+  <action name="action_Winston_Lutz">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/W-L.png</normaloff>:/Icons/Icons/W-L.png</iconset>
+   </property>
+   <property name="text">
+    <string>Winston Lutz</string>
+   </property>
+   <property name="toolTip">
+    <string>Analyse Winston-Lutz images</string>
+   </property>
+  </action>
+  <action name="action_Picket_Fence">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/picketfence.xpm</normaloff>:/Icons/Icons/picketfence.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Picket Fence</string>
+   </property>
+   <property name="toolTip">
+    <string>Analyse picket fence image</string>
+   </property>
+  </action>
+  <action name="action_Settings">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/settings.png</normaloff>:/Icons/Icons/settings.png</iconset>
+   </property>
+   <property name="text">
+    <string>Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Set default values</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/exit.xpm</normaloff>:/Icons/Icons/exit.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit LinaQA</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/help.png</normaloff>:/Icons/Icons/help.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+   <property name="toolTip">
+    <string>About LinaQA</string>
+   </property>
+  </action>
+  <action name="action_PylinacH">
+   <property name="text">
+    <string>Pylinac documentation</string>
+   </property>
+  </action>
+  <action name="action_PyDicomH">
+   <property name="text">
+    <string>PyDicom documentation</string>
+   </property>
+  </action>
+  <action name="action_DICOM_tags">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/DCMtags.png</normaloff>:/Icons/Icons/DCMtags.png</iconset>
+   </property>
+   <property name="text">
+    <string>DICOM tags</string>
+   </property>
+  </action>
+  <action name="action_Gamma">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/Gamma.png</normaloff>:/Icons/Icons/Gamma.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Gamma</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate Gamma difference</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="LinaQA.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>action_Exit</sender>
+   <signal>triggered()</signal>
+   <receiver>LinaQAForm</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>350</x>
+     <y>379</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

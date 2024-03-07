@@ -1,0 +1,21 @@
+<RCC>
+  <qresource prefix="Icons">
+    <file>Icons/Gamma.png</file>
+    <file>Icons/linactoolkit.png</file>
+    <file>Icons/W-L.png</file>
+    <file>Icons/LasVegas.png</file>
+    <file>Icons/vmat.xpm</file>
+    <file>Icons/machinelog.png</file>
+    <file>Icons/catphan.png</file>
+    <file>Icons/starshot.png</file>
+    <file>Icons/OpenImage.xpm</file>
+    <file>Icons/settings.png</file>
+    <file>Icons/OpenRef.xpm</file>
+    <file>Icons/AutoWindow.xpm</file>
+    <file>Icons/invert.xpm</file>
+    <file>Icons/exit.xpm</file>
+    <file>Icons/picketfence.xpm</file>
+    <file>Icons/help.png</file>
+    <file>Icons/DCMtags.png</file>
+  </qresource>
+</RCC>

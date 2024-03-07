@@ -1,0 +1,29 @@
+LinaQA is written and maintained by Alan Chamberlain
+
+LinaQA is written in Python and uses the PyQt5 bindings to QT5
+
+The following contributions are gratefully acknowledged:
+
+Caduceus by Daniel Coelho
+https://github.com/1danielcoelho/Caduceus
+
+PyDicom and the PyDicom team
+https://github.com/pydicom/pydicom
+
+Pylinac by James Kern
+https://github.com/jrkerns/pylinac/tree/master
+
+NumPy and the NumPy developers
+https://www.numpy.org/
+
+PyQt5 and Qt for Python
+https://riverbankcomputing.com/software/pyqt/download
+
+Specific icons By FatCow Web Hosting
+http://www.fatcow.com/free-icons/, CC BY 3.0 us, https://commons.wikimedia.org/w/index.php?curid=11522819
+
+Settings Editor
+https://doc.qt.io/qtforpython-6/examples/example_corelib_settingseditor.html
+# Copyright (C) 2013 Riverbank Computing Limited.
+# Copyright (C) 2022 The Qt Company Ltd.
+
