@@ -280,6 +280,7 @@ class LinaQA(QMainWindow):
             self.open_image(self.filenames)
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
             self.ui.qlImage.show()
+            self.show_dicom_tags()
         else:
             self.ui.statusbar.showMessage("File is not a DICOM image file!")
 
@@ -354,7 +355,7 @@ class LinaQA(QMainWindow):
 
     def resizeEvent(self, event):
         if self.imager is not None:
-            self.show_image(self.imager.get_current_image())
+            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
     def invert(self):
         if self.imager.invflag:
