@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>754</width>
-    <height>759</height>
+    <width>678</width>
+    <height>682</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
@@ -44,7 +44,7 @@
         <item>
          <widget class="QLabel" name="qlImage">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -139,7 +139,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>754</width>
+     <width>678</width>
      <height>30</height>
     </rect>
    </property>
@@ -243,6 +243,12 @@
    <addaction name="action_About"/>
   </widget>
   <widget class="QToolBar" name="toolBar_Side">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -251,7 +257,7 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>150</width>
+     <width>110</width>
      <height>32</height>
     </size>
    </property>
@@ -327,6 +333,9 @@
    </property>
    <property name="toolTip">
     <string>Analyse CatPhan</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
    </property>
   </action>
   <action name="action_2DPhantoms">

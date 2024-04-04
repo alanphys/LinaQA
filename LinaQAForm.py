@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_LinaQAForm(object):
     def setupUi(self, LinaQAForm):
         LinaQAForm.setObjectName("LinaQAForm")
-        LinaQAForm.resize(754, 759)
+        LinaQAForm.resize(678, 682)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/Icons/Icons/linactoolkit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         LinaQAForm.setWindowIcon(icon)
@@ -32,7 +32,7 @@ class Ui_LinaQAForm(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.tab)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.qlImage = QtWidgets.QLabel(self.tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.qlImage.sizePolicy().hasHeightForWidth())
@@ -86,7 +86,7 @@ class Ui_LinaQAForm(object):
         self.verticalLayout.addWidget(self.tabWidget)
         LinaQAForm.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(LinaQAForm)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 754, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 678, 30))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -114,8 +114,13 @@ class Ui_LinaQAForm(object):
         self.toolBar_Right.setObjectName("toolBar_Right")
         LinaQAForm.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar_Right)
         self.toolBar_Side = QtWidgets.QToolBar(LinaQAForm)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.toolBar_Side.sizePolicy().hasHeightForWidth())
+        self.toolBar_Side.setSizePolicy(sizePolicy)
         self.toolBar_Side.setAllowedAreas(QtCore.Qt.AllToolBarAreas)
-        self.toolBar_Side.setIconSize(QtCore.QSize(150, 32))
+        self.toolBar_Side.setIconSize(QtCore.QSize(110, 32))
         self.toolBar_Side.setObjectName("toolBar_Side")
         LinaQAForm.addToolBar(QtCore.Qt.RightToolBarArea, self.toolBar_Side)
         self.action_Open = QtWidgets.QAction(LinaQAForm)
@@ -143,6 +148,7 @@ class Ui_LinaQAForm(object):
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(":/Icons/Icons/catphan.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_CatPhan.setIcon(icon5)
+        self.action_CatPhan.setShortcutContext(QtCore.Qt.WindowShortcut)
         self.action_CatPhan.setObjectName("action_CatPhan")
         self.action_2DPhantoms = QtWidgets.QAction(LinaQAForm)
         icon6 = QtGui.QIcon()
@@ -247,7 +253,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_Side.addAction(self.action_Gamma)
 
         self.retranslateUi(LinaQAForm)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.action_Exit.triggered.connect(LinaQAForm.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(LinaQAForm)
 

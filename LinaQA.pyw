@@ -79,6 +79,7 @@ class LinaQA(QMainWindow):
 
         # we have to insert a Combox for the CatPhan manually into the toolbar
         self.ui.cbCatPhan = QComboBox()
+        self.ui.cbCatPhan.setFixedWidth(120)
         self.ui.toolBar_Side.insertWidget(self.ui.action_Picket_Fence, self.ui.cbCatPhan)
         self.ui.cbCatPhan.addItems(catphan_list)
         self.ui.toolBar_Side.insertSeparator(self.ui.action_Picket_Fence)
@@ -91,6 +92,7 @@ class LinaQA(QMainWindow):
 
         # we have to insert a Combox for the MLC manually into the toolbar
         self.ui.cbMLC = QComboBox()
+        self.ui.cbMLC.setFixedWidth(120)
         self.ui.toolBar_Side.insertWidget(self.ui.action_VMAT, self.ui.cbMLC)
         for mlc in picketfence.MLC:
             self.ui.cbMLC.insertItem(0, mlc.value.get("name"))
@@ -104,6 +106,7 @@ class LinaQA(QMainWindow):
 
         # we have to insert a Combox for the VMAT test manually into the toolbar
         self.ui.cbVMAT = QComboBox()
+        self.ui.cbVMAT.setFixedWidth(120)
         self.ui.toolBar_Side.insertWidget(self.ui.action_2DPhantoms, self.ui.cbVMAT)
         self.ui.cbVMAT.addItems(vmat_list)
         self.ui.toolBar_Side.insertSeparator(self.ui.action_VMAT)
@@ -116,6 +119,7 @@ class LinaQA(QMainWindow):
 
         # we have to insert a Combox for the 2D phantoms test manually into the toolbar
         self.ui.cbPhan2D = QComboBox()
+        self.ui.cbPhan2D.setFixedWidth(120)
         self.ui.toolBar_Side.insertWidget(self.ui.action_Machine_Logs, self.ui.cbPhan2D)
         self.ui.cbPhan2D.addItems(phantom2D_list)
         self.ui.toolBar_Side.insertSeparator(self.ui.action_Machine_Logs)
@@ -247,11 +251,11 @@ class LinaQA(QMainWindow):
         try:
             datasets.sort(key=lambda x: x.InstanceNumber)
             sorted_method = "instance number"
-        except AttributeError:
+        except TypeError:
             try:
                 datasets.sort(key=lambda x: x.SOPInstanceUID)
                 sorted_method = "SOP instance UID"
-            except AttributeError:
+            except TypeError:
                 pass
 
         self.imager = Imager(datasets)
@@ -282,7 +286,13 @@ class LinaQA(QMainWindow):
             self.ui.qlImage.show()
             self.show_dicom_tags()
         else:
-            self.ui.statusbar.showMessage("File is not a DICOM image file!")
+            the_image = QPixmap(self.filenames[0])
+            if the_image.isNull():
+                self.ui.statusbar.showMessage("File is not an image file!")
+            else:
+                self.ui.qlImage.setPixmap(the_image)
+                self.ui.qlImage.setScaledContents(True)
+
 
     def show_image(self, numpy_array, label: QLabel):
         if numpy_array is not None:
@@ -362,7 +372,7 @@ class LinaQA(QMainWindow):
             self.imager.invflag = False
         else:
             self.imager.invflag = True
-        self.show_image(self.imager.get_current_image())
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section
