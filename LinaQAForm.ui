@@ -28,7 +28,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
@@ -160,9 +160,9 @@
     <addaction name="action_Open"/>
     <addaction name="action_Open_Ref"/>
    </widget>
-   <widget class="QMenu" name="menu_Window">
+   <widget class="QMenu" name="menu_Image">
     <property name="title">
-     <string>&amp;Window</string>
+     <string>&amp;Image</string>
     </property>
     <addaction name="action_Auto_Window"/>
     <addaction name="action_Invert"/>
@@ -178,7 +178,6 @@
     <addaction name="action_Starshot"/>
     <addaction name="action_VMAT"/>
     <addaction name="action_Winston_Lutz"/>
-    <addaction name="action_DICOM_tags"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -188,22 +187,20 @@
     <addaction name="action_PylinacH"/>
     <addaction name="action_PyDicomH"/>
    </widget>
-   <widget class="QMenu" name="menuE_xit">
+   <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>E&amp;xit</string>
+     <string>&amp;Edit</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menu_Settings">
-    <property name="title">
-     <string>&amp;Settings</string>
-    </property>
+    <addaction name="action_DICOM_tags"/>
+    <addaction name="action_Pixel_Data"/>
+    <addaction name="separator"/>
+    <addaction name="action_Settings"/>
    </widget>
    <addaction name="menu_File"/>
-   <addaction name="menu_Window"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menu_Image"/>
    <addaction name="menu_Analyse"/>
-   <addaction name="menu_Settings"/>
    <addaction name="menu_Help"/>
-   <addaction name="menuE_xit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar_Left">
@@ -284,9 +281,10 @@
    <addaction name="action_Machine_Logs"/>
    <addaction name="action_Starshot"/>
    <addaction name="action_Winston_Lutz"/>
+   <addaction name="action_Gamma"/>
    <addaction name="separator"/>
    <addaction name="action_DICOM_tags"/>
-   <addaction name="action_Gamma"/>
+   <addaction name="action_Pixel_Data"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -491,6 +489,21 @@
    </property>
    <property name="toolTip">
     <string>Calculate Gamma difference</string>
+   </property>
+  </action>
+  <action name="action_Pixel_Data">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/TableEdit.png</normaloff>:/Icons/Icons/TableEdit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pixel Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit pixel data</string>
    </property>
   </action>
  </widget>

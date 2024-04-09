@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="Icons">
+    <file>Icons/TableEdit.png</file>
     <file>Icons/Gamma.png</file>
     <file>Icons/W-L.png</file>
     <file>Icons/LinacToolkit.png</file>

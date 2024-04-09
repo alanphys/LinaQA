@@ -16,7 +16,7 @@ import os.path as osp
 import os
 import subprocess
 from platform import system
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QMessageBox, QComboBox, QLabel, QTreeView
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QMessageBox, QComboBox, QLabel, QAction
 from PyQt5.QtGui import QPixmap, QImage, QFont, QMouseEvent, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import pyqtSignal as SIGNAL, QObject, Qt, QSettings, QSortFilterProxyModel, QSize
 import matplotlib.pyplot as plt
@@ -27,6 +27,7 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings
 from imageunit import Imager
 from decorators import show_wait_cursor
+from tablemodel import TableModel
 from pydicom import compat
 import pydicom
 from pylinac import image, picketfence, ct, winston_lutz, planar_imaging, vmat, starshot, log_analyzer
@@ -72,6 +73,7 @@ class LinaQA(QMainWindow):
         self.ref_filename = []
         self.source_model = None
         self.proxy_model = None
+        self.table_model = None
         self.ui = Ui_LinaQAForm()
         self.ui.setupUi(self)
         self.settings = QSettings()
@@ -130,10 +132,16 @@ class LinaQA(QMainWindow):
         else:
             raise Exception('Invalid setting in 2D Phantom/Type')
 
+        # we have to insert the Exit action into the main menu manually
+        action_close = QAction("action_menu_Exit", self.ui.menubar)
+        action_close.setText("E&xit")
+        self.ui.menubar.addAction(action_close)
+
         self.ui.statusbar.showMessage('Open DICOM file or drag and drop')
         self.ui.action_Open.triggered.connect(self.openfile)
         self.ui.action_Open_Ref.triggered.connect(self.open_ref)
         self.ui.action_About.triggered.connect(self.showabout)
+        action_close.triggered.connect(self.close)
         self.ui.action_Settings.triggered.connect(self.showsettings)
         self.ui.action_Invert.triggered.connect(self.invert)
         self.ui.action_Auto_Window.triggered.connect(self.auto_window)
@@ -150,6 +158,7 @@ class LinaQA(QMainWindow):
         self.setWindowTitle(f'LinaQA v{version}')
         self.ui.tabWidget.setTabVisible(1, False)
         self.ui.tabWidget.setTabVisible(2, False)
+        self.ui.tabWidget.setTabVisible(3, False)
 
     def set_default_settings(self, settings):
         settings.beginGroup('CatPhan')
