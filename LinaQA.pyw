@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QMe
 from PyQt5.QtGui import QPixmap, QImage, QFont, QMouseEvent, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import pyqtSignal as SIGNAL, QObject, Qt, QSettings, QSortFilterProxyModel, QSize
 import matplotlib.pyplot as plt
+import numpy as np
 
 from LinaQAForm import Ui_LinaQAForm
 from aboutpackage import About
@@ -140,6 +141,7 @@ class LinaQA(QMainWindow):
         self.ui.statusbar.showMessage('Open DICOM file or drag and drop')
         self.ui.action_Open.triggered.connect(self.openfile)
         self.ui.action_Open_Ref.triggered.connect(self.open_ref)
+        self.ui.action_Save.triggered.connect(self.save_file)
         self.ui.action_About.triggered.connect(self.showabout)
         action_close.triggered.connect(self.close)
         self.ui.action_Settings.triggered.connect(self.showsettings)
@@ -153,8 +155,11 @@ class LinaQA(QMainWindow):
         self.ui.action_Starshot.triggered.connect(self.analyse_star)
         self.ui.action_VMAT.triggered.connect(self.analyse_vmat)
         self.ui.action_Machine_Logs.triggered.connect(self.analyse_log)
+        self.ui.action_DICOM_tags.triggered.connect(self.show_dicom_tags)
+        self.ui.action_Pixel_Data.triggered.connect(self.edit_pixel_data)
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
         self.ui.tabWidget.tabCloseRequested.connect(lambda index: self.ui.tabWidget.setTabVisible(index, False))
+        self.ui.tabWidget.currentChanged.connect(self.tab_changed)
         self.setWindowTitle(f'LinaQA v{version}')
         self.ui.tabWidget.setTabVisible(1, False)
         self.ui.tabWidget.setTabVisible(2, False)
@@ -294,6 +299,7 @@ class LinaQA(QMainWindow):
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
             self.ui.qlImage.show()
             self.show_dicom_tags()
+            self.edit_pixel_data()
         else:
             the_image = QPixmap(self.filenames[0])
             if the_image.isNull():
@@ -302,6 +308,12 @@ class LinaQA(QMainWindow):
                 self.ui.qlImage.setPixmap(the_image)
                 self.ui.qlImage.setScaledContents(True)
 
+    def save_file(self):
+        if self.imager is not None:
+            ds = self.imager.datasets[self.imager.index]
+            arr = ds.pixel_array
+            ds.PixelData = arr.tobytes()
+            ds.save_as(ds.filename, True)
 
     def show_image(self, numpy_array, label: QLabel):
         if numpy_array is not None:
@@ -382,6 +394,13 @@ class LinaQA(QMainWindow):
         else:
             self.imager.invflag = True
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+
+    def tab_changed(self, index):
+        if self.imager is not None:
+            if index == 0:
+                ds = self.imager.datasets[self.imager.index]
+                np.copyto(self.imager.values[:, :, self.imager.index], ds.pixel_array, 'unsafe')
+                self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section
@@ -620,6 +639,20 @@ class LinaQA(QMainWindow):
         self.ref_imager = Imager(datasets)
         self.ui.statusbar.showMessage("Opened %d DICOM file(s) sorted on %s. Rejected %d bad files" %
                                       (num_ok, sorted_method, num_bad))
+
+    # ---------------------------------------------------------------------------------------------------------------------
+    # Pixel Data Section
+    # ---------------------------------------------------------------------------------------------------------------------
+    def edit_pixel_data(self):
+        if self.imager:
+            if self.ui.action_Pixel_Data.isChecked():
+                self.ui.tabWidget.setTabVisible(3, True)
+                self.ui.tabWidget.setCurrentIndex(3)
+                ds = self.imager.datasets[self.imager.index]
+                self.table_model = TableModel(ds.pixel_array)
+                self.ui.qtvPixelData.setModel(self.table_model)
+            else:
+                self.ui.tabWidget.setTabVisible(3, False)
 
 
 def main():

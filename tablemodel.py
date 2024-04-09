@@ -1,4 +1,6 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt
+# Adapted from https://www.pythonguis.com/tutorials/qtableview-modelviews-numpy-pandas/
+# Author: Martin Fitzpatrick
 
 
 class TableModel(QAbstractTableModel):
@@ -18,3 +20,15 @@ class TableModel(QAbstractTableModel):
 
     def columnCount(self, index):
         return self._data.shape[1]
+
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        return super().flags(index) | Qt.ItemIsEditable  # add editable flag.
+
+    def setData(self, index, value, role):
+        if role == Qt.EditRole:
+            # Set the value into the frame.
+            self._data[index.row(), index.column()] = value
+            return True
+        return False

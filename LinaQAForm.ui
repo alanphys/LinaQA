@@ -14,8 +14,8 @@
    <string>LinaQA</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/Icons/Icons/linactoolkit.png</normaloff>:/Icons/Icons/linactoolkit.png</iconset>
+   <iconset resource="LinaQA.qrc">
+    <normaloff>:/Icons/Icons/LinacToolkit.png</normaloff>:/Icons/Icons/LinacToolkit.png</iconset>
   </property>
   <property name="iconSize">
    <size>
@@ -28,7 +28,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
@@ -136,7 +136,7 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QTableWidget" name="tableWidget"/>
+         <widget class="QTableView" name="qtvPixelData"/>
         </item>
        </layout>
       </widget>
@@ -159,6 +159,7 @@
     </property>
     <addaction name="action_Open"/>
     <addaction name="action_Open_Ref"/>
+    <addaction name="action_Save"/>
    </widget>
    <widget class="QMenu" name="menu_Image">
     <property name="title">
@@ -221,6 +222,7 @@
    </attribute>
    <addaction name="action_Open"/>
    <addaction name="action_Open_Ref"/>
+   <addaction name="action_Save"/>
    <addaction name="separator"/>
    <addaction name="action_Auto_Window"/>
    <addaction name="action_Invert"/>
@@ -504,6 +506,18 @@
    </property>
    <property name="toolTip">
     <string>Edit pixel data</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/Save.png</normaloff>:/Icons/Icons/Save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save image</string>
    </property>
   </action>
  </widget>
