@@ -14,7 +14,7 @@
    <string>LinaQA</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="LinaQA.qrc">
+   <iconset>
     <normaloff>:/Icons/Icons/linactoolkit.png</normaloff>:/Icons/Icons/linactoolkit.png</iconset>
   </property>
   <property name="iconSize">
@@ -28,7 +28,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
@@ -127,6 +127,16 @@
            <string>TextLabel</string>
           </property>
          </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>Pixel Data</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QTableWidget" name="tableWidget"/>
         </item>
        </layout>
       </widget>
@@ -244,7 +254,7 @@
   </widget>
   <widget class="QToolBar" name="toolBar_Side">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -317,7 +327,7 @@
    </property>
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/invert.xpm</normaloff>:/Icons/Icons/invert.xpm</iconset>
+     <normaloff>:/Icons/Icons/Invert.xpm</normaloff>:/Icons/Icons/Invert.xpm</iconset>
    </property>
    <property name="text">
     <string>&amp;Invert</string>
@@ -326,7 +336,7 @@
   <action name="action_CatPhan">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/catphan.png</normaloff>:/Icons/Icons/catphan.png</iconset>
+     <normaloff>:/Icons/Icons/Catphan.png</normaloff>:/Icons/Icons/Catphan.png</iconset>
    </property>
    <property name="text">
     <string>CatPhan</string>
@@ -353,7 +363,7 @@
   <action name="action_VMAT">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/vmat.xpm</normaloff>:/Icons/Icons/vmat.xpm</iconset>
+     <normaloff>:/Icons/Icons/Vmat.xpm</normaloff>:/Icons/Icons/Vmat.xpm</iconset>
    </property>
    <property name="text">
     <string>VMAT</string>
@@ -365,7 +375,7 @@
   <action name="action_Machine_Logs">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/machinelog.png</normaloff>:/Icons/Icons/machinelog.png</iconset>
+     <normaloff>:/Icons/Icons/MachineLog.png</normaloff>:/Icons/Icons/MachineLog.png</iconset>
    </property>
    <property name="text">
     <string>Machine Logs</string>
@@ -377,7 +387,7 @@
   <action name="action_Starshot">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/starshot.png</normaloff>:/Icons/Icons/starshot.png</iconset>
+     <normaloff>:/Icons/Icons/Starshot.png</normaloff>:/Icons/Icons/Starshot.png</iconset>
    </property>
    <property name="text">
     <string>Starshot</string>
@@ -401,7 +411,7 @@
   <action name="action_Picket_Fence">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/picketfence.xpm</normaloff>:/Icons/Icons/picketfence.xpm</iconset>
+     <normaloff>:/Icons/Icons/PicketFence.xpm</normaloff>:/Icons/Icons/PicketFence.xpm</iconset>
    </property>
    <property name="text">
     <string>Picket Fence</string>
@@ -413,7 +423,7 @@
   <action name="action_Settings">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/settings.png</normaloff>:/Icons/Icons/settings.png</iconset>
+     <normaloff>:/Icons/Icons/Settings.png</normaloff>:/Icons/Icons/Settings.png</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
@@ -425,7 +435,7 @@
   <action name="action_Exit">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/exit.xpm</normaloff>:/Icons/Icons/exit.xpm</iconset>
+     <normaloff>:/Icons/Icons/Exit.xpm</normaloff>:/Icons/Icons/Exit.xpm</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -437,7 +447,7 @@
   <action name="action_About">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/help.png</normaloff>:/Icons/Icons/help.png</iconset>
+     <normaloff>:/Icons/Icons/Help.png</normaloff>:/Icons/Icons/Help.png</iconset>
    </property>
    <property name="text">
     <string>&amp;About</string>
