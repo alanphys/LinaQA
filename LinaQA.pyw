@@ -21,6 +21,7 @@ from PyQt5.QtGui import QPixmap, QImage, QFont, QMouseEvent, QStandardItemModel,
 from PyQt5.QtCore import pyqtSignal as SIGNAL, QObject, Qt, QSettings, QSortFilterProxyModel, QSize
 import matplotlib.pyplot as plt
 import numpy as np
+import webbrowser
 
 from LinaQAForm import Ui_LinaQAForm
 from aboutpackage import About
@@ -143,6 +144,8 @@ class LinaQA(QMainWindow):
         self.ui.action_Open_Ref.triggered.connect(self.open_ref)
         self.ui.action_Save.triggered.connect(self.save_file)
         self.ui.action_About.triggered.connect(self.showabout)
+        self.ui.action_PyDicomH.triggered.connect(self.pydicom_help)
+        self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
         action_close.triggered.connect(self.close)
         self.ui.action_Settings.triggered.connect(self.showsettings)
         self.ui.action_Invert.triggered.connect(self.invert)
@@ -327,6 +330,12 @@ class LinaQA(QMainWindow):
     def showabout(self):
         about = About()
         about.exec()
+
+    def pydicom_help(self):
+        webbrowser.open('https://pydicom.github.io/pydicom/stable/')
+
+    def pylinac_help(self):
+        webbrowser.open('https://pylinac.readthedocs.io/en/latest/')
 
     def showsettings(self):
         settings = Settings()
