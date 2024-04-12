@@ -491,7 +491,7 @@ class VariantDelegate(QItemDelegate):
             value = editor.value()
         else:
             value = self.value_from_lineedit(editor, model, index)
-        if not value is None:
+        if value is not None:
             model.setData(index, value, Qt.UserRole)
             model.setData(index, self.display_text(value), Qt.DisplayRole)
 

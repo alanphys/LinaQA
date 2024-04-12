@@ -7,13 +7,14 @@ Frontend GUI to pylinac and pydicom with some added functionality.
 Usage: python LinaQA.pyw
 
 """
-
+import enum
 # author : AC Chamberlain <alanphys@yahoo.co.uk>
 # copyright: AC Chamberlain (c) 2023, 2024
 
 import sys
 import os.path as osp
 import os
+import io
 import subprocess
 from platform import system
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QMessageBox, QComboBox, QLabel, QAction
@@ -494,13 +495,22 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_picket_fence(self):
+        stream = io.BytesIO()
+        self.imager.datasets[self.imager.index].save_as(stream)
         if self.settings.value('Picket Fence/Apply median filter') == 'True':
-            pf = picketfence.PicketFence(self.filenames[0], mlc=self.ui.cbMLC.currentText(), filter=3)
+            pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText(), filter=3)
         else:
-            pf = picketfence.PicketFence(self.filenames[0], mlc=self.ui.cbMLC.currentText())
-        pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
-                   action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
-                   num_pickets=int(self.settings.value('Picket Fence/Number of pickets')))
+            pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText())
+        try:
+            pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
+                       action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
+                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')))
+        except ValueError:
+            # if it throws an exception fall back to this as per issue #470
+            pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
+                       action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
+                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
+                       required_prominence=0.1)
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         pf.publish_pdf(filename)
         open_path(filename)
