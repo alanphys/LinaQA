@@ -496,7 +496,8 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_picket_fence(self):
         stream = io.BytesIO()
-        self.imager.datasets[self.imager.index].save_as(stream)
+        self.imager.datasets[self.imager.index].save_as(stream, True)
+        stream.seek(0)
         if self.settings.value('Picket Fence/Apply median filter') == 'True':
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText(), filter=3)
         else:
@@ -526,7 +527,10 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_2d_phantoms(self):
-        phan = getattr(planar_imaging, self.ui.cbPhan2D.currentText().replace(' ', ''))(self.filenames[0])
+        stream = io.BytesIO()
+        self.imager.datasets[self.imager.index].save_as(stream, True)
+        stream.seek(0)
+        phan = getattr(planar_imaging, self.ui.cbPhan2D.currentText().replace(' ', ''))(stream)
         phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantom/Low contrast threshold')),
                      high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
                      invert=self.ui.action_Invert.isChecked())
@@ -536,12 +540,22 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_vmat(self):
-        images = (self.filenames[0], self.ref_filename[0])
+        stream = io.BytesIO()
+        self.imager.datasets[self.imager.index].save_as(stream, True)
+        stream.seek(0)
+
+        ref_stream = io.BytesIO()
+        self.ref_imager.datasets[self.imager.index].save_as(ref_stream, True)
+        ref_stream.seek(0)
+
+        images = (stream, ref_stream)
         if self.ui.cbVMAT.currentText() == 'DRGS':
             v = vmat.DRGS(image_paths=images)
         else:
             v = vmat.DRMLC(image_paths=images)
         v.analyze(tolerance=float(self.settings.value('VMAT/Tolerance')))
+        v.open_image.base_path = self.filenames[0]
+        v.dmlc_image.base_path = self.ref_filename
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         v.publish_pdf(filename)
         open_path(filename)
@@ -579,8 +593,16 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_gamma(self):
         if len(self.ref_filename) >> 0:
-            eval_img = image.load(self.filenames[0])
-            ref_img = image.load(self.ref_filename[0])
+            stream = io.BytesIO()
+            self.imager.datasets[self.imager.index].save_as(stream, True)
+            stream.seek(0)
+
+            ref_stream = io.BytesIO()
+            self.ref_imager.datasets[self.imager.index].save_as(ref_stream, True)
+            ref_stream.seek(0)
+
+            eval_img = image.load(stream)
+            ref_img = image.load(ref_stream)
             eval_img.normalize()
             ref_img.normalize()
             gamma = image.gamma_2d(reference=ref_img.array,
