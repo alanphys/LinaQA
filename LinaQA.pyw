@@ -191,7 +191,7 @@ class LinaQA(QMainWindow):
         if not settings.contains('Number of pickets'):
             settings.setValue('Number of pickets', '10')
         if not settings.contains('Apply median filter'):
-            settings.setValue('Apply median filter', 'False')
+            settings.setValue('Apply median filter', 'false')
         settings.endGroup()
 
         settings.beginGroup('Star shot')
@@ -498,7 +498,7 @@ class LinaQA(QMainWindow):
         stream = io.BytesIO()
         self.imager.datasets[self.imager.index].save_as(stream, True)
         stream.seek(0)
-        if self.settings.value('Picket Fence/Apply median filter') == 'True':
+        if self.settings.value('Picket Fence/Apply median filter'):
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText(), filter=3)
         else:
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText())

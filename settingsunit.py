@@ -449,7 +449,7 @@ class VariantDelegate(QItemDelegate):
         editor = None
         if isinstance(original_value, bool):
             editor = QCheckBox(parent)
-        if isinstance(original_value, int):
+        elif isinstance(original_value, int):
             editor = QSpinBox(parent)
             editor.setRange(-32767, 32767)
         else:
