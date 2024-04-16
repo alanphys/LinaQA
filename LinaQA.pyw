@@ -430,7 +430,6 @@ class LinaQA(QMainWindow):
             event.ignore()
 
     def dropEvent(self, event):
-        # TODO fix this
         if event.mimeData().hasText():
             urls = event.mimeData().text().split("\n")
             self.filenames = []
@@ -441,6 +440,10 @@ class LinaQA(QMainWindow):
                         self.filenames.append(filename)
             if self.filenames:
                 self.open_image(self.filenames)
+                self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+                self.ui.qlImage.show()
+                self.show_dicom_tags()
+                self.edit_pixel_data()
 
     def resizeEvent(self, event):
         if self.imager is not None:

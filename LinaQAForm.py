@@ -15,11 +15,13 @@ class Ui_LinaQAForm(object):
     def setupUi(self, LinaQAForm):
         LinaQAForm.setObjectName("LinaQAForm")
         LinaQAForm.resize(678, 682)
+        LinaQAForm.setAcceptDrops(True)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/Icons/Icons/LinacToolkit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         LinaQAForm.setWindowIcon(icon)
         LinaQAForm.setIconSize(QtCore.QSize(32, 32))
         self.centralwidget = QtWidgets.QWidget(LinaQAForm)
+        self.centralwidget.setAcceptDrops(True)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -28,6 +30,7 @@ class Ui_LinaQAForm(object):
         self.tabWidget.setTabBarAutoHide(False)
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
+        self.tab.setAcceptDrops(True)
         self.tab.setObjectName("tab")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.tab)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -37,6 +40,7 @@ class Ui_LinaQAForm(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.qlImage.sizePolicy().hasHeightForWidth())
         self.qlImage.setSizePolicy(sizePolicy)
+        self.qlImage.setAcceptDrops(True)
         self.qlImage.setObjectName("qlImage")
         self.horizontalLayout.addWidget(self.qlImage)
         self.tabWidget.addTab(self.tab, "")
@@ -275,7 +279,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_Side.addAction(self.action_Pixel_Data)
 
         self.retranslateUi(LinaQAForm)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(0)
         self.action_Exit.triggered.connect(LinaQAForm.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(LinaQAForm)
 
