@@ -18,8 +18,8 @@ import io
 import subprocess
 from platform import system
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QMessageBox, QComboBox, QLabel, QAction
-from PyQt5.QtGui import QPixmap, QImage, QFont, QMouseEvent, QStandardItemModel, QStandardItem
-from PyQt5.QtCore import pyqtSignal as SIGNAL, QObject, Qt, QSettings, QSortFilterProxyModel, QSize
+from PyQt5.QtGui import QPixmap, QImage, QFont, QMouseEvent, QStandardItemModel, QStandardItem, QColor, QPalette
+from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
 import matplotlib.pyplot as plt
 import numpy as np
 import webbrowser
@@ -49,6 +49,10 @@ phantom2D_list = ["Doselab MC2 MV",
                   "SI QC-3",
                   "SI QC-kV",
                   "IBA Primus A"]
+# colours for status bar messages
+faint_red = '#ff7979'
+faint_yellow = '#fffccf'
+faint_green = '#d3ffe4'
 
 
 def open_path(path: str) -> None:
@@ -140,7 +144,6 @@ class LinaQA(QMainWindow):
         action_close.setText("E&xit")
         self.ui.menubar.addAction(action_close)
 
-        self.ui.statusbar.showMessage('Open DICOM file or drag and drop')
         self.ui.action_Open.triggered.connect(self.openfile)
         self.ui.action_Open_Ref.triggered.connect(self.open_ref)
         self.ui.action_Save.triggered.connect(self.save_file)
@@ -168,7 +171,12 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(1, False)
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
+        self.status_clear()
+        self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
+# ---------------------------------------------------------------------------------------------------------------------
+# Define default settings
+# ---------------------------------------------------------------------------------------------------------------------
     def set_default_settings(self, settings):
         settings.beginGroup('CatPhan')
         if not settings.contains('Type'):
@@ -238,6 +246,44 @@ class LinaQA(QMainWindow):
             settings.setValue('Dose threshold', '5')
         settings.endGroup()
 
+# ---------------------------------------------------------------------------------------------------------------------
+# Status bar routines
+# ---------------------------------------------------------------------------------------------------------------------
+    def status_clear(self):
+        # Clear the status bar
+        qsb_color = self.ui.statusbar.palette().color(QPalette.Base)
+        mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
+        self.ui.statusbar.setStyleSheet(mystylesheet)
+        self.ui.statusbar.showMessage('')
+
+    def status_message(self, status_message):
+        # Clear the status bar
+        qsb_color = self.ui.statusbar.palette().color(QPalette.Base)
+        mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
+        self.ui.statusbar.setStyleSheet(mystylesheet)
+        self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
+        self.ui.statusbar.showMessage(status_message)
+
+    def status_warn(self, status_message):
+        mystylesheet = f"background-color: {faint_yellow}; border-top: 1px outset grey;"
+        self.ui.statusbar.setStyleSheet(mystylesheet)
+        self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
+        self.ui.statusbar.showMessage(status_message)
+
+    def status_good(self, status_message):
+        mystylesheet = f"background-color: {faint_green}; border-top: 1px outset grey;"
+        self.ui.statusbar.setStyleSheet(mystylesheet)
+        self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
+        self.ui.statusbar.showMessage(status_message)
+
+    def status_error(self, status_message):
+        mystylesheet = f"background-color: {faint_red}; border-top: 1px outset grey;"
+        self.ui.statusbar.setStyleSheet(mystylesheet)
+        self.ui.statusbar.showMessage(status_message)
+
+# ---------------------------------------------------------------------------------------------------------------------
+# User interface routines
+# ---------------------------------------------------------------------------------------------------------------------
     def closeEvent(self, event):
         if self.changed:
             reply = QMessageBox.question(self, 'Quit', 'Are you sure you want to quit?',
@@ -275,11 +321,12 @@ class LinaQA(QMainWindow):
                 sorted_method = "SOP instance UID"
             except TypeError:
                 pass
-
         self.imager = Imager(datasets)
+        if num_bad == 0:
+            self.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files")
+        else:
+            self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files")
 
-        self.ui.statusbar.showMessage("Opened %d DICOM file(s) sorted on %s. Rejected %d bad files" %
-                                      (num_ok, sorted_method, num_bad))
 
     def openfile(self):
         self.ui.qlImage.clear()
@@ -298,6 +345,8 @@ class LinaQA(QMainWindow):
         else:
             self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath,
                                                                 'DICOM files (*.dcm);;All files (*)')[0]
+        self.status_clear()
+        # TODO fix non image dicom files
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
@@ -307,7 +356,7 @@ class LinaQA(QMainWindow):
         else:
             the_image = QPixmap(self.filenames[0])
             if the_image.isNull():
-                self.ui.statusbar.showMessage("File is not an image file!")
+                self.status_error("File is not an image file!")
             else:
                 self.ui.qlImage.setPixmap(the_image)
                 self.ui.qlImage.setScaledContents(True)
@@ -343,15 +392,16 @@ class LinaQA(QMainWindow):
         settings.exec()
 
     def auto_window(self):
-        self.imager.auto_window()
-        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-        self.ui.statusbar.showMessage(
-            "Window center %d, Window width %d" % (self.imager.window_center, self.imager.window_width))
+        if self.imager is not None:
+            self.imager.auto_window()
+            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+            self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
 
     def wheelEvent(self, e):
-        self.imager.index += int(e.angleDelta().y()/120)
-        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-        self.ui.statusbar.showMessage("Current slice %d" % self.imager.index)
+        if self.imager is not None:
+            self.imager.index += int(e.angleDelta().y()/120)
+            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+            self.status_message(f"Current slice {self.imager.index}")
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
@@ -364,16 +414,13 @@ class LinaQA(QMainWindow):
             self.mouse_button_down = False
 
     def mouseMoveEvent(self, event: QMouseEvent):
-        if self.mouse_button_down:
+        if self.mouse_button_down and self.imager is not None:
             delta = (event.globalPos() - self.mouse_last_pos) * (self.imager.window_width/1000)
             self.mouse_last_pos = event.globalPos()
-
             self.imager.window_width += delta.x()
             self.imager.window_center += delta.y()
-
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.ui.statusbar.showMessage("Window center %d, Window width %d" %
-                                          (self.imager.window_center, self.imager.window_width))
+            self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasText():
@@ -383,16 +430,17 @@ class LinaQA(QMainWindow):
             event.ignore()
 
     def dropEvent(self, event):
+        # TODO fix this
         if event.mimeData().hasText():
             urls = event.mimeData().text().split("\n")
-            filenames = []
+            self.filenames = []
             for url in urls:
                 if url != "":
                     filename = url.split('/', 2)[2]
                     if filename != "":
-                        filenames.append(filename)
-            if filenames:
-                self.open_image(filenames)
+                        self.filenames.append(filename)
+            if self.filenames:
+                self.open_image(self.filenames)
 
     def resizeEvent(self, event):
         if self.imager is not None:
@@ -678,8 +726,7 @@ class LinaQA(QMainWindow):
             except AttributeError:
                 pass
         self.ref_imager = Imager(datasets)
-        self.ui.statusbar.showMessage("Opened %d DICOM file(s) sorted on %s. Rejected %d bad files" %
-                                      (num_ok, sorted_method, num_bad))
+        self.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files")
 
     # ---------------------------------------------------------------------------------------------------------------------
     # Pixel Data Section

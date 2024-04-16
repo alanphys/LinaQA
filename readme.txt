@@ -1,8 +1,8 @@
-LinaQA Readme file
+LinaQA Readme file (c) Yenzakahle MPI 2024
 
 
 1) Introduction
-LinaQA (pronounced Linakwa) is a GUI frontend for pylinac and pydicom. It is intended to be a general purpose medical physics quality assurance tool for radiotherapy, nuclear medicine and diagnostic radiology. Currently LinaQA only displays DICOM image files although other tests can still be run.
+LinaQA (pronounced Linakwa) is a GUI frontend for pylinac and pydicom. It is intended to be a general purpose medical physics quality assurance tool for radiotherapy, nuclear medicine and diagnostic radiology.
 
 2) Licence
 Please read the file Licence.txt. This means that if as a result of using this program you fry your patients, trash your linac, nuke the cat, blow the city power in a ten block radius and generally cause global thermonuclear meltdown! Sorry, you were warned!
@@ -52,6 +52,7 @@ Implemented DICOM Tags, CatPhan, Picket Fence, 2D phantoms, VMAT and Winston-Lut
 
 9) To Do
 Run on PySide or PyQt, which ever is available.
-Add Gamma analysis.
 Integrate PDFs
 Error reporting to status bar
+Edit DICOM tags
+Show machine log?
