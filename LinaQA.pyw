@@ -17,8 +17,9 @@ import os
 import io
 import subprocess
 from platform import system
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QMessageBox, QComboBox, QLabel, QAction
-from PyQt5.QtGui import QPixmap, QImage, QFont, QMouseEvent, QStandardItemModel, QStandardItem, QColor, QPalette
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QMessageBox, QComboBox, QLabel, QAction,
+                             QInputDialog, QHeaderView)
+from PyQt5.QtGui import QPixmap, QImage, QFont, QMouseEvent, QStandardItemModel, QStandardItem, QPalette
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,6 +31,8 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings
 from imageunit import Imager
 from decorators import show_wait_cursor
+from misc_utils import get_dot_attr, set_dot_attr
+
 from tablemodel import TableModel
 from pydicom import compat
 import pydicom
@@ -144,9 +147,19 @@ class LinaQA(QMainWindow):
         action_close.setText("E&xit")
         self.ui.menubar.addAction(action_close)
 
+        # add actions to treeView
+        self.ui.treeView.addAction(self.ui.action_Copy)
+        self.ui.treeView.addAction(self.ui.action_Select_all)
+        self.ui.treeView.addAction(self.ui.action_Clear_selection)
+        self.ui.treeView.addAction(self.ui.action_Find_tag)
+        self.ui.treeView.addAction(self.ui.action_Expand_all)
+        self.ui.treeView.addAction(self.ui.action_Collapse_all)
+
+        # connect menu and toolbar actions
         self.ui.action_Open.triggered.connect(self.openfile)
         self.ui.action_Open_Ref.triggered.connect(self.open_ref)
         self.ui.action_Save.triggered.connect(self.save_file)
+        self.ui.action_Save_as.triggered.connect(self.save_file_as)
         self.ui.action_About.triggered.connect(self.showabout)
         self.ui.action_PyDicomH.triggered.connect(self.pydicom_help)
         self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
@@ -165,9 +178,24 @@ class LinaQA(QMainWindow):
         self.ui.action_DICOM_tags.triggered.connect(self.show_dicom_tags)
         self.ui.action_Pixel_Data.triggered.connect(self.edit_pixel_data)
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
+        self.ui.action_Find_tag.triggered.connect(self.find_tag)
+        self.ui.qle_filter_tag.textChanged.connect(self.filter_tag)
+        self.ui.action_Insert_tag.triggered.connect(self.insert_tag)
+        self.ui.action_Edit_tag.triggered.connect(self.edit_tag)
+        self.ui.action_Delete_tag.triggered.connect(self.del_tag)
+
+        # connect treeView actions
+        self.ui.action_Copy.triggered.connect(self.copy_tag)
+        self.ui.action_Select_all.triggered.connect(self.selectall_tags)
+        self.ui.action_Clear_selection.triggered.connect(self.clearall_tags)
+        self.ui.action_Expand_all.triggered.connect(self.expandall_tags)
+        self.ui.action_Collapse_all.triggered.connect(self.collapseall_tags)
         self.ui.tabWidget.tabCloseRequested.connect(lambda index: self.ui.tabWidget.setTabVisible(index, False))
         self.ui.tabWidget.currentChanged.connect(self.tab_changed)
+
+        # prepare ui
         self.setWindowTitle(f'LinaQA v{version}')
+        self.ui.treeView.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.ui.tabWidget.setTabVisible(1, False)
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
@@ -261,7 +289,7 @@ class LinaQA(QMainWindow):
         qsb_color = self.ui.statusbar.palette().color(QPalette.Base)
         mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
         self.ui.statusbar.setStyleSheet(mystylesheet)
-        self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
+        # self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
         self.ui.statusbar.showMessage(status_message)
 
     def status_warn(self, status_message):
@@ -285,6 +313,7 @@ class LinaQA(QMainWindow):
 # User interface routines
 # ---------------------------------------------------------------------------------------------------------------------
     def closeEvent(self, event):
+        # TODO implement this for file changed
         if self.changed:
             reply = QMessageBox.question(self, 'Quit', 'Are you sure you want to quit?',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
@@ -299,11 +328,25 @@ class LinaQA(QMainWindow):
 
         # Clear non-dicom files
         datasets = []
-        for file in filenames:
+        # we have to treat the first file separately to get the image modality
+        try:
+            ds = pydicom.dcmread(filenames[0], force=True)
+            if 'TransferSyntaxUID' not in ds.file_meta:
+                ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+            first_modality = ds.Modality
+            datasets.append(ds)
+        except pydicom.errors.InvalidDicomError:
+            num_bad += 1
+            filenames.remove(filenames[0])
+
+        for file in filenames[1:]:
             try:
                 ds = pydicom.dcmread(file, force=True)
                 if 'TransferSyntaxUID' not in ds.file_meta:
                     ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+                modality = ds.Modality
+                if modality != first_modality:
+                    raise pydicom.errors.InvalidDicomError
                 datasets.append(ds)
             except pydicom.errors.InvalidDicomError:
                 num_bad += 1
@@ -321,12 +364,11 @@ class LinaQA(QMainWindow):
                 sorted_method = "SOP instance UID"
             except TypeError:
                 pass
-        self.imager = Imager(datasets)
+        self.imager = Imager(datasets)   # TODO fix this for non image DICOM files
         if num_bad == 0:
-            self.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files")
+            self.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
         else:
-            self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files")
-
+            self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
 
     def openfile(self):
         self.ui.qlImage.clear()
@@ -340,17 +382,22 @@ class LinaQA(QMainWindow):
         dirpath = osp.dirname(osp.realpath(self.filenames[0]))
         ostype = system()
         if ostype == 'Windows':
-            self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath,
-                                                                'DICOM files (*.dcm);;All files (*.*)')[0]
+            self.filenames = QFileDialog.getOpenFileNames(
+                self, 'Open DICOM file', dirpath,
+                'DICOM files (*.dcm);;All files (*.*)')[0]
         else:
-            self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath,
-                                                                'DICOM files (*.dcm);;All files (*)')[0]
+            self.filenames = QFileDialog.getOpenFileNames(
+                self, 'Open DICOM file', dirpath,
+                'DICOM files (*.dcm);;All files (*)')[0]
         self.status_clear()
-        # TODO fix non image dicom files
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
-            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.ui.qlImage.show()
+            if self.imager.datasets[self.imager.index].Modality in ['RTIMAGE', 'CT', 'NM', 'PT']:
+                self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+                self.ui.qlImage.show()
+            else:
+                self.ui.action_DICOM_tags.setChecked(True)
+                self.ui.tabWidget.setTabVisible(0, False)
             self.show_dicom_tags()
             self.edit_pixel_data()
         else:
@@ -362,11 +409,28 @@ class LinaQA(QMainWindow):
                 self.ui.qlImage.setScaledContents(True)
 
     def save_file(self):
-        if self.imager is not None:
+        if self.imager:
             ds = self.imager.datasets[self.imager.index]
             arr = ds.pixel_array
             ds.PixelData = arr.tobytes()
             ds.save_as(ds.filename, True)
+
+    def save_file_as(self):
+        self.status_clear()
+        dirpath = osp.dirname(osp.realpath(self.filenames[self.imager.index]))
+        ostype = system()
+        if ostype == 'Windows':
+            filename = QFileDialog.getSaveFileName(self, 'Save DICOM file', dirpath,
+                                                         'DICOM files (*.dcm);;All files (*.*)')[0]
+        else:
+            filename = QFileDialog.getSaveFileName(self, 'Save DICOM file', dirpath,
+                                                         'DICOM files (*.dcm);;All files (*)')[0]
+        if self.imager and filename != '':
+            ds = self.imager.datasets[self.imager.index]
+            arr = ds.pixel_array
+            ds.PixelData = arr.tobytes()
+            ds.save_as(filename, True)
+            self.status_message('File save as ' + filename)
 
     def show_image(self, numpy_array, label: QLabel):
         if numpy_array is not None:
@@ -457,11 +521,30 @@ class LinaQA(QMainWindow):
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
     def tab_changed(self, index):
-        if self.imager is not None:
+        if self.imager:
+            if index != 1:
+                self.ui.action_Find_tag.setEnabled(False)
+                self.ui.action_Find_tag.setVisible(False)
+                self.ui.action_Insert_tag.setEnabled(False)
+                self.ui.action_Insert_tag.setVisible(False)
+                self.ui.action_Edit_tag.setEnabled(False)
+                self.ui.action_Edit_tag.setVisible(False)
+                self.ui.action_Delete_tag.setEnabled(False)
+                self.ui.action_Delete_tag.setVisible(False)
             if index == 0:
                 ds = self.imager.datasets[self.imager.index]
-                np.copyto(self.imager.values[:, :, self.imager.index], ds.pixel_array, 'unsafe')
-                self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+                if self.imager.datasets[self.imager.index].Modality in ['RTIMAGE', 'CT', 'NM', 'PT']:
+                    np.copyto(self.imager.values[:, :, self.imager.index], ds.pixel_array, 'unsafe')
+                    self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+            elif index == 1:
+                self.ui.action_Find_tag.setEnabled(True)
+                self.ui.action_Find_tag.setVisible(True)
+                self.ui.action_Insert_tag.setEnabled(True)
+                self.ui.action_Insert_tag.setVisible(True)
+                self.ui.action_Edit_tag.setEnabled(True)
+                self.ui.action_Edit_tag.setVisible(True)
+                self.ui.action_Delete_tag.setEnabled(True)
+                self.ui.action_Delete_tag.setVisible(True)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section
@@ -530,6 +613,125 @@ class LinaQA(QMainWindow):
                     parent.appendRow(item)
                     self.recurse_tree(model, ds, item)
 
+    def copy_tag(self):
+        clipboard = QApplication.clipboard()
+        selected_tags = ''
+        for index in self.ui.treeView.selectedIndexes():
+            selected_tags = selected_tags + self.ui.treeView.model().itemData(index)[0] + '\n'
+        clipboard.setText(selected_tags)
+
+    def selectall_tags(self):
+        self.ui.treeView.selectAll()
+
+    def clearall_tags(self):
+        self.ui.treeView.clearSelection()
+
+    def expandall_tags(self):
+        self.ui.treeView.expandAll()
+
+    def collapseall_tags(self):
+        self.ui.treeView.collapseAll()
+
+    def find_tag(self):
+        if self.ui.action_Find_tag.isChecked():
+            self.ui.fsearchbar.setVisible(True)
+            self.ui.fsearchbar.setEnabled(True)
+            self.ui.fsearchbar.activateWindow()
+            self.ui.qle_filter_tag.setFocus()
+            self.ui.action_Find_tag.setText('Hide &Filter bar')
+        else:
+            self.ui.qle_filter_tag.setText('')
+            self.ui.fsearchbar.setVisible(False)
+            self.ui.fsearchbar.setEnabled(False)
+            self.ui.action_Find_tag.setText('Show &Filter bar')
+
+    def filter_tag(self):
+        """Select tags that contain requested text"""
+        tag_to_find = self.ui.qle_filter_tag.text()
+        if tag_to_find != '':
+            self.proxy_model.setFilterKeyColumn(-1)
+            self.proxy_model.setRecursiveFilteringEnabled(True)
+            self.proxy_model.setFilterRegularExpression(tag_to_find)
+        else:
+            self.proxy_model.setFilterRegularExpression('')
+
+    def insert_tag(self):
+        ds = self.imager.datasets[self.imager.index]
+        index = self.ui.treeView.currentIndex()
+        tagtext = self.ui.treeView.model().itemData(index)[0]
+        input_dlg = QInputDialog(self)
+        input_dlg.setInputMode(QInputDialog.TextInput)
+        input_dlg.resize(500, 100)
+        input_dlg.setLabelText('Create new tag as: (Group, Element) Keyword VR: Value')
+        input_dlg.setTextValue('')
+        input_dlg.setWindowTitle('Change DICOM tag')
+        ok = input_dlg.exec_()
+        tagtext = input_dlg.textValue()
+        if ok and tagtext != '':
+            tag_no = '0x' + tagtext[1:5] + tagtext[7:11]
+            VR = tagtext.split(':')[0][-2:]
+            tag_value = tagtext.split(':')[1][1:].strip("'")
+            if tag_value[0] == '[':
+                tag_value = tag_value.translate({ord(i): None for i in "[]'"}).split(',')
+            print(VR, tag_value)
+            ds.add_new(tag_no, VR, tag_value)
+            self.show_tree()
+
+    def edit_tag(self):
+        proxy_index = self.ui.treeView.currentIndex()
+        source_index = self.proxy_model.mapToSource(proxy_index)
+        tag_text = source_index.data(Qt.DisplayRole)
+        tag_parent = source_index.parent()
+        tag_group = '0x' + tag_text[1:5]
+        tag_element = '0x' + tag_text[7:11]
+        tag_group_int = int(tag_group, 16)
+        tag_element_int = int(tag_element, 16)
+        tag_vr = tag_text.split(':')[0][-2:]
+        tag_keyword = tag_text.split(':')[0][13:-2].strip()
+        tag_value = tag_text.split(':')[1].strip()
+        tag_path = ''
+        input_dlg = QInputDialog(self)
+        input_dlg.setInputMode(QInputDialog.TextInput)
+        input_dlg.resize(500, 100)
+        label = '(' + tag_group + ', ' + tag_element + ') ' + tag_keyword + ' ' + tag_vr + ':'
+        while tag_parent.data(Qt.DisplayRole) is not None:
+            parent_lable = tag_parent.data(Qt.DisplayRole)
+            label = parent_lable + '.' + label
+            tag_path = parent_lable + '.' + tag_path
+            tag_parent = tag_parent.parent()
+        label = 'Change value for ' + label
+        if tag_group == '0x0002':
+            tag_header = 'file_meta.'
+        else:
+            tag_header = ''
+        tag_path = tag_header + tag_path.replace(" ", "") + tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "")
+        ds = self.imager.datasets[self.imager.index]
+        orig_tag_value = get_dot_attr(ds, tag_path)
+        input_dlg.setLabelText(label)
+        input_dlg.setTextValue(str(orig_tag_value))
+        input_dlg.setWindowTitle('Change DICOM tag')
+        ok = input_dlg.exec_()
+        tag_text = input_dlg.textValue()
+        if ok and tag_text != '':
+            if tag_vr == 'DS':
+                if tag_text[0] == '[':
+                    tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(',')
+            set_dot_attr(ds, tag_path, tag_text)
+            # self.ds[tag_group_int,tag_element_int].value = tag_text
+            self.show_tree()
+
+    def del_tag(self):
+        index = self.ui.treeView.currentIndex()
+        tagtext = self.ui.treeView.model().itemData(index)[0]
+        tag_group = '0x' + tagtext[1:5]
+        tag_element = '0x' + tagtext[7:11]
+        tag_group_int = int(tag_group, 16)
+        tag_element_int = int(tag_element, 16)
+        if tagtext != '':
+            del self.imager.datasets[self.imager.index][tag_group_int,tag_element_int]
+            self.show_tree()
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Analyse section
 # ---------------------------------------------------------------------------------------------------------------------
@@ -563,6 +765,7 @@ class LinaQA(QMainWindow):
                        action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
                        num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
                        required_prominence=0.1)
+            self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         pf.publish_pdf(filename)
         open_path(filename)

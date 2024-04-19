@@ -34,7 +34,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
@@ -124,6 +124,15 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::ActionsContextMenu</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <attribute name="headerStretchLastSection">
+           <bool>false</bool>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -172,6 +181,7 @@
     <addaction name="action_Open"/>
     <addaction name="action_Open_Ref"/>
     <addaction name="action_Save"/>
+    <addaction name="action_Save_as"/>
    </widget>
    <widget class="QMenu" name="menu_Image">
     <property name="title">
@@ -207,6 +217,11 @@
     <addaction name="action_DICOM_tags"/>
     <addaction name="action_Pixel_Data"/>
     <addaction name="separator"/>
+    <addaction name="action_Find_tag"/>
+    <addaction name="action_Insert_tag"/>
+    <addaction name="action_Edit_tag"/>
+    <addaction name="action_Delete_tag"/>
+    <addaction name="separator"/>
     <addaction name="action_Settings"/>
    </widget>
    <addaction name="menu_File"/>
@@ -239,6 +254,10 @@
    <addaction name="action_Auto_Window"/>
    <addaction name="action_Invert"/>
    <addaction name="separator"/>
+   <addaction name="action_Find_tag"/>
+   <addaction name="action_Insert_tag"/>
+   <addaction name="action_Edit_tag"/>
+   <addaction name="action_Delete_tag"/>
   </widget>
   <widget class="QToolBar" name="toolBar_Right">
    <property name="windowTitle">
@@ -530,6 +549,141 @@
    </property>
    <property name="toolTip">
     <string>Save image</string>
+   </property>
+  </action>
+  <action name="action_Copy">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy DICOM tag</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="action_Select_all">
+   <property name="text">
+    <string>Select all</string>
+   </property>
+   <property name="toolTip">
+    <string>Select all tags</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="action_Clear_selection">
+   <property name="text">
+    <string>Clear selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Unselect DICOM tags</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="action_Find_tag">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/SearchTag.png</normaloff>:/Icons/Icons/SearchTag.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find tag</string>
+   </property>
+   <property name="toolTip">
+    <string>Find DICOM tags</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Expand_all">
+   <property name="text">
+    <string>Expand all</string>
+   </property>
+   <property name="toolTip">
+    <string>Expand all nested DICOM tags</string>
+   </property>
+  </action>
+  <action name="action_Collapse_all">
+   <property name="text">
+    <string>Collapse all</string>
+   </property>
+   <property name="toolTip">
+    <string>Collapse all nested DICOM tags</string>
+   </property>
+  </action>
+  <action name="action_Insert_tag">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/AddTag.png</normaloff>:/Icons/Icons/AddTag.png</iconset>
+   </property>
+   <property name="text">
+    <string>Insert tag</string>
+   </property>
+   <property name="toolTip">
+    <string>Add DICOM tag</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Delete_tag">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/DelTag.png</normaloff>:/Icons/Icons/DelTag.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete tag</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove DICOM tag</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Edit_tag">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/EditTag.png</normaloff>:/Icons/Icons/EditTag.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit tag</string>
+   </property>
+   <property name="toolTip">
+    <string>Change DICOM tag</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Save_as">
+   <property name="text">
+    <string>Save as</string>
+   </property>
+   <property name="toolTip">
+    <string>Save file as</string>
    </property>
   </action>
  </widget>

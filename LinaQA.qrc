@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="Icons">
+    <file>Icons/SearchTag.png</file>
+    <file>Icons/AddTag.png</file>
+    <file>Icons/DelTag.png</file>
+    <file>Icons/EditTag.png</file>
     <file>Icons/Save.png</file>
     <file>Icons/TableEdit.png</file>
     <file>Icons/Gamma.png</file>

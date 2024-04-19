@@ -4,46 +4,52 @@ import numpy as np
 class Imager:
     def __init__(self, datasets):
         self.datasets = datasets
-        self._window_width = 1000
-        self._window_center = 0
-        self._invflag = False
+        self._index = 0
 
-        # Dataset has 3D volume
-        if hasattr(datasets[0],"NumberOfFrames"):
-            self.size = (int(datasets[0].Rows), int(datasets[0].Columns), int(datasets[0].NumberOfFrames))
-        # Datasets have 2D planes
-        else:
-            self.size = (int(datasets[0].Rows), int(datasets[0].Columns), len(datasets))
+        # check if dataset has an image
+        if datasets[0].Modality in ['RTIMAGE', 'CT', 'NM', 'PT']:
+            self._window_width = 1000
+            self._window_center = 0
+            self._invflag = False
 
-        # CT 3D dataset
-        if hasattr(datasets[0],"PixelSpacing") and (datasets[0].SliceThickness != '') and (datasets[0].SliceThickness != None):
-            self.spacings = (float(datasets[0].PixelSpacing[0]),
-                             float(datasets[0].PixelSpacing[1]),
-                             float(datasets[0].SliceThickness))
-        # 2D dataset
-        elif hasattr(datasets[0],"ImagePlanePixelSpacing"):
-            self.spacings = (float(datasets[0].ImagePlanePixelSpacing[0]),
-                             float(datasets[0].ImagePlanePixelSpacing[1]),
-                             float(1))
-        else:
-            self.spacings = (1, 1, 1)
+            # Dataset has 3D volume
+            if hasattr(datasets[0], "NumberOfFrames"):
+                self.size = (int(datasets[0].Rows), int(datasets[0].Columns), int(datasets[0].NumberOfFrames))
+            # Datasets have 2D planes
+            else:
+                self.size = (int(datasets[0].Rows), int(datasets[0].Columns), len(datasets))
 
-        self._index = int(self.size[2]/2)
+            # CT 3D dataset
+            if (hasattr(datasets[0], "PixelSpacing") and
+               (datasets[0].SliceThickness != '') and
+               (datasets[0].SliceThickness is not None)):
+                self.spacings = (float(datasets[0].PixelSpacing[0]),
+                                 float(datasets[0].PixelSpacing[1]),
+                                 float(datasets[0].SliceThickness))
+            # 2D dataset
+            elif hasattr(datasets[0], "ImagePlanePixelSpacing"):
+                self.spacings = (float(datasets[0].ImagePlanePixelSpacing[0]),
+                                 float(datasets[0].ImagePlanePixelSpacing[1]),
+                                 float(1))
+            else:
+                self.spacings = (1, 1, 1)
 
-        self.axes = (np.arange(0.0, (self.size[0] + 1) * self.spacings[0], self.spacings[0]),
-                     np.arange(0.0, (self.size[1] + 1) * self.spacings[1], self.spacings[1]),
-                     np.arange(0.0, (self.size[2] + 1) * self.spacings[2], self.spacings[2]))
+            self._index = int(self.size[2]/2)
 
-        # Load pixel data
-        if datasets[0].pixel_array.ndim == 2:
-            self.values = np.zeros(self.size, dtype='int32')
-            for i, d in enumerate(datasets):
-                # Also performs rescaling. 'unsafe' since it converts from float64 to int32
-                np.copyto(self.values[:, :, i], d.pixel_array, 'unsafe')
-        elif datasets[0].pixel_array.ndim == 3:
-            self.values = datasets[0].pixel_array.transpose(1, 2, 0)
+            self.axes = (np.arange(0.0, (self.size[0] + 1) * self.spacings[0], self.spacings[0]),
+                         np.arange(0.0, (self.size[1] + 1) * self.spacings[1], self.spacings[1]),
+                         np.arange(0.0, (self.size[2] + 1) * self.spacings[2], self.spacings[2]))
 
-        self.auto_window()
+            # Load pixel data
+            if datasets[0].pixel_array.ndim == 2:
+                self.values = np.zeros(self.size, dtype='int32')
+                for i, d in enumerate(datasets):
+                    # Also performs rescaling. 'unsafe' since it converts from float64 to int32
+                    np.copyto(self.values[:, :, i], d.pixel_array, 'unsafe')
+            elif datasets[0].pixel_array.ndim == 3:
+                self.values = datasets[0].pixel_array.transpose(1, 2, 0)
+
+            self.auto_window()
 
     @property
     def index(self):
@@ -82,34 +88,35 @@ class Imager:
         self._invflag = value
 
     def get_image(self, index):
-        # int32 true values (HU or brightness units)
-        img = self.values[:, :, index]
+        if self.values is not None:
+            # int32 true values (HU or brightness units)
+            img = self.values[:, :, index]
 
-        # Vectorized windowing using boolean masks
-        w_left = (self._window_center - self._window_width / 2)
-        w_right = (self._window_center + self._window_width / 2)
-        mask_0 = img < w_left
-        mask_1 = img > w_right
-        mask_2 = np.invert(mask_0 + mask_1)
+            # Vectorized windowing using boolean masks
+            w_left = (self._window_center - self._window_width / 2)
+            w_right = (self._window_center + self._window_width / 2)
+            mask_0 = img < w_left
+            mask_1 = img > w_right
+            mask_2 = np.invert(mask_0 + mask_1)
 
-        # Cast to RGB image so that QImage can handle it
-        rgb_array = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint32)
-        if self._invflag:
-            rgb_array[:, :, 0] = rgb_array[:, :, 1] = rgb_array[:, :, 2] = \
-                mask_1 * 0 + mask_0 * 255 + mask_2 * (255 * (w_right - img) / (w_right - w_left))
-        else:
-            rgb_array[:, :, 0] = rgb_array[:, :, 1] = rgb_array[:, :, 2] = \
-                mask_0 * 0 + mask_1 * 255 + mask_2 * (255 * (img - w_left) / (w_right - w_left))
+            # Cast to RGB image so that QImage can handle it
+            rgb_array = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint32)
+            if self._invflag:
+                rgb_array[:, :, 0] = rgb_array[:, :, 1] = rgb_array[:, :, 2] = \
+                    mask_1 * 0 + mask_0 * 255 + mask_2 * (255 * (w_right - img) / (w_right - w_left))
+            else:
+                rgb_array[:, :, 0] = rgb_array[:, :, 1] = rgb_array[:, :, 2] = \
+                    mask_0 * 0 + mask_1 * 255 + mask_2 * (255 * (img - w_left) / (w_right - w_left))
 
-        # flatten RGB array to RGB32
-        res = (255 << 24 | rgb_array[:,:,0] << 16 | rgb_array[:,:,1] << 8 | rgb_array[:,:,2])
-        return res
+            # flatten RGB array to RGB32
+            res = (255 << 24 | rgb_array[:, :, 0] << 16 | rgb_array[:, :, 1] << 8 | rgb_array[:, :, 2])
+            return res
 
     def get_current_image(self):
         return self.get_image(self.index)
 
     def auto_window(self):
-        max = np.max(self.values)
-        min = np.min(self.values)
-        self._window_width = max-min
-        self._window_center = (max + min)//2
+        win_max = np.max(self.values)
+        win_min = np.min(self.values)
+        self._window_width = win_max-win_min
+        self._window_center = (win_max + win_min)//2
