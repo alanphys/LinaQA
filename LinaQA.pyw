@@ -84,6 +84,7 @@ class LinaQA(QMainWindow):
         self.source_model = None
         self.proxy_model = None
         self.table_model = None
+        self.is_changed = False
         self.ui = Ui_LinaQAForm()
         self.ui.setupUi(self)
         self.settings = QSettings()
@@ -307,15 +308,15 @@ class LinaQA(QMainWindow):
     def status_error(self, status_message):
         mystylesheet = f"background-color: {faint_red}; border-top: 1px outset grey;"
         self.ui.statusbar.setStyleSheet(mystylesheet)
+        self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
         self.ui.statusbar.showMessage(status_message)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # User interface routines
 # ---------------------------------------------------------------------------------------------------------------------
     def closeEvent(self, event):
-        # TODO implement this for file changed
-        if self.changed:
-            reply = QMessageBox.question(self, 'Quit', 'Are you sure you want to quit?',
+        if self.is_changed:
+            reply = QMessageBox.question(self, 'Quit', 'You have made changes. Are you sure you want to quit?',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
             if reply == QMessageBox.Yes:
                 event.accept()
@@ -374,6 +375,9 @@ class LinaQA(QMainWindow):
         self.ui.qlImage.clear()
         self.ui.tabWidget.setTabVisible(0, True)
         self.ui.tabWidget.setCurrentIndex(0)
+        self.is_changed = False
+        del self.imager
+        self.imager = None
         if len(self.filenames) == 0:
             if len(sys.argv) > 1:
                 self.filenames = [sys.argv[1]]
@@ -390,6 +394,7 @@ class LinaQA(QMainWindow):
                 self, 'Open DICOM file', dirpath,
                 'DICOM files (*.dcm);;All files (*)')[0]
         self.status_clear()
+        # TODO move this section to open_file
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
             if self.imager.datasets[self.imager.index].Modality in ['RTIMAGE', 'CT', 'NM', 'PT']:
@@ -430,6 +435,7 @@ class LinaQA(QMainWindow):
             arr = ds.pixel_array
             ds.PixelData = arr.tobytes()
             ds.save_as(filename, True)
+            self.is_changed = False
             self.status_message('File save as ' + filename)
 
     def show_image(self, numpy_array, label: QLabel):
@@ -569,6 +575,8 @@ class LinaQA(QMainWindow):
                 self.show_tree()
             else:
                 self.ui.tabWidget.setTabVisible(1, False)
+        else:
+            self.status_error('No DICOM data.')
 
     def show_tree(self):
         self.dataset_to_model()
@@ -676,6 +684,7 @@ class LinaQA(QMainWindow):
             print(VR, tag_value)
             ds.add_new(tag_no, VR, tag_value)
             self.show_tree()
+            self.is_changed = True
 
     def edit_tag(self):
         proxy_index = self.ui.treeView.currentIndex()
@@ -719,6 +728,7 @@ class LinaQA(QMainWindow):
             set_dot_attr(ds, tag_path, tag_text)
             # self.ds[tag_group_int,tag_element_int].value = tag_text
             self.show_tree()
+            self.is_changed = True
 
     def del_tag(self):
         index = self.ui.treeView.currentIndex()
@@ -730,6 +740,7 @@ class LinaQA(QMainWindow):
         if tagtext != '':
             del self.imager.datasets[self.imager.index][tag_group_int,tag_element_int]
             self.show_tree()
+            self.is_changed = True
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -945,6 +956,7 @@ class LinaQA(QMainWindow):
                 ds = self.imager.datasets[self.imager.index]
                 self.table_model = TableModel(ds.pixel_array)
                 self.ui.qtvPixelData.setModel(self.table_model)
+                self.is_changed = True
             else:
                 self.ui.tabWidget.setTabVisible(3, False)
 
