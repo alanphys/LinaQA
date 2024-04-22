@@ -364,7 +364,7 @@ class LinaQA(QMainWindow):
                 sorted_method = "SOP instance UID"
             except TypeError:
                 pass
-        self.imager = Imager(datasets)   # TODO fix this for non image DICOM files
+        self.imager = Imager(datasets)
         if num_bad == 0:
             self.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
         else:
@@ -950,9 +950,13 @@ class LinaQA(QMainWindow):
 
 
 def main():
+    os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+    os.environ["QT_SCALE_FACTOR"] = "1"
     app = QApplication(sys.argv)
     app.setApplicationName("LinaQA")
     app.setOrganizationName("YenzakahleMPI")
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
     window = LinaQA()
     window.show()
     if len(sys.argv) > 1:
