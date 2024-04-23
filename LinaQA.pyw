@@ -967,10 +967,10 @@ def main():
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     os.environ["QT_SCALE_FACTOR"] = "1"
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     app.setApplicationName("LinaQA")
     app.setOrganizationName("YenzakahleMPI")
-    app.setAttribute(Qt.AA_EnableHighDpiScaling)
     window = LinaQA()
     window.show()
     if len(sys.argv) > 1:

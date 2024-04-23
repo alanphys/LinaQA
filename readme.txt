@@ -21,13 +21,46 @@ Windows users will need to install a python stack (such as anaconda) and PyQT5/Q
 If you install pylinac it will automatically install pydicom and numpy.
 
 5) Installation
-Copy the files into a directory
+This assumes mini/anaconda or other python interpreter is installed
+
+Install PyQt5
+Open miniconda prompt
+>pip install PyQt5
+
+Test if PyQt5 is active
+At the minconda command prompt go into python
+>python
+from the python prompt
+>>>from PyQt5 import QtCore
+If does not give an error message your installation is active.
+
+Install pylinac if it is not already installed. If it is installed consider upgrading to the latest version
+>pip install pylinac
+or
+>pip install pylinac --upgrade
+
+
+Test pylinac install
+At the minconda command prompt go into python
+>python
+from the python prompt
+>>>from pylinac import DRGS
+>>>DRGS.run_demo()
+if the DRGS demo windows appears pylinac is active
+
+Install LinaQA
+Unzip LinaQA.zip into a suitable directory
+At the minconda command prompt navigate to the LinaQA directory
+start LinaQA by
+>python LinaQA.pyw
+
+This installation method is temporary and will be replaced by the conventional pip install when LinaQA is stable.
 
 6) Use
 Open a console window (miniconda prompt for windows users), change to the above directory and run
 python LinaQA.pyw
 
-Open a DICOM file either from the menu or toolbar. Drag and drop from your favourite file manager is also supported. Note: For mulitple files such as a CatPhan series the files must be selected in the file dialog.
+Open a file either from the menu or toolbar. Drag and drop from your favourite file manager is also supported. Note: For mulitple files such as a CatPhan series the files must be selected in the file open dialog.
 
 Open the reference image if needed.
 
@@ -35,10 +68,13 @@ Select the appropriate MLC, phantom or test if necessary. Defaults can be set in
 
 Click the relevant Test button.
 
-Non DICOM files such as machine logs (BIN) or film scans (JPG, TIF) currently will not be displayed, but the test can still be run.
+Non image files such as machine logs (BIN) currently will not be displayed, but the test can still be run.
 
 7) Release notes
 These detail new or changed functionality in BeamScheme. Please see the History for bug fixes
+
+Version 0.03
+Add gamma function, DICOM tag editing and DICOM pixel data editing. Cater for high dpi and tweak UI. Support JPEG, TIFF and other image files for Starshot.
 
 Version 0.02
 Second draft based on PyQt5 due to problems with Miniconda.
@@ -49,10 +85,10 @@ First draft based on PySide2
 Implemented DICOM Tags, CatPhan, Picket Fence, 2D phantoms, VMAT and Winston-Lutz
 
 8) History
+See GIT log.
 
 9) To Do
 Run on PySide or PyQt, which ever is available.
 Integrate PDFs
-Error reporting to status bar
-Edit DICOM tags
-Show machine log?
+10) Known issues
+DICOM tag insert and delete does not work on nested tags.
