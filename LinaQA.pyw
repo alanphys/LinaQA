@@ -157,7 +157,7 @@ class LinaQA(QMainWindow):
         self.ui.treeView.addAction(self.ui.action_Collapse_all)
 
         # connect menu and toolbar actions
-        self.ui.action_Open.triggered.connect(self.openfile)
+        self.ui.action_Open.triggered.connect(self.choose_file)
         self.ui.action_Open_Ref.triggered.connect(self.open_ref)
         self.ui.action_Save.triggered.connect(self.save_file)
         self.ui.action_Save_as.triggered.connect(self.save_file_as)
@@ -286,7 +286,8 @@ class LinaQA(QMainWindow):
         self.ui.statusbar.showMessage('')
 
     def status_message(self, status_message):
-        # Clear the status bar
+        # Clear the status bar        dirpath = osp.dirname(osp.realpath(self.filenames[0]))
+
         qsb_color = self.ui.statusbar.palette().color(QPalette.Base)
         mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
         self.ui.statusbar.setStyleSheet(mystylesheet)
@@ -346,9 +347,11 @@ class LinaQA(QMainWindow):
                 if 'TransferSyntaxUID' not in ds.file_meta:
                     ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
                 modality = ds.Modality
+                # cannot mix modalities
                 if modality != first_modality:
                     raise pydicom.errors.InvalidDicomError
                 datasets.append(ds)
+
             except pydicom.errors.InvalidDicomError:
                 num_bad += 1
                 filenames.remove(file)
@@ -371,32 +374,11 @@ class LinaQA(QMainWindow):
         else:
             self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
 
-    def openfile(self):
-        self.ui.qlImage.clear()
-        self.ui.tabWidget.setTabVisible(0, True)
-        self.ui.tabWidget.setCurrentIndex(0)
-        self.is_changed = False
-        del self.imager
-        self.imager = None
-        if len(self.filenames) == 0:
-            if len(sys.argv) > 1:
-                self.filenames = [sys.argv[1]]
-            else:
-                self.filenames = [osp.expanduser("~")]
-        dirpath = osp.dirname(osp.realpath(self.filenames[0]))
-        ostype = system()
-        if ostype == 'Windows':
-            self.filenames = QFileDialog.getOpenFileNames(
-                self, 'Open DICOM file', dirpath,
-                'DICOM files (*.dcm);;All files (*.*)')[0]
-        else:
-            self.filenames = QFileDialog.getOpenFileNames(
-                self, 'Open DICOM file', dirpath,
-                'DICOM files (*.dcm);;All files (*)')[0]
-        self.status_clear()
-        # TODO move this section to open_file
+    def open_file(self):
+        # is the file a DICOM file?
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
+            # does the file have a recognised image format?
             if self.imager.datasets[self.imager.index].Modality in ['RTIMAGE', 'CT', 'NM', 'PT']:
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
                 self.ui.qlImage.show()
@@ -412,6 +394,30 @@ class LinaQA(QMainWindow):
             else:
                 self.ui.qlImage.setPixmap(the_image)
                 self.ui.qlImage.setScaledContents(True)
+
+    def choose_file(self):
+        # set up ui
+        self.ui.qlImage.clear()
+        self.ui.tabWidget.setTabVisible(0, True)
+        self.ui.tabWidget.setCurrentIndex(0)
+
+        self.is_changed = False
+        self.status_clear()
+        del self.imager
+        self.imager = None
+
+        # get filename(s)
+        dirpath = osp.dirname(osp.realpath(self.filenames[0]))
+        ostype = system()
+        if ostype == 'Windows':
+            self.filenames = QFileDialog.getOpenFileNames(
+                self, 'Open DICOM file', dirpath,
+                'DICOM files (*.dcm);;All files (*.*)')[0]
+        else:
+            self.filenames = QFileDialog.getOpenFileNames(
+                self, 'Open DICOM file', dirpath,
+                'DICOM files (*.dcm);;All files (*)')[0]
+        self.open_file()
 
     def save_file(self):
         if self.imager:
@@ -509,11 +515,7 @@ class LinaQA(QMainWindow):
                     if filename != "":
                         self.filenames.append(filename)
             if self.filenames:
-                self.open_image(self.filenames)
-                self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-                self.ui.qlImage.show()
-                self.show_dicom_tags()
-                self.edit_pixel_data()
+                self.open_file()
 
     def resizeEvent(self, event):
         if self.imager is not None:
@@ -972,9 +974,9 @@ def main():
     window = LinaQA()
     window.show()
     if len(sys.argv) > 1:
-        filenames = sys.argv[1:]
-        if filenames:
-            window.open_image(filenames)
+        window.filenames = sys.argv[1:]
+        if window.filenames:
+            window.open_file()
     sys.exit(app.exec_())
 
 

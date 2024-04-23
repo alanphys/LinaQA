@@ -328,19 +328,19 @@
     <string>&amp;Open</string>
    </property>
    <property name="toolTip">
-    <string>Open Image</string>
+    <string>Open image(s)</string>
    </property>
   </action>
   <action name="action_Open_Ref">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/OpenRef.xpm</normaloff>:/Icons/Icons/OpenRef.xpm</iconset>
+     <normaloff>:/Icons/Icons/OpenRef.png</normaloff>:/Icons/Icons/OpenRef.png</iconset>
    </property>
    <property name="text">
     <string>Open &amp;Ref</string>
    </property>
    <property name="toolTip">
-    <string>Open Reference</string>
+    <string>Open reference image</string>
    </property>
   </action>
   <action name="action_Auto_Window">
