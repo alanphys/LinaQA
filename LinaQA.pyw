@@ -200,7 +200,6 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(1, False)
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
-        self.status_clear()
         self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -286,8 +285,7 @@ class LinaQA(QMainWindow):
         self.ui.statusbar.showMessage('')
 
     def status_message(self, status_message):
-        # Clear the status bar        dirpath = osp.dirname(osp.realpath(self.filenames[0]))
-
+        # Clear the status bar
         qsb_color = self.ui.statusbar.palette().color(QPalette.Base)
         mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
         self.ui.statusbar.setStyleSheet(mystylesheet)
@@ -410,14 +408,16 @@ class LinaQA(QMainWindow):
         dirpath = osp.dirname(osp.realpath(self.filenames[0]))
         ostype = system()
         if ostype == 'Windows':
-            self.filenames = QFileDialog.getOpenFileNames(
+            file_names = QFileDialog.getOpenFileNames(
                 self, 'Open DICOM file', dirpath,
                 'DICOM files (*.dcm);;All files (*.*)')[0]
         else:
-            self.filenames = QFileDialog.getOpenFileNames(
+            file_names = QFileDialog.getOpenFileNames(
                 self, 'Open DICOM file', dirpath,
                 'DICOM files (*.dcm);;All files (*)')[0]
-        self.open_file()
+        if len(file_names) > 0:
+            self.filenames = file_names
+            self.open_file()
 
     def save_file(self):
         if self.imager:
@@ -977,6 +977,8 @@ def main():
         window.filenames = sys.argv[1:]
         if window.filenames:
             window.open_file()
+    else:
+        window.filenames = [osp.expanduser("~")]
     sys.exit(app.exec_())
 
 
