@@ -279,14 +279,14 @@ class LinaQA(QMainWindow):
 # ---------------------------------------------------------------------------------------------------------------------
     def status_clear(self):
         # Clear the status bar
-        qsb_color = self.ui.statusbar.palette().color(QPalette.Base)
+        qsb_color = self.ui.statusbar.palette().color(QPalette.Base).getRgb()
         mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
         self.ui.statusbar.setStyleSheet(mystylesheet)
         self.ui.statusbar.showMessage('')
 
     def status_message(self, status_message):
         # Clear the status bar
-        qsb_color = self.ui.statusbar.palette().color(QPalette.Base)
+        qsb_color = self.ui.statusbar.palette().color(QPalette.Base).getRgb()
         mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
         self.ui.statusbar.setStyleSheet(mystylesheet)
         # self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
