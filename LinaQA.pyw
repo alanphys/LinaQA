@@ -7,7 +7,6 @@ Frontend GUI to pylinac and pydicom with some added functionality.
 Usage: python LinaQA.pyw
 
 """
-import enum
 # author : AC Chamberlain <alanphys@yahoo.co.uk>
 # copyright: AC Chamberlain (c) 2023, 2024
 
@@ -61,6 +60,7 @@ faint_green = '#d3ffe4'
 def open_path(path: str) -> None:
     """Open the specified path in the system default viewer."""
 
+    launcher = ''
     if os.name == 'darwin':
         launcher = "open"
     elif os.name == 'posix':
@@ -80,7 +80,7 @@ class LinaQA(QMainWindow):
         self.changed = False
         self.mouse_last_pos = None
         self.filenames = []
-        self.ref_filename = []
+        self.ref_filename = ''
         self.source_model = None
         self.proxy_model = None
         self.table_model = None
@@ -894,6 +894,7 @@ class LinaQA(QMainWindow):
     # Reference image section
     # ---------------------------------------------------------------------------------------------------------------------
     def open_ref(self):
+        self.status_clear()
         self.ui.qlRef.clear()
         self.ui.tabWidget.setTabVisible(2, True)
         self.ui.tabWidget.setCurrentIndex(2)
@@ -903,49 +904,32 @@ class LinaQA(QMainWindow):
             else:
                 dirpath = osp.realpath(self.filenames[0])
         else:
-            dirpath = osp.realpath(self.ref_filename[0])
+            dirpath = osp.realpath(self.ref_filename)
         ostype = system()
         if ostype == 'Windows':
-            self.ref_filename = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath,
-                                                             'DICOM files (*.dcm);;All files (*.*)')[0]
+            self.ref_filename = QFileDialog.getOpenFileName(self, 'Open DICOM file', dirpath,
+                                                            'DICOM files (*.dcm);;All files (*.*)')[0]
         else:
-            self.ref_filename = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath,
-                                                             'DICOM files (*.dcm);;All files (*)')[0]
-        if self.ref_filename:
+            self.ref_filename = QFileDialog.getOpenFileName(self, 'Open DICOM file', dirpath,
+                                                            'DICOM files (*.dcm);;All files (*)')[0]
+        if self.ref_filename and pydicom.misc.is_dicom(self.ref_filename):
             self.open_ref_image(self.ref_filename)
             self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
             self.ui.qlRef.show()
+        else:
+            self.status_error('Not a DICOM image file.')
 
-    def open_ref_image(self, filenames):
-        num_total = len(filenames)
-        num_bad = 0
-
+    def open_ref_image(self, filename):
         # Clear non-dicom files
         datasets = []
-        for file in filenames:
-            try:
-                ds = pydicom.dcmread(file, force=True)
-                if 'TransferSyntaxUID' not in ds.file_meta:
-                    ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-                datasets.append(ds)
-            except pydicom.errors.InvalidDicomError:
-                num_bad += 1
-                filenames.remove(file)
-        num_ok = num_total - num_bad
-
-        # Try to sort based on instance number then SOPInstanceUID
-        sorted_method = "filenames"
         try:
-            datasets.sort(key=lambda x: x.InstanceNumber)
-            sorted_method = "instance number"
-        except AttributeError:
-            try:
-                datasets.sort(key=lambda x: x.SOPInstanceUID)
-                sorted_method = "SOP instance UID"
-            except AttributeError:
-                pass
-        self.ref_imager = Imager(datasets)
-        self.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files")
+            ds = pydicom.dcmread(filename, force=True)
+            if 'TransferSyntaxUID' not in ds.file_meta:
+                ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+            datasets.append(ds)
+            self.ref_imager = Imager(datasets)
+        except pydicom.errors.InvalidDicomError:
+            self.status_error('Error reeading DICOM image file.')
 
     # ---------------------------------------------------------------------------------------------------------------------
     # Pixel Data Section
