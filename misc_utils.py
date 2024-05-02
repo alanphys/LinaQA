@@ -21,7 +21,7 @@ def get_dot_attr(obj, att_name) -> str:
         parts = part.split('[')
         if len(parts) > 1:
             sequence_str = parts[0]
-            sequence_num = int(parts[1].replace(']', ""))
+            sequence_num = int(parts[1].replace(']', "")) - 1
             sequence = getattr(obj, sequence_str)
             obj = sequence[sequence_num]
         else:
@@ -47,7 +47,7 @@ def set_dot_attr(obj, att_name, value):
         parts = part.split('[')
         if len(parts) > 1:
             sequence_str = parts[0]
-            sequence_num = int(parts[1].replace(']', ""))
+            sequence_num = int(parts[1].replace(']', "")) - 1
             sequence = getattr(obj, sequence_str)
             obj = sequence[sequence_num]
         else:

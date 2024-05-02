@@ -468,13 +468,13 @@ class LinaQA(QMainWindow):
         settings.exec()
 
     def auto_window(self):
-        if self.imager is not None:
+        if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.auto_window()
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
             self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
 
     def wheelEvent(self, e):
-        if self.imager is not None:
+        if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.index += int(e.angleDelta().y()/120)
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
             self.status_message(f"Current slice {self.imager.index}")
@@ -490,7 +490,7 @@ class LinaQA(QMainWindow):
             self.mouse_button_down = False
 
     def mouseMoveEvent(self, event: QMouseEvent):
-        if self.mouse_button_down and self.imager is not None:
+        if self.mouse_button_down and self.imager is not None and hasattr(self.imager, "values"):
             delta = (event.globalPos() - self.mouse_last_pos) * (self.imager.window_width/1000)
             self.mouse_last_pos = event.globalPos()
             self.imager.window_width += delta.x()
@@ -518,7 +518,7 @@ class LinaQA(QMainWindow):
                 self.open_file()
 
     def resizeEvent(self, event):
-        if self.imager is not None:
+        if self.imager is not None and hasattr(self.imager, "values"):
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
     def invert(self):
@@ -617,8 +617,7 @@ class LinaQA(QMainWindow):
             parent.appendRow(item)
             if data_element.VR == "SQ":   # a sequence
                 for i, ds in enumerate(data_element.value):
-                    sq_item_description = data_element.name.replace(" Sequence", "")  # XXX not i18n
-                    item_text = "{0:s} {1:d}".format(sq_item_description, i + 1)
+                    item_text = "{0:s} [{1:d}]".format(data_element.name, i + 1)
                     item = QStandardItem(item_text)
                     parent.appendRow(item)
                     self.recurse_tree(model, ds, item)
@@ -666,6 +665,7 @@ class LinaQA(QMainWindow):
             self.proxy_model.setFilterRegularExpression('')
 
     def insert_tag(self):
+        # TODO fix for nested tags
         ds = self.imager.datasets[self.imager.index]
         index = self.ui.treeView.currentIndex()
         tagtext = self.ui.treeView.model().itemData(index)[0]
@@ -689,6 +689,7 @@ class LinaQA(QMainWindow):
             self.is_changed = True
 
     def edit_tag(self):
+        # get current tag
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_text = source_index.data(Qt.DisplayRole)
@@ -701,10 +702,63 @@ class LinaQA(QMainWindow):
         tag_keyword = tag_text.split(':')[0][13:-2].strip()
         tag_value = tag_text.split(':')[1].strip()
         tag_path = ''
+        label = '(' + tag_group + ', ' + tag_element + ') ' + tag_keyword + ' ' + tag_vr + ':'
+
+        # get tag parents if any
+        while tag_parent.data(Qt.DisplayRole) is not None:
+            parent_lable = tag_parent.data(Qt.DisplayRole)
+            label = parent_lable + '.' + label
+            tag_path = parent_lable + '.' + tag_path
+            tag_parent = tag_parent.parent()
+        label = 'Change value for ' + label
+        if tag_group == '0x0002':
+            tag_header = 'file_meta.'
+        else:
+            tag_header = ''
+        tag_path = (tag_header + tag_path.replace(" ", "") +
+                    tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "").replace("-", ""))
+
+        # get tag value
+        ds = self.imager.datasets[self.imager.index]
+        orig_tag_value = get_dot_attr(ds, tag_path)
+
+        # display in dialog for editing
         input_dlg = QInputDialog(self)
         input_dlg.setInputMode(QInputDialog.TextInput)
         input_dlg.resize(500, 100)
+        input_dlg.setLabelText(label)
+        input_dlg.setTextValue(str(orig_tag_value))
+        input_dlg.setWindowTitle('Change DICOM tag')
+        ok = input_dlg.exec_()
+        tag_text = input_dlg.textValue()
+
+        # store changed tag
+        if ok and tag_text != '':
+            if tag_vr == 'DS':
+                if tag_text[0] == '[':
+                    tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(',')
+            set_dot_attr(ds, tag_path, tag_text)
+            # self.ds[tag_group_int,tag_element_int].value = tag_text
+            self.show_tree()
+            self.is_changed = True
+
+    def del_tag(self):
+        # TODO fix for nested tags
+        proxy_index = self.ui.treeView.currentIndex()
+        source_index = self.proxy_model.mapToSource(proxy_index)
+        tag_text = source_index.data(Qt.DisplayRole)
+        tag_parent = source_index.parent()
+        tag_group = '0x' + tag_text[1:5]
+        tag_element = '0x' + tag_text[7:11]
+        tag_group_int = int(tag_group, 16)
+        tag_element_int = int(tag_element, 16)
+        tag_vr = tag_text.split(':')[0][-2:]
+        tag_keyword = tag_text.split(':')[0][13:-2].strip()
+        tag_value = tag_text.split(':')[1].strip()
+        tag_path = ''
         label = '(' + tag_group + ', ' + tag_element + ') ' + tag_keyword + ' ' + tag_vr + ':'
+
+        # get tag parents if any
         while tag_parent.data(Qt.DisplayRole) is not None:
             parent_lable = tag_parent.data(Qt.DisplayRole)
             label = parent_lable + '.' + label
@@ -716,34 +770,12 @@ class LinaQA(QMainWindow):
         else:
             tag_header = ''
         tag_path = tag_header + tag_path.replace(" ", "") + tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "")
+
+        # delete attribute
         ds = self.imager.datasets[self.imager.index]
-        orig_tag_value = get_dot_attr(ds, tag_path)
-        input_dlg.setLabelText(label)
-        input_dlg.setTextValue(str(orig_tag_value))
-        input_dlg.setWindowTitle('Change DICOM tag')
-        ok = input_dlg.exec_()
-        tag_text = input_dlg.textValue()
-        if ok and tag_text != '':
-            if tag_vr == 'DS':
-                if tag_text[0] == '[':
-                    tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(',')
-            set_dot_attr(ds, tag_path, tag_text)
-            # self.ds[tag_group_int,tag_element_int].value = tag_text
-            self.show_tree()
-            self.is_changed = True
-
-    def del_tag(self):
-        index = self.ui.treeView.currentIndex()
-        tagtext = self.ui.treeView.model().itemData(index)[0]
-        tag_group = '0x' + tagtext[1:5]
-        tag_element = '0x' + tagtext[7:11]
-        tag_group_int = int(tag_group, 16)
-        tag_element_int = int(tag_element, 16)
-        if tagtext != '':
-            del self.imager.datasets[self.imager.index][tag_group_int,tag_element_int]
-            self.show_tree()
-            self.is_changed = True
-
+        delattr(ds, tag_path)
+        self.show_tree()
+        self.is_changed = True
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Analyse section
@@ -890,9 +922,9 @@ class LinaQA(QMainWindow):
         else:
             self.ui.tabWidget.setTabVisible(3, False)
 
-    # ---------------------------------------------------------------------------------------------------------------------
-    # Reference image section
-    # ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# Reference image section
+# ---------------------------------------------------------------------------------------------------------------------
     def open_ref(self):
         self.status_clear()
         self.ui.qlRef.clear()
@@ -931,9 +963,9 @@ class LinaQA(QMainWindow):
         except pydicom.errors.InvalidDicomError:
             self.status_error('Error reeading DICOM image file.')
 
-    # ---------------------------------------------------------------------------------------------------------------------
-    # Pixel Data Section
-    # ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# Pixel Data Section
+# ---------------------------------------------------------------------------------------------------------------------
     def edit_pixel_data(self):
         if self.imager:
             if self.ui.action_Pixel_Data.isChecked():
