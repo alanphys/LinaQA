@@ -30,7 +30,7 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings
 from imageunit import Imager
 from decorators import show_wait_cursor
-from misc_utils import get_dot_attr, set_dot_attr
+from misc_utils import get_dot_attr, set_dot_attr, del_dot_attr
 
 from tablemodel import TableModel
 from pydicom import compat
@@ -742,40 +742,39 @@ class LinaQA(QMainWindow):
             self.show_tree()
             self.is_changed = True
 
+    @show_wait_cursor
     def del_tag(self):
         # TODO fix for nested tags
+        self.status_clear()
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_text = source_index.data(Qt.DisplayRole)
         tag_parent = source_index.parent()
         tag_group = '0x' + tag_text[1:5]
-        tag_element = '0x' + tag_text[7:11]
-        tag_group_int = int(tag_group, 16)
-        tag_element_int = int(tag_element, 16)
-        tag_vr = tag_text.split(':')[0][-2:]
         tag_keyword = tag_text.split(':')[0][13:-2].strip()
-        tag_value = tag_text.split(':')[1].strip()
         tag_path = ''
-        label = '(' + tag_group + ', ' + tag_element + ') ' + tag_keyword + ' ' + tag_vr + ':'
 
         # get tag parents if any
         while tag_parent.data(Qt.DisplayRole) is not None:
             parent_lable = tag_parent.data(Qt.DisplayRole)
-            label = parent_lable + '.' + label
             tag_path = parent_lable + '.' + tag_path
             tag_parent = tag_parent.parent()
-        label = 'Change value for ' + label
         if tag_group == '0x0002':
             tag_header = 'file_meta.'
         else:
             tag_header = ''
-        tag_path = tag_header + tag_path.replace(" ", "") + tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "")
+        tag_path = (tag_header + tag_path.replace(" ", "") +
+                    tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "")).replace("-", "")
 
         # delete attribute
-        ds = self.imager.datasets[self.imager.index]
-        delattr(ds, tag_path)
-        self.show_tree()
-        self.is_changed = True
+        try:
+            ds = self.imager.datasets[self.imager.index]
+            del_dot_attr(ds, tag_path)
+            self.show_tree()
+            self.is_changed = True
+            self.status_message('Deleted ' + tag_path)
+        except AttributeError:
+            self.status_error('Could not delete ' + tag_path)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Analyse section
