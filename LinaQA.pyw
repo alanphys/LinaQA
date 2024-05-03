@@ -592,11 +592,11 @@ class LinaQA(QMainWindow):
         model_header.append(self.filenames[self.imager.index])
         self.source_model.setHorizontalHeaderLabels(model_header)
         parent_item = self.source_model.invisibleRootItem()
-        self.write_header(self.source_model, self.imager.datasets[self.imager.index], parent_item)
-        self.recurse_tree(self.source_model, self.imager.datasets[self.imager.index], parent_item)
+        self.write_header(self.imager.datasets[self.imager.index], parent_item)
+        self.recurse_tree(self.imager.datasets[self.imager.index], parent_item)
         return
 
-    def write_header(self, model, ds, parent):
+    def write_header(self, ds, parent):
         # write meta data
         fm = ds.file_meta
         for data_element in fm:
@@ -606,7 +606,7 @@ class LinaQA(QMainWindow):
                 item = QStandardItem(str(data_element))
             parent.appendRow(item)
 
-    def recurse_tree(self, model, ds, parent):
+    def recurse_tree(self, ds, parent):
         # order the dicom tags
         # write data elements
         for data_element in ds:
@@ -617,10 +617,10 @@ class LinaQA(QMainWindow):
             parent.appendRow(item)
             if data_element.VR == "SQ":   # a sequence
                 for i, ds in enumerate(data_element.value):
-                    item_text = "{0:s} [{1:d}]".format(data_element.name, i + 1)
-                    item = QStandardItem(item_text)
-                    parent.appendRow(item)
-                    self.recurse_tree(model, ds, item)
+                    sub_item_text = "{0:s} [{1:d}]".format(data_element.name, i + 1)
+                    sub_item = QStandardItem(sub_item_text)
+                    item.appendRow(sub_item)
+                    self.recurse_tree(ds, sub_item)
 
     def copy_tag(self):
         clipboard = QApplication.clipboard()
@@ -751,7 +751,7 @@ class LinaQA(QMainWindow):
         tag_text = source_index.data(Qt.DisplayRole)
         tag_parent = source_index.parent()
         tag_group = '0x' + tag_text[1:5]
-        tag_keyword = tag_text.split(':')[0][13:-2].strip()
+        tag_keyword = tag_text.split(':')[0].split(')')[1][:-2].strip()
         tag_path = ''
 
         # get tag parents if any
