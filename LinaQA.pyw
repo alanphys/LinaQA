@@ -30,7 +30,7 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings
 from imageunit import Imager
 from decorators import show_wait_cursor
-from misc_utils import get_dot_attr, set_dot_attr, del_dot_attr
+from misc_utils import get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag
 
 from tablemodel import TableModel
 from pydicom import compat
@@ -373,6 +373,7 @@ class LinaQA(QMainWindow):
             self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
 
     def open_file(self):
+        # TODO allow directory only
         # is the file a DICOM file?
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
@@ -667,8 +668,6 @@ class LinaQA(QMainWindow):
     def insert_tag(self):
         # TODO fix for nested tags
         ds = self.imager.datasets[self.imager.index]
-        index = self.ui.treeView.currentIndex()
-        tagtext = self.ui.treeView.model().itemData(index)[0]
         input_dlg = QInputDialog(self)
         input_dlg.setInputMode(QInputDialog.TextInput)
         input_dlg.resize(500, 100)
@@ -690,91 +689,91 @@ class LinaQA(QMainWindow):
 
     def edit_tag(self):
         # get current tag
+        self.status_warn('Editing a DICOM tag may corrupt the file!')
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_text = source_index.data(Qt.DisplayRole)
-        tag_parent = source_index.parent()
-        tag_group = '0x' + tag_text[1:5]
-        tag_element = '0x' + tag_text[7:11]
-        tag_group_int = int(tag_group, 16)
-        tag_element_int = int(tag_element, 16)
-        tag_vr = tag_text.split(':')[0][-2:]
-        tag_keyword = tag_text.split(':')[0][13:-2].strip()
-        tag_value = tag_text.split(':')[1].strip()
-        tag_path = ''
-        label = '(' + tag_group + ', ' + tag_element + ') ' + tag_keyword + ' ' + tag_vr + ':'
+        if tag_text is not None:
+            tag_parent = source_index.parent()
+            tag_group, tag_element, tag_keyword, tag_vr, _ = text_to_tag(tag_text)
+            tag_path = ''
 
-        # get tag parents if any
-        while tag_parent.data(Qt.DisplayRole) is not None:
-            parent_lable = tag_parent.data(Qt.DisplayRole)
-            label = parent_lable + '.' + label
-            tag_path = parent_lable + '.' + tag_path
-            tag_parent = tag_parent.parent()
-        label = 'Change value for ' + label
-        if tag_group == '0x0002':
-            tag_header = 'file_meta.'
+            # get tag parents if any
+            while tag_parent.data(Qt.DisplayRole) is not None:
+                _, _, parent_lable, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
+                tag_path = parent_lable + '.' + tag_path
+                tag_parent = tag_parent.parent()
+            if tag_group == '0x0002':
+                tag_header = 'file_meta.'
+            else:
+                tag_header = ''
+            label = 'Change value for ' + tag_path + '(' + tag_group + ', ' + tag_element + ') ' + tag_keyword + ' ' + tag_vr + ':'
+            tag_path = (tag_header + tag_path.replace(" ", "") +
+                        tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "").replace("-", ""))
+
+            # get tag value
+            ds = self.imager.datasets[self.imager.index]
+            orig_tag_value = get_dot_attr(ds, tag_path)
+
+            # display in dialog for editing
+            input_dlg = QInputDialog(self)
+            input_dlg.setInputMode(QInputDialog.TextInput)
+            input_dlg.resize(500, 100)
+            input_dlg.setLabelText(label)
+            input_dlg.setTextValue(str(orig_tag_value))
+            input_dlg.setWindowTitle('Change DICOM tag')
+            ok = input_dlg.exec_()
+            tag_text = input_dlg.textValue()
+
+            # store changed tag
+            if ok and tag_text != '':
+                if tag_vr == 'DS':
+                    if tag_text[0] == '[':
+                        tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(',')
+                try
+                    set_dot_attr(ds, tag_path, tag_text)
+                    self.show_tree()
+                    self.is_changed = True
+                    self.status_message('Changed ' + tag_path + ' to ' + tag_text)
+                except AttributeError:
+                    self.status_error('Could not change ' + tag_path)
         else:
-            tag_header = ''
-        tag_path = (tag_header + tag_path.replace(" ", "") +
-                    tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "").replace("-", ""))
-
-        # get tag value
-        ds = self.imager.datasets[self.imager.index]
-        orig_tag_value = get_dot_attr(ds, tag_path)
-
-        # display in dialog for editing
-        input_dlg = QInputDialog(self)
-        input_dlg.setInputMode(QInputDialog.TextInput)
-        input_dlg.resize(500, 100)
-        input_dlg.setLabelText(label)
-        input_dlg.setTextValue(str(orig_tag_value))
-        input_dlg.setWindowTitle('Change DICOM tag')
-        ok = input_dlg.exec_()
-        tag_text = input_dlg.textValue()
-
-        # store changed tag
-        if ok and tag_text != '':
-            if tag_vr == 'DS':
-                if tag_text[0] == '[':
-                    tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(',')
-            set_dot_attr(ds, tag_path, tag_text)
-            # self.ds[tag_group_int,tag_element_int].value = tag_text
-            self.show_tree()
-            self.is_changed = True
+            self.status_warn('No tag selected!')
 
     @show_wait_cursor
     def del_tag(self):
-        # TODO fix for nested tags
-        self.status_clear()
+        self.status_warn('Editing a DICOM tag may corrupt the file!')
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_text = source_index.data(Qt.DisplayRole)
-        tag_parent = source_index.parent()
-        tag_group = '0x' + tag_text[1:5]
-        tag_keyword = tag_text.split(':')[0].split(')')[1][:-2].strip()
-        tag_path = ''
+        if tag_text is not None:
+            tag_parent = source_index.parent()
+            tag_group, _, tag_keyword, _, _ = text_to_tag(tag_text)
+            tag_path = ''
 
-        # get tag parents if any
-        while tag_parent.data(Qt.DisplayRole) is not None:
-            parent_lable = tag_parent.data(Qt.DisplayRole)
-            tag_path = parent_lable + '.' + tag_path
-            tag_parent = tag_parent.parent()
-        if tag_group == '0x0002':
-            tag_header = 'file_meta.'
+            # get tag parents if any
+            while tag_parent.data(Qt.DisplayRole) is not None:
+                _, _, parent_lable, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
+                tag_path = parent_lable + '.' + tag_path
+                tag_parent = tag_parent.parent()
+            if tag_group == '0x0002':
+                tag_header = 'file_meta.'
+            else:
+                tag_header = ''
+            tag_path = (tag_header + tag_path.replace(" ", "") +
+                        tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "")).replace("-", "")
+
+            # delete attribute
+            try:
+                ds = self.imager.datasets[self.imager.index]
+                del_dot_attr(ds, tag_path)
+                self.show_tree()
+                self.is_changed = True
+                self.status_message('Deleted ' + tag_path)
+            except AttributeError:
+                self.status_error('Could not delete ' + tag_path)
         else:
-            tag_header = ''
-        tag_path = (tag_header + tag_path.replace(" ", "") +
-                    tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "")).replace("-", "")
-
-        # delete attribute
-        try:
-            ds = self.imager.datasets[self.imager.index]
-            del_dot_attr(ds, tag_path)
-            self.show_tree()
-            self.is_changed = True
-            self.status_message('Deleted ' + tag_path)
-        except AttributeError:
-            self.status_error('Could not delete ' + tag_path)
+            self.status_warn('No tag selected!')
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Analyse section
