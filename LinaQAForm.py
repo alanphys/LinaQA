@@ -67,6 +67,7 @@ class Ui_LinaQAForm(object):
         self.label.setObjectName("label")
         self.horizontalLayout_2.addWidget(self.label)
         self.qle_filter_tag = QtWidgets.QLineEdit(self.fsearchbar)
+        self.qle_filter_tag.setClearButtonEnabled(True)
         self.qle_filter_tag.setObjectName("qle_filter_tag")
         self.horizontalLayout_2.addWidget(self.qle_filter_tag)
         self.verticalLayout_2.addWidget(self.fsearchbar)

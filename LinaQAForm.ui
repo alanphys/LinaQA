@@ -111,7 +111,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="qle_filter_tag"/>
+            <widget class="QLineEdit" name="qle_filter_tag">
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

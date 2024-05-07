@@ -373,7 +373,11 @@ class LinaQA(QMainWindow):
             self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
 
     def open_file(self):
-        # TODO allow directory only
+        # is the filename a directory
+        if len(self.filenames) == 1 and os.path.isdir(self.filenames[0]):
+            # get list of files in directory
+            dir_path = osp.realpath(self.filenames[0])
+            self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)]
         # is the file a DICOM file?
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
@@ -409,23 +413,22 @@ class LinaQA(QMainWindow):
         dirpath = osp.dirname(osp.realpath(self.filenames[0]))
         ostype = system()
         if ostype == 'Windows':
-            file_names = QFileDialog.getOpenFileNames(
-                self, 'Open DICOM file', dirpath,
-                'DICOM files (*.dcm);;All files (*.*)')[0]
+            file_filter = 'DICOM files (*.dcm);;All files (*.*)'
         else:
-            file_names = QFileDialog.getOpenFileNames(
-                self, 'Open DICOM file', dirpath,
-                'DICOM files (*.dcm);;All files (*)')[0]
-        if len(file_names) > 0:
-            self.filenames = file_names
+            file_filter = 'DICOM files (*.dcm);;All files (*)'
+        self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath, file_filter)[0]
+        if len(self.filenames) > 0:
             self.open_file()
 
     def save_file(self):
         if self.imager:
             ds = self.imager.datasets[self.imager.index]
-            arr = ds.pixel_array
-            ds.PixelData = arr.tobytes()
+            if hasattr(ds, 'pixel_array'):
+                arr = ds.pixel_array
+                ds.PixelData = arr.tobytes()
             ds.save_as(ds.filename, True)
+            self.is_changed = False
+            self.status_message('File saved')
 
     def save_file_as(self):
         self.status_clear()
@@ -439,8 +442,9 @@ class LinaQA(QMainWindow):
                                                          'DICOM files (*.dcm);;All files (*)')[0]
         if self.imager and filename != '':
             ds = self.imager.datasets[self.imager.index]
-            arr = ds.pixel_array
-            ds.PixelData = arr.tobytes()
+            if hasattr(ds, 'pixel_array'):
+                arr = ds.pixel_array
+                ds.PixelData = arr.tobytes()
             ds.save_as(filename, True)
             self.is_changed = False
             self.status_message('File save as ' + filename)
