@@ -377,7 +377,7 @@
     <string>CatPhan</string>
    </property>
    <property name="toolTip">
-    <string>Analyse CatPhan</string>
+    <string>Analyse 3D Phantoms</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::WindowShortcut</enum>

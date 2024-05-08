@@ -35,9 +35,9 @@ from misc_utils import get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag
 from tablemodel import TableModel
 from pydicom import compat
 import pydicom
-from pylinac import image, picketfence, ct, winston_lutz, planar_imaging, vmat, starshot, log_analyzer
+from pylinac import image, picketfence, ct, winston_lutz, planar_imaging, vmat, starshot, log_analyzer, QuartDVT
 
-catphan_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604"]
+catphan_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "QuartDVT"]
 vmat_list = ["DRGS", "DRMLC"]
 phantom2D_list = ["Doselab MC2 MV",
                   "Doselab MC2 kV",
@@ -96,12 +96,12 @@ class LinaQA(QMainWindow):
         self.ui.toolBar_Side.insertWidget(self.ui.action_Picket_Fence, self.ui.cbCatPhan)
         self.ui.cbCatPhan.addItems(catphan_list)
         self.ui.toolBar_Side.insertSeparator(self.ui.action_Picket_Fence)
-        catphan_type = self.settings.value('CatPhan/Type')
+        catphan_type = self.settings.value('3D Phantom/Type')
         index = self.ui.cbCatPhan.findText(catphan_type)
         if index >= 0:
             self.ui.cbCatPhan.setCurrentIndex(index)
         else:
-            raise Exception('Invalid setting in CatPhan/Type')
+            raise Exception('Invalid setting in 3D Phantom/Type')
 
         # we have to insert a Combox for the MLC manually into the toolbar
         self.ui.cbMLC = QComboBox()
@@ -206,7 +206,7 @@ class LinaQA(QMainWindow):
 # Define default settings
 # ---------------------------------------------------------------------------------------------------------------------
     def set_default_settings(self, settings):
-        settings.beginGroup('CatPhan')
+        settings.beginGroup('3D Phantom')
         if not settings.contains('Type'):
             settings.setValue('Type', 'CatPhan604')
         if not settings.contains('HU Tolerance'):
@@ -809,11 +809,14 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_catphan(self):
         dirname = os.path.dirname(self.filenames[0])
-        cat = getattr(ct, self.ui.cbCatPhan.currentText())(dirname)
+        if self.ui.cbCatPhan.currentText() == 'QuartDVT':
+            cat = QuartDVT(dirname)
+        else:
+            cat = getattr(ct, self.ui.cbCatPhan.currentText())(dirname)
         filename = osp.join(dirname, 'CBCT Analysis.pdf')
-        cat.analyze(hu_tolerance=int(self.settings.value('CatPhan/HU Tolerance')),
-                    thickness_tolerance=float(self.settings.value('CatPhan/Thickness Tolerance')),
-                    scaling_tolerance=float(self.settings.value('CatPhan/Scaling Tolerance')))
+        cat.analyze(hu_tolerance=int(self.settings.value('3D Phantom/HU Tolerance')),
+                    thickness_tolerance=float(self.settings.value('3D Phantom/Thickness Tolerance')),
+                    scaling_tolerance=float(self.settings.value('3D Phantom/Scaling Tolerance')))
         cat.publish_pdf(filename)
         open_path(filename)
 
