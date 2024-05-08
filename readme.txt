@@ -59,8 +59,10 @@ This installation method is temporary and will be replaced by the conventional p
 6) Use
 Open a console window (miniconda prompt for windows users), change to the above directory and run
 python LinaQA.pyw
+or
+python LinaQA.pyw \Path\to\DICOM\
 
-Open a file either from the menu or toolbar. Drag and drop from your favourite file manager is also supported. Note: For mulitple files such as a CatPhan series the files must be selected in the file open dialog.
+Open a file either from the menu or toolbar. Drag and drop from your favourite file manager is also supported. Note: For mulitple files such as a CatPhan series the files must be selected in the file open dialog. You can use <ctrl>-A to select all files.
 
 Open the reference image if needed.
 
@@ -72,6 +74,9 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 
 7) Release notes
 These detail new or changed functionality in BeamScheme. Please see the History for bug fixes
+
+Version 0.04
+Implement QuartDVT phantom. Enable directory/file load from command line. Fix DICOM tag insert, delete and edit for nested tags. Note: Only tags can be inserted and deleted, not sequences.
 
 Version 0.03
 Add gamma function, DICOM tag editing and DICOM pixel data editing. Cater for high dpi and tweak UI. Support JPEG, TIFF and other image files for Starshot.

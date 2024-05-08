@@ -9,13 +9,10 @@ import sys
 
 from PyQt5.QtCore import (QByteArray, QDate, QDateTime, QDir, QEvent, QPoint,
      QRect, QRegularExpression, QSettings, QSize, QTime, QTimer, Qt, pyqtSlot as Slot)
-from PyQt5.QtGui import (QColor, QIcon, QIntValidator,
-     QDoubleValidator, QRegularExpressionValidator, QValidator)
-from PyQt5.QtWidgets import (QAction, QAbstractItemView, QApplication,
-     QCheckBox, QComboBox, QFileDialog, QDialog, QDialogButtonBox, QGridLayout,
-     QGroupBox, QHeaderView, QInputDialog, QItemDelegate, QLabel, QLineEdit,
-     QMainWindow, QMessageBox, QStyle, QSpinBox, QStyleOptionViewItem,
-     QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout)
+from PyQt5.QtGui import (QColor, QIcon, QIntValidator, QDoubleValidator, QRegularExpressionValidator, QValidator)
+from PyQt5.QtWidgets import (QAbstractItemView, QCheckBox, QDialog, QDialogButtonBox, QGridLayout,
+     QHeaderView, QItemDelegate, QLineEdit, QStyle, QSpinBox, QStyleOptionViewItem,
+     QTableWidgetItem, QTreeWidget, QTreeWidgetItem)
 
 
 class TypeChecker:
