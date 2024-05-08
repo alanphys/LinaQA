@@ -27,7 +27,7 @@ import webbrowser
 from LinaQAForm import Ui_LinaQAForm
 from aboutpackage import About
 from aboutpackage.aboutform import version
-from settingsunit import Settings
+from settingsunit import Settings, set_default_settings
 from imageunit import Imager
 from decorators import show_wait_cursor
 from misc_utils import get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag
@@ -88,7 +88,7 @@ class LinaQA(QMainWindow):
         self.ui = Ui_LinaQAForm()
         self.ui.setupUi(self)
         self.settings = QSettings()
-        self.set_default_settings(self.settings)
+        set_default_settings(self.settings)
 
         # we have to insert a Combox for the CatPhan manually into the toolbar
         self.ui.cbCatPhan = QComboBox()
@@ -201,78 +201,6 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
         self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
-
-# ---------------------------------------------------------------------------------------------------------------------
-# Define default settings
-# ---------------------------------------------------------------------------------------------------------------------
-    def set_default_settings(self, settings):
-        settings.beginGroup('3D Phantom')
-        if not settings.contains('Type'):
-            settings.setValue('Type', 'CatPhan604')
-        if not settings.contains('HU Tolerance'):
-            settings.setValue('HU Tolerance', '40')
-        if not settings.contains('Thickness Tolerance'):
-            settings.setValue('Thickness Tolerance', '0.2')
-        if not settings.contains('Scaling Tolerance'):
-            settings.setValue('Scaling Tolerance', '1')
-        settings.endGroup()
-
-        settings.beginGroup('Picket Fence')
-        if not settings.contains('MLC Type'):
-            settings.setValue('MLC Type', 'HD Millennium')
-        if not settings.contains('Leaf Tolerance'):
-            settings.setValue('Leaf Tolerance', '0.5')
-        if not settings.contains('Leaf Action'):
-            settings.setValue('Leaf Action', '0.25')
-        if not settings.contains('Number of pickets'):
-            settings.setValue('Number of pickets', '10')
-        if not settings.contains('Apply median filter'):
-            settings.setValue('Apply median filter', 'false')
-        settings.endGroup()
-
-        settings.beginGroup('Star shot')
-        if not settings.contains('DPI'):
-            settings.setValue('DPI', '76')
-        if not settings.contains('SID'):
-            settings.setValue('SID', '1000')
-        if not settings.contains('Normalised analysis radius'):
-            settings.setValue('Normalised analysis radius', '0.85')
-        if not settings.contains('Tolerance'):
-            settings.setValue('Tolerance', '1')
-        if not settings.contains('Recursive analysis'):
-            settings.setValue('Recursive analysis', 'False')
-        settings.endGroup()
-
-        settings.beginGroup('VMAT')
-        if not settings.contains('Test type'):
-            settings.setValue('Test type', 'DRGS')
-        if not settings.contains('Tolerance'):
-            settings.setValue('Tolerance', '1.5')
-        settings.endGroup()
-
-        settings.beginGroup('2D Phantom')
-        if not settings.contains('Type'):
-            settings.setValue('Type', 'Leeds TOR')
-        if not settings.contains('Low contrast threshold'):
-            settings.setValue('Low contrast threshold', '0.1')
-        if not settings.contains('High contrast threshold'):
-            settings.setValue('High contrast threshold', '0.5')
-        if not settings.contains('Force image inversion'):
-            settings.setValue('Force image inversion', 'False')
-        settings.endGroup()
-
-        settings.beginGroup('Gamma Analysis')
-        if not settings.contains('Dose to agreement'):
-            settings.setValue('Dose to agreement', '2')
-        if not settings.contains('Distance to agreement'):
-            settings.setValue('Distance to agreement', '2')
-        if not settings.contains('Gamma cap'):
-            settings.setValue('Gamma cap', '2')
-        if not settings.contains('Global dose'):
-            settings.setValue('Global dose', 'True')
-        if not settings.contains('Dose threshold'):
-            settings.setValue('Dose threshold', '5')
-        settings.endGroup()
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Status bar routines

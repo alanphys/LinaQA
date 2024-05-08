@@ -15,6 +15,76 @@ from PyQt5.QtWidgets import (QAbstractItemView, QCheckBox, QDialog, QDialogButto
      QTableWidgetItem, QTreeWidget, QTreeWidgetItem)
 
 
+def set_default_settings(settings):
+    settings.beginGroup('3D Phantom')
+    if not settings.contains('Type'):
+        settings.setValue('Type', 'CatPhan604')
+    if not settings.contains('HU Tolerance'):
+        settings.setValue('HU Tolerance', '40')
+    if not settings.contains('Thickness Tolerance'):
+        settings.setValue('Thickness Tolerance', '0.2')
+    if not settings.contains('Scaling Tolerance'):
+        settings.setValue('Scaling Tolerance', '1')
+    settings.endGroup()
+
+    settings.beginGroup('Picket Fence')
+    if not settings.contains('MLC Type'):
+        settings.setValue('MLC Type', 'HD Millennium')
+    if not settings.contains('Leaf Tolerance'):
+        settings.setValue('Leaf Tolerance', '0.5')
+    if not settings.contains('Leaf Action'):
+        settings.setValue('Leaf Action', '0.25')
+    if not settings.contains('Number of pickets'):
+        settings.setValue('Number of pickets', '10')
+    if not settings.contains('Apply median filter'):
+        settings.setValue('Apply median filter', 'false')
+    settings.endGroup()
+
+    settings.beginGroup('Star shot')
+    if not settings.contains('DPI'):
+        settings.setValue('DPI', '76')
+    if not settings.contains('SID'):
+        settings.setValue('SID', '1000')
+    if not settings.contains('Normalised analysis radius'):
+        settings.setValue('Normalised analysis radius', '0.85')
+    if not settings.contains('Tolerance'):
+        settings.setValue('Tolerance', '1')
+    if not settings.contains('Recursive analysis'):
+        settings.setValue('Recursive analysis', 'False')
+    settings.endGroup()
+
+    settings.beginGroup('VMAT')
+    if not settings.contains('Test type'):
+        settings.setValue('Test type', 'DRGS')
+    if not settings.contains('Tolerance'):
+        settings.setValue('Tolerance', '1.5')
+    settings.endGroup()
+
+    settings.beginGroup('2D Phantom')
+    if not settings.contains('Type'):
+        settings.setValue('Type', 'Leeds TOR')
+    if not settings.contains('Low contrast threshold'):
+        settings.setValue('Low contrast threshold', '0.1')
+    if not settings.contains('High contrast threshold'):
+        settings.setValue('High contrast threshold', '0.5')
+    if not settings.contains('Force image inversion'):
+        settings.setValue('Force image inversion', 'False')
+    settings.endGroup()
+
+    settings.beginGroup('Gamma Analysis')
+    if not settings.contains('Dose to agreement'):
+        settings.setValue('Dose to agreement', '2')
+    if not settings.contains('Distance to agreement'):
+        settings.setValue('Distance to agreement', '2')
+    if not settings.contains('Gamma cap'):
+        settings.setValue('Gamma cap', '2')
+    if not settings.contains('Global dose'):
+        settings.setValue('Global dose', 'True')
+    if not settings.contains('Dose threshold'):
+        settings.setValue('Dose threshold', '5')
+    settings.endGroup()
+
+
 class TypeChecker:
     def __init__(self, parent=None):
         self.bool_exp = QRegularExpression('^(true)|(false)$')
