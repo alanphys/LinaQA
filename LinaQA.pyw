@@ -306,7 +306,8 @@ class LinaQA(QMainWindow):
         if len(self.filenames) == 1 and os.path.isdir(self.filenames[0]):
             # get list of files in directory
             dir_path = osp.realpath(self.filenames[0])
-            self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)]
+            self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
+                              if os.path.isfile(os.path.join(dir_path, file_name))]
         # is the file a DICOM file?
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
