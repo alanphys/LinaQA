@@ -259,7 +259,7 @@ class LinaQA(QMainWindow):
         datasets = []
         # we have to treat the first file separately to get the image modality
         try:
-            ds = pydicom.dcmread(filenames[0], force=True)
+            ds = pydicom.dcmread(filenames[0])
             if 'TransferSyntaxUID' not in ds.file_meta:
                 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
             first_modality = ds.Modality
@@ -270,7 +270,7 @@ class LinaQA(QMainWindow):
 
         for file in filenames[1:]:
             try:
-                ds = pydicom.dcmread(file, force=True)
+                ds = pydicom.dcmread(file)
                 if 'TransferSyntaxUID' not in ds.file_meta:
                     ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
                 modality = ds.Modality
