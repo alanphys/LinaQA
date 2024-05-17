@@ -57,17 +57,18 @@ faint_yellow = '#fffccf'
 faint_green = '#d3ffe4'
 
 
-def open_path(path: str) -> None:
+def open_path(path: str) -> bool:
     """Open the specified path in the system default viewer."""
-
-    launcher = ''
-    if os.name == 'darwin':
-        launcher = "open"
-    elif os.name == 'posix':
-        launcher = "xdg-open"
-    elif os.name == 'nt':
-        launcher = "explorer"
-    subprocess.call([launcher, path])
+    try:
+        if os.name == 'nt':
+            os.startfile(path)
+        elif os.name == 'posix':
+            subprocess.call(["xdg-open", path])
+        elif os.name == 'darwin':
+            subprocess.call(["open", path])
+        return True
+    except OSError:
+        return False
 
 
 class LinaQA(QMainWindow):
@@ -746,7 +747,10 @@ class LinaQA(QMainWindow):
                     thickness_tolerance=float(self.settings.value('3D Phantom/Thickness Tolerance')),
                     scaling_tolerance=float(self.settings.value('3D Phantom/Scaling Tolerance')))
         cat.publish_pdf(filename)
-        open_path(filename)
+        if open_path(filename):
+            self.status_message('Results displayed in PDF')
+        else:
+            self.status_error('No reader to open document')
 
     @show_wait_cursor
     def analyse_picket_fence(self):
@@ -770,7 +774,10 @@ class LinaQA(QMainWindow):
             self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         pf.publish_pdf(filename)
-        open_path(filename)
+        if open_path(filename):
+            self.status_message('Results displayed in PDF')
+        else:
+            self.status_error('No reader to open document')
 
     @show_wait_cursor
     def analyse_winston_lutz(self):
@@ -779,7 +786,10 @@ class LinaQA(QMainWindow):
         wl.analyze()
         filename = osp.join(dirname, 'W-L Analysis.pdf')
         wl.publish_pdf(filename)
-        open_path(filename)
+        if open_path(filename):
+            self.status_message('Results displayed in PDF')
+        else:
+            self.status_error('No reader to open document')
 
     @show_wait_cursor
     def analyse_2d_phantoms(self):
@@ -792,7 +802,10 @@ class LinaQA(QMainWindow):
                      invert=self.ui.action_Invert.isChecked())
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         phan.publish_pdf(filename)
-        open_path(filename)
+        if open_path(filename):
+            self.status_message('Results displayed in PDF')
+        else:
+            self.status_error('No reader to open document')
 
     @show_wait_cursor
     def analyse_vmat(self):
@@ -814,7 +827,10 @@ class LinaQA(QMainWindow):
         v.dmlc_image.base_path = self.ref_filename
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         v.publish_pdf(filename)
-        open_path(filename)
+        if open_path(filename):
+            self.status_message('Results displayed in PDF')
+        else:
+            self.status_error('No reader to open document')
 
     @show_wait_cursor
     def analyse_star(self):
@@ -837,14 +853,20 @@ class LinaQA(QMainWindow):
                      recursive=self.settings.value('Star shot/Recursive analysis'))
         filename = filename + '.pdf'
         star.publish_pdf(filename)
-        open_path(filename)
+        if open_path(filename):
+            self.status_message('Results displayed in PDF')
+        else:
+            self.status_error('No reader to open document')
 
     @show_wait_cursor
     def analyse_log(self):
         log = log_analyzer.load_log(self.filenames[0])
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         log.publish_pdf(filename)
-        open_path(filename)
+        if open_path(filename):
+            self.status_message('Results displayed in PDF')
+        else:
+            self.status_error('No reader to open document')
 
     @show_wait_cursor
     def analyse_gamma(self):
