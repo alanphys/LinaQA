@@ -924,12 +924,13 @@ class LinaQA(QMainWindow):
         else:
             self.ref_filename = QFileDialog.getOpenFileName(self, 'Open DICOM file', dirpath,
                                                             'DICOM files (*.dcm);;All files (*)')[0]
-        if self.ref_filename and pydicom.misc.is_dicom(self.ref_filename):
-            self.open_ref_image(self.ref_filename)
-            self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
-            self.ui.qlRef.show()
-        else:
-            self.status_error('Not a DICOM image file.')
+        if self.ref_filename:
+            if pydicom.misc.is_dicom(self.ref_filename):
+                self.open_ref_image(self.ref_filename)
+                self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
+                self.ui.qlRef.show()
+            else:
+                self.status_error('Not a DICOM image file.')
 
     def open_ref_image(self, filename):
         # Clear non-dicom files
