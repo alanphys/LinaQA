@@ -464,8 +464,10 @@ class LinaQA(QMainWindow):
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
     def tab_changed(self, index):
+        self.ui.action_DICOM_tags.setChecked(self.ui.tabWidget.isTabVisible(1))
         if self.imager:
             if index != 1:
+                self.ui.action_DICOM_tags.setChecked(self.ui.tabWidget.isTabVisible(1))
                 self.ui.action_Find_tag.setEnabled(False)
                 self.ui.action_Find_tag.setVisible(False)
                 self.ui.action_Insert_tag.setEnabled(False)
