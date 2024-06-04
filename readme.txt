@@ -9,13 +9,13 @@ Please read the file Licence.txt. This means that if as a result of using this p
 
 3) System Requirements
 Currently tested on
-* Fedora 36/KDE 5.27/QT 5.15
+* Fedora 40/KDE 6.05/QT 5.15
 * Window 10/Miniconda3
 Windows users will need to install a python stack (such as anaconda) and PyQT5/QT5.
 
 4) Dependencies
 * PyQt5
-* pylinac (tested with pylinac 3.20)
+* pylinac (tested with pylinac 3.23)
 * pydicom (tested with pydicom 2.4.2)
 * NumPy
 If you install pylinac it will automatically install pydicom and numpy.
@@ -73,7 +73,7 @@ Click the relevant Test button.
 Non image files such as machine logs (BIN) currently will not be displayed, but the test can still be run.
 
 7) Release notes
-These detail new or changed functionality in BeamScheme. Please see the History for bug fixes
+These detail new or changed functionality in LinaQA. Please see the History for bug fixes
 
 Version 0.04
 Implement QuartDVT phantom. Enable directory/file load from command line. Fix DICOM tag insert, delete and edit for nested tags. Note: Only tags can be inserted and deleted, not sequences.
@@ -95,5 +95,7 @@ See GIT log.
 9) To Do
 Run on PySide or PyQt, which ever is available.
 Integrate PDFs
+Implement integrity checking
+
 10) Known issues
-DICOM tag insert and delete does not work on nested tags.
+DICOM tag insert and delete does not work on sequences.

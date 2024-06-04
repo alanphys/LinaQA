@@ -14,7 +14,7 @@ Redistribution and use in source and binary forms, with or without modification,
 
 Yenzakahle MPI, their subsidiaries and associated companies or practices make no representations or warranties, expressly or implied regarding the program and associated computer files forming the software.  No representations or warranties of the merchantablity or fitness for any particular purpose are made or that the use of the software will not infringe any patents, copyrights or trademarks.  The licensee agrees that neither Yenzakahle MPI nor any of their employees, agents or contractors nor the authors, developers or programmers of the software shall be liable under any claim, charge, demand, whether in contract, tort or otherwise, for any and all loss, cost, charge, claim, demand, fee, expense or damage of any nature or kind arising out of, connected with, resulting from or sustained as a result of this agreement. In no event shall Yenzakahle MPI, nor any of their employees, agents or contractors nor the authors, developers or programmers of the software be liable for special, direct, indirect or consequential damages, losses, costs, charges, demands, fees or expenses of any nature or kind.
 
-pYadiv uses the following libraries:
+LinaQA uses the following libraries:
 
 pydicom
 ---------------------------------------------------------------------------
