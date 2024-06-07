@@ -289,11 +289,11 @@ class LinaQA(QMainWindow):
         try:
             datasets.sort(key=lambda x: x.InstanceNumber)
             sorted_method = "instance number"
-        except TypeError:
+        except (TypeError, AttributeError):
             try:
                 datasets.sort(key=lambda x: x.SOPInstanceUID)
                 sorted_method = "SOP instance UID"
-            except TypeError:
+            except (TypeError, AttributeError):
                 pass
         self.imager = Imager(datasets)
         if num_bad == 0:
