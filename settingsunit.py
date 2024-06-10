@@ -16,6 +16,11 @@ from PyQt5.QtWidgets import (QAbstractItemView, QCheckBox, QDialog, QDialogButto
 
 
 def set_default_settings(settings):
+    settings.beginGroup('General')
+    if not settings.contains('Logo'):
+        settings.setValue('Logo', '')
+    settings.endGroup()
+
     settings.beginGroup('3D Phantom')
     if not settings.contains('Type'):
         settings.setValue('Type', 'CatPhan604')

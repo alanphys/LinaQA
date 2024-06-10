@@ -731,7 +731,7 @@ class LinaQA(QMainWindow):
         cat.analyze(hu_tolerance=int(self.settings.value('3D Phantom/HU Tolerance')),
                     thickness_tolerance=float(self.settings.value('3D Phantom/Thickness Tolerance')),
                     scaling_tolerance=float(self.settings.value('3D Phantom/Scaling Tolerance')))
-        cat.publish_pdf(filename)
+        cat.publish_pdf(filename, logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -758,7 +758,7 @@ class LinaQA(QMainWindow):
                        required_prominence=0.1)
             self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        pf.publish_pdf(filename)
+        pf.publish_pdf(filename, logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -770,7 +770,7 @@ class LinaQA(QMainWindow):
         wl = winston_lutz.WinstonLutz(dirname)
         wl.analyze()
         filename = osp.join(dirname, 'W-L Analysis.pdf')
-        wl.publish_pdf(filename)
+        wl.publish_pdf(filename, logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -786,7 +786,7 @@ class LinaQA(QMainWindow):
                      high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
                      invert=self.ui.action_Invert.isChecked())
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        phan.publish_pdf(filename)
+        phan.publish_pdf(filename, logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -811,7 +811,7 @@ class LinaQA(QMainWindow):
         v.open_image.base_path = self.filenames[0]
         v.dmlc_image.base_path = self.ref_filename
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        v.publish_pdf(filename)
+        v.publish_pdf(filename, logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -837,7 +837,7 @@ class LinaQA(QMainWindow):
                      tolerance=float(self.settings.value('Star shot/Tolerance')),
                      recursive=self.settings.value('Star shot/Recursive analysis'))
         filename = filename + '.pdf'
-        star.publish_pdf(filename)
+        star.publish_pdf(filename, logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -847,7 +847,7 @@ class LinaQA(QMainWindow):
     def analyse_log(self):
         log = log_analyzer.load_log(self.filenames[0])
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        log.publish_pdf(filename)
+        log.publish_pdf(filename, logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
