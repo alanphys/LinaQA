@@ -1,7 +1,7 @@
 """
-====================================
-Miscellaneous tools for DicomTreeQT5
-====================================
+==============================
+Miscellaneous tools for LinaQA
+==============================
 """
 # Author: AC Chamberlain
 

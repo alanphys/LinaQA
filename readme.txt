@@ -96,6 +96,7 @@ See GIT log.
 Run on PySide or PyQt, which ever is available.
 Integrate PDFs
 Implement integrity checking
+Add customisable logo on publish_pdf
 
 10) Known issues
 DICOM tag insert and delete does not work on sequences.

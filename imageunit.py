@@ -1,4 +1,5 @@
 import numpy as np
+from linaqa_types import supported_modalities
 
 
 class Imager:
@@ -7,7 +8,7 @@ class Imager:
         self._index = 0
 
         # check if dataset has an image
-        if datasets[0].Modality in ['RTIMAGE', 'CT', 'NM', 'PT']:
+        if datasets[0].Modality in supported_modalities:
             self._window_width = 1000
             self._window_center = 0
             self._invflag = False

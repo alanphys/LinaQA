@@ -25,6 +25,7 @@ import numpy as np
 import webbrowser
 
 from LinaQAForm import Ui_LinaQAForm
+from linaqa_types import supported_modalities, catphan_list, vmat_list, phantom2D_list, faint_red, faint_green, faint_yellow
 from aboutpackage import About
 from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
@@ -36,25 +37,6 @@ from tablemodel import TableModel
 from pydicom import compat
 import pydicom
 from pylinac import image, picketfence, ct, winston_lutz, planar_imaging, vmat, starshot, log_analyzer, QuartDVT
-
-catphan_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "QuartDVT"]
-vmat_list = ["DRGS", "DRMLC"]
-phantom2D_list = ["Doselab MC2 MV",
-                  "Doselab MC2 kV",
-                  "Las Vegas",
-                  "Elekta Las Vegas",
-                  "Leeds TOR",
-                  "PTW EPID QC",
-                  "SNC MV-QA",
-                  "SNC kV-QA",
-                  "SI FC-2",
-                  "SI QC-3",
-                  "SI QC-kV",
-                  "IBA Primus A"]
-# colours for status bar messages
-faint_red = '#ff7979'
-faint_yellow = '#fffccf'
-faint_green = '#d3ffe4'
 
 
 def open_path(path: str) -> bool:
@@ -312,7 +294,7 @@ class LinaQA(QMainWindow):
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
             # does the file have a recognised image format?
-            if self.imager.datasets[self.imager.index].Modality in ['RTIMAGE', 'CT', 'NM', 'PT']:
+            if self.imager.datasets[self.imager.index].Modality in supported_modalities:
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
                 self.ui.qlImage.show()
             else:
