@@ -89,6 +89,13 @@ def set_default_settings(settings):
         settings.setValue('Dose threshold', '5')
     settings.endGroup()
 
+    settings.beginGroup('Window')
+    if not settings.contains('Position'):
+        settings.setValue('Position', QPoint(100, 200))
+    if not settings.contains('Size'):
+        settings.setValue('Size', QSize(678, 682))
+    settings.endGroup()
+
 
 class TypeChecker:
     def __init__(self, parent=None):

@@ -71,6 +71,10 @@ class LinaQA(QMainWindow):
         self.ui = Ui_LinaQAForm()
         self.ui.setupUi(self)
         self.settings = QSettings()
+        if self.settings.contains('Window/Size'):
+            self.resize(self.settings.value('Window/Size'))
+        if self.settings.contains('Window/Position'):
+            self.move(self.settings.value('Window/Position'))
         set_default_settings(self.settings)
 
         # we have to insert a Combox for the CatPhan manually into the toolbar
@@ -225,6 +229,8 @@ class LinaQA(QMainWindow):
 # User interface routines
 # ---------------------------------------------------------------------------------------------------------------------
     def closeEvent(self, event):
+        self.settings.setValue('Window/Size', self.size())
+        self.settings.setValue('Window/Position', self.pos())
         if self.is_changed:
             reply = QMessageBox.question(self, 'Quit', 'You have made changes. Are you sure you want to quit?',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
