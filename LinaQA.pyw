@@ -14,7 +14,6 @@ import sys
 import os.path as osp
 import os
 import io
-import subprocess
 from platform import system
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QMessageBox, QComboBox, QLabel, QAction,
                              QInputDialog, QHeaderView)
@@ -31,26 +30,12 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
 from imageunit import Imager
 from decorators import show_wait_cursor
-from misc_utils import get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag
+from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag
 
 from tablemodel import TableModel
 from pydicom import compat
 import pydicom
 from pylinac import image, picketfence, ct, winston_lutz, planar_imaging, vmat, starshot, log_analyzer, QuartDVT
-
-
-def open_path(path: str) -> bool:
-    """Open the specified path in the system default viewer."""
-    try:
-        if os.name == 'nt':
-            os.startfile(path)
-        elif os.name == 'posix':
-            subprocess.call(["xdg-open", path])
-        elif os.name == 'darwin':
-            subprocess.call(["open", path])
-        return True
-    except OSError:
-        return False
 
 
 class LinaQA(QMainWindow):

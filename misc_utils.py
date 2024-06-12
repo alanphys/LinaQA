@@ -5,6 +5,23 @@ Miscellaneous tools for LinaQA
 """
 # Author: AC Chamberlain
 
+import os
+import subprocess
+
+
+def open_path(path: str) -> bool:
+    """Open the specified path in the system default viewer."""
+    try:
+        if os.name == 'nt':
+            os.startfile(path)
+        elif os.name == 'posix':
+            subprocess.call(["xdg-open", path])
+        elif os.name == 'darwin':
+            subprocess.call(["open", path])
+        return True
+    except OSError:
+        return False
+
 
 def get_dot_attr(obj, att_name) -> str:
     """
