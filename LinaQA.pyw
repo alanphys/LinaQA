@@ -734,6 +734,7 @@ class LinaQA(QMainWindow):
                     scaling_tolerance=float(self.settings.value('3D Phantom/Scaling Tolerance')))
         cat.publish_pdf(filename,
                         notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                        metadata=self.settings.value('General/Metadata'),
                         logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
@@ -763,6 +764,7 @@ class LinaQA(QMainWindow):
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         pf.publish_pdf(filename,
                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                       metadata=self.settings.value('General/Metadata'),
                        logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
@@ -777,6 +779,7 @@ class LinaQA(QMainWindow):
         filename = osp.join(dirname, 'W-L Analysis.pdf')
         wl.publish_pdf(filename,
                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                       metadata=self.settings.value('General/Metadata'),
                        logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
@@ -795,6 +798,7 @@ class LinaQA(QMainWindow):
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         phan.publish_pdf(filename,
                          notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                         metadata=self.settings.value('General/Metadata'),
                          logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
@@ -822,6 +826,7 @@ class LinaQA(QMainWindow):
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         v.publish_pdf(filename,
                       notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                      metadata=self.settings.value('General/Metadata'),
                       logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
@@ -850,6 +855,7 @@ class LinaQA(QMainWindow):
         filename = filename + '.pdf'
         star.publish_pdf(filename,
                          notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                         metadata=self.settings.value('General/Metadata'),
                          logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
@@ -870,7 +876,7 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_gamma(self):
-        # TODO put this in pdf
+        # TODO put this in pdf maybe create its own class in pylinac
         if len(self.ref_filename) >> 0:
             stream = io.BytesIO()
             self.imager.datasets[self.imager.index].save_as(stream, True)

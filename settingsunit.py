@@ -19,6 +19,8 @@ def set_default_settings(settings):
     settings.beginGroup('General')
     if not settings.contains('Logo'):
         settings.setValue('Logo', '')
+    if not settings.contains('Metadata'):
+        settings.setValue('Metadata', {})
     settings.endGroup()
 
     settings.beginGroup('3D Phantom')
@@ -203,6 +205,10 @@ class TypeChecker:
                          int(match.captured(2)))
         if isinstance(original_value, list):
             return text.split(',')
+        if isinstance(original_value, dict):
+            text = text.strip('{}').replace('\"', '').replace('\'', '')
+            pairs = text.split(',')
+            return {key.strip(' '): value.strip(' ') for key, value in (pair.split(':') for pair in pairs)}
         return type(original_value)(text)
 
 
@@ -578,7 +584,7 @@ class VariantDelegate(QItemDelegate):
     def is_supported_type(value):
         return isinstance(value, (bool, float, int, QByteArray, str, QColor,
                                   QDate, QDateTime, QTime, QPoint, QRect,
-                                  QSize, list))
+                                  QSize, list, dict))
 
     @staticmethod
     def display_text(value):
@@ -609,6 +615,8 @@ class VariantDelegate(QItemDelegate):
             return f'({w},{h})'
         if isinstance(value, list):
             return ','.join(map(repr, value))
+        if isinstance(value, dict):
+            return str(value)
         if value is None:
             return '<Invalid>'
 
