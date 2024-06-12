@@ -156,6 +156,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Insert_tag.triggered.connect(self.insert_tag)
         self.ui.action_Edit_tag.triggered.connect(self.edit_tag)
         self.ui.action_Delete_tag.triggered.connect(self.del_tag)
+        self.ui.action_Notes.triggered.connect(self.show_notes)
 
         # connect treeView actions
         self.ui.action_Copy.triggered.connect(self.copy_tag)
@@ -172,6 +173,7 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(1, False)
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
+        self.ui.tabWidget.setTabVisible(4, False)
         self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -464,6 +466,14 @@ class LinaQA(QMainWindow):
                 self.ui.action_Delete_tag.setEnabled(True)
                 self.ui.action_Delete_tag.setVisible(True)
 
+    def show_notes(self):
+        if self.ui.action_Notes.isChecked():
+            self.ui.tabWidget.setTabVisible(4, True)
+            self.ui.tabWidget.setCurrentIndex(4)
+        else:
+            self.ui.tabWidget.setTabVisible(4, False)
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section
 # ---------------------------------------------------------------------------------------------------------------------
@@ -722,7 +732,9 @@ class LinaQA(QMainWindow):
         cat.analyze(hu_tolerance=int(self.settings.value('3D Phantom/HU Tolerance')),
                     thickness_tolerance=float(self.settings.value('3D Phantom/Thickness Tolerance')),
                     scaling_tolerance=float(self.settings.value('3D Phantom/Scaling Tolerance')))
-        cat.publish_pdf(filename, logo=self.settings.value('General/Logo'))
+        cat.publish_pdf(filename,
+                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                        logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -749,7 +761,9 @@ class LinaQA(QMainWindow):
                        required_prominence=0.1)
             self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        pf.publish_pdf(filename, logo=self.settings.value('General/Logo'))
+        pf.publish_pdf(filename,
+                       notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                       logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -761,7 +775,9 @@ class LinaQA(QMainWindow):
         wl = winston_lutz.WinstonLutz(dirname)
         wl.analyze()
         filename = osp.join(dirname, 'W-L Analysis.pdf')
-        wl.publish_pdf(filename, logo=self.settings.value('General/Logo'))
+        wl.publish_pdf(filename,
+                       notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                       logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -777,7 +793,9 @@ class LinaQA(QMainWindow):
                      high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
                      invert=self.ui.action_Invert.isChecked())
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        phan.publish_pdf(filename, logo=self.settings.value('General/Logo'))
+        phan.publish_pdf(filename,
+                         notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                         logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -802,7 +820,9 @@ class LinaQA(QMainWindow):
         v.open_image.base_path = self.filenames[0]
         v.dmlc_image.base_path = self.ref_filename
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        v.publish_pdf(filename, logo=self.settings.value('General/Logo'))
+        v.publish_pdf(filename,
+                      notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                      logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -828,7 +848,9 @@ class LinaQA(QMainWindow):
                      tolerance=float(self.settings.value('Star shot/Tolerance')),
                      recursive=self.settings.value('Star shot/Recursive analysis'))
         filename = filename + '.pdf'
-        star.publish_pdf(filename, logo=self.settings.value('General/Logo'))
+        star.publish_pdf(filename,
+                         notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                         logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -838,7 +860,9 @@ class LinaQA(QMainWindow):
     def analyse_log(self):
         log = log_analyzer.load_log(self.filenames[0])
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        log.publish_pdf(filename, logo=self.settings.value('General/Logo'))
+        log.publish_pdf(filename,
+                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                        logo=self.settings.value('General/Logo'))
         if open_path(filename):
             self.status_message('Results displayed in PDF')
         else:
@@ -846,6 +870,7 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_gamma(self):
+        # TODO put this in pdf
         if len(self.ref_filename) >> 0:
             stream = io.BytesIO()
             self.imager.datasets[self.imager.index].save_as(stream, True)

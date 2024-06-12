@@ -34,7 +34,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
@@ -165,6 +165,20 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>Notes</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QTextEdit" name="pte_notes">
+          <property name="placeholderText">
+           <string>Enter notes here</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -175,7 +189,7 @@
      <x>0</x>
      <y>0</y>
      <width>678</width>
-     <height>30</height>
+     <height>40</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -220,6 +234,7 @@
     </property>
     <addaction name="action_DICOM_tags"/>
     <addaction name="action_Pixel_Data"/>
+    <addaction name="action_Notes"/>
     <addaction name="separator"/>
     <addaction name="action_Find_tag"/>
     <addaction name="action_Insert_tag"/>
@@ -283,8 +298,9 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_Exit"/>
-   <addaction name="action_Settings"/>
    <addaction name="action_About"/>
+   <addaction name="action_Settings"/>
+   <addaction name="action_Notes"/>
   </widget>
   <widget class="QToolBar" name="toolBar_Side">
    <property name="sizePolicy">
@@ -688,6 +704,21 @@
    </property>
    <property name="toolTip">
     <string>Save file as</string>
+   </property>
+  </action>
+  <action name="action_Notes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/EditNotes.png</normaloff>:/Icons/Icons/EditNotes.png</iconset>
+   </property>
+   <property name="text">
+    <string>Notes</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit user note</string>
    </property>
   </action>
  </widget>
