@@ -76,6 +76,8 @@ def set_default_settings(settings):
         settings.setValue('High contrast threshold', '0.5')
     if not settings.contains('Force image inversion'):
         settings.setValue('Force image inversion', 'False')
+    if not settings.contains('SSD'):
+        settings.setValue('SSD', '1000')
     settings.endGroup()
 
     settings.beginGroup('Gamma Analysis')

@@ -473,6 +473,20 @@ class LinaQA(QMainWindow):
         else:
             self.ui.tabWidget.setTabVisible(4, False)
 
+    def show_results(self, test, filename):
+        if osp.exists(filename):
+            filename = QFileDialog.getSaveFileName(self, "File exists, save file as:", filename, "PDF files (*.pdf)")[0]
+        if len(filename) > 0:
+            test.publish_pdf(filename,
+                             notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                             metadata=self.settings.value('General/Metadata'),
+                             logo=self.settings.value('General/Logo'))
+            if open_path(filename):
+                self.status_message('Results displayed in PDF')
+            else:
+                self.status_error('No reader to open document')
+        else:
+            self.status_warn("Results not saved.")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section
@@ -732,14 +746,7 @@ class LinaQA(QMainWindow):
         cat.analyze(hu_tolerance=int(self.settings.value('3D Phantom/HU Tolerance')),
                     thickness_tolerance=float(self.settings.value('3D Phantom/Thickness Tolerance')),
                     scaling_tolerance=float(self.settings.value('3D Phantom/Scaling Tolerance')))
-        cat.publish_pdf(filename,
-                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
-                        metadata=self.settings.value('General/Metadata'),
-                        logo=self.settings.value('General/Logo'))
-        if open_path(filename):
-            self.status_message('Results displayed in PDF')
-        else:
-            self.status_error('No reader to open document')
+        self.show_results(cat, filename)
 
     @show_wait_cursor
     def analyse_picket_fence(self):
@@ -762,14 +769,7 @@ class LinaQA(QMainWindow):
                        required_prominence=0.1)
             self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        pf.publish_pdf(filename,
-                       notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
-                       metadata=self.settings.value('General/Metadata'),
-                       logo=self.settings.value('General/Logo'))
-        if open_path(filename):
-            self.status_message('Results displayed in PDF')
-        else:
-            self.status_error('No reader to open document')
+        self.show_results(pf, filename)
 
     @show_wait_cursor
     def analyse_winston_lutz(self):
@@ -794,16 +794,11 @@ class LinaQA(QMainWindow):
         phan = getattr(planar_imaging, self.ui.cbPhan2D.currentText().replace(' ', ''))(stream)
         phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantom/Low contrast threshold')),
                      high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
-                     invert=self.ui.action_Invert.isChecked())
+                     invert=self.ui.action_Invert.isChecked(),
+                     ssd=('auto' if self.settings.value('2D Phantom/SSD') == '1000'
+                          else float(self.settings.value('2D Phantom/SSD'))))
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        phan.publish_pdf(filename,
-                         notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
-                         metadata=self.settings.value('General/Metadata'),
-                         logo=self.settings.value('General/Logo'))
-        if open_path(filename):
-            self.status_message('Results displayed in PDF')
-        else:
-            self.status_error('No reader to open document')
+        self.show_results(phan, filename)
 
     @show_wait_cursor
     def analyse_vmat(self):
@@ -824,14 +819,7 @@ class LinaQA(QMainWindow):
         v.open_image.base_path = self.filenames[0]
         v.dmlc_image.base_path = self.ref_filename
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        v.publish_pdf(filename,
-                      notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
-                      metadata=self.settings.value('General/Metadata'),
-                      logo=self.settings.value('General/Logo'))
-        if open_path(filename):
-            self.status_message('Results displayed in PDF')
-        else:
-            self.status_error('No reader to open document')
+        self.show_results(v, filename)
 
     @show_wait_cursor
     def analyse_star(self):
@@ -853,26 +841,13 @@ class LinaQA(QMainWindow):
                      tolerance=float(self.settings.value('Star shot/Tolerance')),
                      recursive=self.settings.value('Star shot/Recursive analysis'))
         filename = filename + '.pdf'
-        star.publish_pdf(filename,
-                         notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
-                         metadata=self.settings.value('General/Metadata'),
-                         logo=self.settings.value('General/Logo'))
-        if open_path(filename):
-            self.status_message('Results displayed in PDF')
-        else:
-            self.status_error('No reader to open document')
+        self.show_results(star, filename)
 
     @show_wait_cursor
     def analyse_log(self):
         log = log_analyzer.load_log(self.filenames[0])
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        log.publish_pdf(filename,
-                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
-                        logo=self.settings.value('General/Logo'))
-        if open_path(filename):
-            self.status_message('Results displayed in PDF')
-        else:
-            self.status_error('No reader to open document')
+        self.show_results(log, filename)
 
     @show_wait_cursor
     def analyse_gamma(self):
