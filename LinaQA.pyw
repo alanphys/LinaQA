@@ -49,6 +49,7 @@ class LinaQA(QMainWindow):
         self.mouse_last_pos = None
         self.filenames = []
         self.ref_filename = ''
+        self.working_dir = ''
         self.source_model = None
         self.proxy_model = None
         self.table_model = None
@@ -315,7 +316,10 @@ class LinaQA(QMainWindow):
         self.imager = None
 
         # get filename(s)
-        dirpath = osp.dirname(osp.realpath(self.filenames[0]))
+        if len(self.filenames) > 0:
+            dirpath = osp.dirname(osp.realpath(self.filenames[0]))
+        else:
+            dirpath = self.working_dir
         ostype = system()
         if ostype == 'Windows':
             file_filter = 'DICOM files (*.dcm);;All files (*.*)'
@@ -323,6 +327,7 @@ class LinaQA(QMainWindow):
             file_filter = 'DICOM files (*.dcm);;All files (*)'
         self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath, file_filter)[0]
         if len(self.filenames) > 0:
+            self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
             self.open_file()
 
     def save_file(self):
@@ -956,7 +961,7 @@ def main():
         if window.filenames:
             window.open_file()
     else:
-        window.filenames = [osp.expanduser("~")]
+        window.working_dir = osp.expanduser("~")
     sys.exit(app.exec_())
 
 
