@@ -239,6 +239,8 @@ class LinaQA(QMainWindow):
             if 'TransferSyntaxUID' not in ds.file_meta:
                 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
             first_modality = ds.Modality
+            if ds.file_meta.TransferSyntaxUID.is_compressed:
+                ds.decompress()
             datasets.append(ds)
         except pydicom.errors.InvalidDicomError:
             num_bad += 1
@@ -253,6 +255,8 @@ class LinaQA(QMainWindow):
                 # cannot mix modalities
                 if modality != first_modality:
                     raise pydicom.errors.InvalidDicomError
+                if ds.file_meta.TransferSyntaxUID.is_compressed:
+                    ds.decompress()
                 datasets.append(ds)
 
             except pydicom.errors.InvalidDicomError:
