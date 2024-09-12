@@ -20,6 +20,11 @@ Windows users will need to install a python stack (such as anaconda) and PyQT5/Q
 * NumPy
 If you install pylinac it will automatically install pydicom and numpy.
 
+LinaQA can read compressed images and save them uncompressed, but to do this it needs the additional libraries below which must be installed independently:
+* pylibjpeg
+* pylibjpeg-libjpeg
+* GDCM (optional depending on type of compression)
+
 5) Installation
 This assumes mini/anaconda or other python interpreter is installed
 
@@ -74,6 +79,9 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 
 7) Release notes
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
+
+Version 0.05
+Images are now handled internally uncompressed. Saving an image will save it uncompressed. The entire dataset may be saved.
 
 Version 0.04
 Implement QuartDVT phantom. Enable directory/file load from command line. Fix DICOM tag insert, delete and edit for nested tags. Note: Only tags can be inserted and deleted, not sequences.
