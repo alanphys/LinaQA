@@ -134,6 +134,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Open_Ref.triggered.connect(self.open_ref)
         self.ui.action_Save.triggered.connect(self.save_file)
         self.ui.action_Save_as.triggered.connect(self.save_file_as)
+        self.ui.action_Save_all.triggered.connect(self.save_all)
         self.ui.action_About.triggered.connect(self.showabout)
         self.ui.action_PyDicomH.triggered.connect(self.pydicom_help)
         self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
@@ -362,6 +363,25 @@ class LinaQA(QMainWindow):
             ds.save_as(filename, True)
             self.is_changed = False
             self.status_message('File save as ' + filename)
+
+    def save_all(self):
+        self.status_clear()
+        dirpath = osp.dirname(osp.realpath(self.filenames[self.imager.index]))
+        ostype = system()
+        if ostype == 'Windows':
+            dirpath = QFileDialog.getExistingDirectory(self, 'Choose directory to save files to', dirpath)
+        else:
+            dirpath = QFileDialog.getExistingDirectory(self, 'Choose directory to save files to', dirpath)
+        if self.imager and dirpath != '':
+            for i, ds in enumerate(self.imager.datasets):
+                if hasattr(ds, 'pixel_array'):
+                    arr = ds.pixel_array
+                    ds.PixelData = arr.tobytes()
+                filename = osp.basename(self.filenames[i])
+                filename = osp.splitext(filename)[0] + '_un.dcm'
+                ds.save_as(osp.join(dirpath, filename), True)
+            self.is_changed = False
+            self.status_message(f'{i} images saved in' + dirpath)
 
     def show_image(self, numpy_array, label: QLabel):
         if numpy_array is not None:
