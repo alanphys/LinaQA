@@ -30,7 +30,7 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
 from imageunit import Imager
 from decorators import show_wait_cursor
-from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag
+from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag, to_bool
 
 from tablemodel import TableModel
 from pydicom import compat
@@ -368,10 +368,7 @@ class LinaQA(QMainWindow):
         self.status_clear()
         dirpath = osp.dirname(osp.realpath(self.filenames[self.imager.index]))
         ostype = system()
-        if ostype == 'Windows':
-            dirpath = QFileDialog.getExistingDirectory(self, 'Choose directory to save files to', dirpath)
-        else:
-            dirpath = QFileDialog.getExistingDirectory(self, 'Choose directory to save files to', dirpath)
+        dirpath = QFileDialog.getExistingDirectory(self, 'Choose directory to save files to', dirpath)
         if self.imager and dirpath != '':
             for i, ds in enumerate(self.imager.datasets):
                 if hasattr(ds, 'pixel_array'):
@@ -381,7 +378,7 @@ class LinaQA(QMainWindow):
                 filename = osp.splitext(filename)[0] + '_un.dcm'
                 ds.save_as(osp.join(dirpath, filename), True)
             self.is_changed = False
-            self.status_message(f'{i} images saved in' + dirpath)
+            self.status_message(f'{i} images saved in ' + dirpath)
 
     def show_image(self, numpy_array, label: QLabel):
         if numpy_array is not None:
@@ -804,7 +801,12 @@ class LinaQA(QMainWindow):
     def analyse_winston_lutz(self):
         dirname = os.path.dirname(self.filenames[0])
         wl = winston_lutz.WinstonLutz(dirname)
-        wl.analyze()
+        if self.imager.invflag:
+            for im in wl.images:
+                im.invert()
+        wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
+                   open_field=to_bool(self.settings.value('Winston-Lutz/Open field')),
+                   low_density_bb=to_bool(self.settings.value('Winston-Lutz/Low density BB')))
         filename = osp.join(dirname, 'W-L Analysis.pdf')
         wl.publish_pdf(filename,
                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
@@ -868,7 +870,7 @@ class LinaQA(QMainWindow):
                                                           dpi=float(self.settings.value('Star shot/DPI')))
         star.analyze(radius=float(self.settings.value('Star shot/Normalised analysis radius')),
                      tolerance=float(self.settings.value('Star shot/Tolerance')),
-                     recursive=self.settings.value('Star shot/Recursive analysis'))
+                     recursive=to_bool(self.settings.value('Star shot/Recursive analysis')))
         filename = filename + '.pdf'
         self.show_results(star, filename)
 

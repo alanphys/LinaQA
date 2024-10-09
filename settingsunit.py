@@ -44,7 +44,7 @@ def set_default_settings(settings):
     if not settings.contains('Number of pickets'):
         settings.setValue('Number of pickets', '10')
     if not settings.contains('Apply median filter'):
-        settings.setValue('Apply median filter', 'false')
+        settings.setValue('Apply median filter', 'False')
     settings.endGroup()
 
     settings.beginGroup('Star shot')
@@ -65,6 +65,15 @@ def set_default_settings(settings):
         settings.setValue('Test type', 'DRGS')
     if not settings.contains('Tolerance'):
         settings.setValue('Tolerance', '1.5')
+    settings.endGroup()
+
+    settings.beginGroup('Winston-Lutz')
+    if not settings.contains('BB Size'):
+        settings.setValue('BB Size', '5')
+    if not settings.contains('Open field'):
+        settings.setValue('Open field', 'False')
+    if not settings.contains('Low density BB'):
+        settings.setValue('Low density BB', 'False')
     settings.endGroup()
 
     settings.beginGroup('2D Phantom')
