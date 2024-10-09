@@ -768,6 +768,9 @@ class LinaQA(QMainWindow):
             cat = QuartDVT(dirname)
         else:
             cat = getattr(ct, self.ui.cbCatPhan.currentText())(dirname)
+        if self.imager.invflag:
+            for im in cat.dicom_stack.images:
+                im.invert()
         filename = osp.join(dirname, 'CBCT Analysis.pdf')
         cat.analyze(hu_tolerance=int(self.settings.value('3D Phantom/HU Tolerance')),
                     thickness_tolerance=float(self.settings.value('3D Phantom/Thickness Tolerance')),
@@ -786,12 +789,14 @@ class LinaQA(QMainWindow):
         try:
             pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
                        action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
-                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')))
+                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
+                       invert=self.imager.invflag)
         except ValueError:
             # if it throws an exception fall back to this as per issue #470
             pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
                        action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
                        num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
+                       invert=self.imager.invflag,
                        required_prominence=0.1)
             self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
@@ -825,7 +830,7 @@ class LinaQA(QMainWindow):
         phan = getattr(planar_imaging, self.ui.cbPhan2D.currentText().replace(' ', ''))(stream)
         phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantom/Low contrast threshold')),
                      high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
-                     invert=self.ui.action_Invert.isChecked(),
+                     invert=self.imager.invflag,
                      ssd=('auto' if self.settings.value('2D Phantom/SSD') == '1000'
                           else float(self.settings.value('2D Phantom/SSD'))))
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
@@ -893,6 +898,8 @@ class LinaQA(QMainWindow):
             ref_stream.seek(0)
 
             eval_img = image.load(stream)
+            if self.imager.invflag:
+                eval_img.invert()
             ref_img = image.load(ref_stream)
             eval_img.normalize()
             ref_img.normalize()
