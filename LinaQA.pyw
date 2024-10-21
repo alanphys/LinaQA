@@ -253,8 +253,11 @@ class LinaQA(QMainWindow):
                 if 'TransferSyntaxUID' not in ds.file_meta:
                     ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
                 modality = ds.Modality
+                frames = 1
+                if hasattr(ds, "NumberOfFrames"):
+                    frames = ds.NumberOfFrames
                 # cannot mix modalities
-                if modality != first_modality:
+                if (modality != first_modality) or (frames > 1):
                     raise pydicom.errors.InvalidDicomError
                 if ds.file_meta.TransferSyntaxUID.is_compressed:
                     ds.decompress()
@@ -293,7 +296,7 @@ class LinaQA(QMainWindow):
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
             # does the file have a recognised image format?
-            if self.imager.datasets[self.imager.index].Modality in supported_modalities:
+            if self.imager.datasets[0].Modality in supported_modalities:
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
                 self.ui.qlImage.show()
             else:
