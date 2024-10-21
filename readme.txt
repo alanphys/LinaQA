@@ -81,7 +81,7 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
 
 Version 0.05
-Images are now handled internally uncompressed. Saving an image will save it uncompressed. The entire dataset may be saved.
+Images are now handled internally uncompressed. Saving an image will save it uncompressed. The entire dataset may be saved. The image invert flag is carried through to analysis methods. Where methods do not have an invert flag the images are explicitly inverted.
 
 Version 0.04
 Implement QuartDVT phantom. Enable directory/file load from command line. Fix DICOM tag insert, delete and edit for nested tags. Note: Only tags can be inserted and deleted, not sequences.

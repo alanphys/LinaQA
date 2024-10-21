@@ -22,8 +22,9 @@ class Imager:
 
             # CT 3D dataset
             if (hasattr(datasets[0], "PixelSpacing") and
-               (datasets[0].SliceThickness != '') and
-               (datasets[0].SliceThickness is not None)):
+               hasattr(datasets[0], "SliceThickness") and
+               (datasets[0].SliceThickness is not None) and
+               (datasets[0].SliceThickness != '')):
                 self.spacings = (float(datasets[0].PixelSpacing[0]),
                                  float(datasets[0].PixelSpacing[1]),
                                  float(datasets[0].SliceThickness))
