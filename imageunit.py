@@ -14,7 +14,7 @@ class Imager:
             self._invflag = False
 
             # Dataset has 3D volume
-            if hasattr(datasets[0], "NumberOfFrames"):
+            if hasattr(datasets[0], "NumberOfFrames") and (int(datasets[0].NumberOfFrames) > 1):
                 self.size = (int(datasets[0].Rows), int(datasets[0].Columns), int(datasets[0].NumberOfFrames))
             # Datasets have 2D planes
             else:

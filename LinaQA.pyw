@@ -256,7 +256,7 @@ class LinaQA(QMainWindow):
                 frames = 1
                 if hasattr(ds, "NumberOfFrames"):
                     frames = ds.NumberOfFrames
-                # cannot mix modalities
+                # cannot mix modalities or multi frame images
                 if (modality != first_modality) or (frames > 1):
                     raise pydicom.errors.InvalidDicomError
                 if ds.file_meta.TransferSyntaxUID.is_compressed:
