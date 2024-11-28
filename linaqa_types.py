@@ -5,7 +5,7 @@ Type definitions for LinaQA
 """
 # Author: AC Chamberlain
 
-supported_modalities = ['RTIMAGE', 'CT', 'NM', 'PT', 'MR']
+supported_modalities = ['RTIMAGE', 'CT', 'NM', 'PT', 'MR', 'OT']
 catphan_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "QuartDVT"]
 vmat_list = ["DRGS", "DRMLC"]
 phantom2D_list = ["Doselab MC2 MV",
