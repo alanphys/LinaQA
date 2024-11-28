@@ -83,8 +83,8 @@ def set_default_settings(settings):
         settings.setValue('Low contrast threshold', '0.1')
     if not settings.contains('High contrast threshold'):
         settings.setValue('High contrast threshold', '0.5')
-    if not settings.contains('Force image inversion'):
-        settings.setValue('Force image inversion', 'False')
+    if not settings.contains('Angle override'):
+        settings.setValue('Angle override', '0')
     if not settings.contains('SSD'):
         settings.setValue('SSD', '1000')
     settings.endGroup()

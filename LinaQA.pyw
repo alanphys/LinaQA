@@ -834,6 +834,8 @@ class LinaQA(QMainWindow):
         phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantom/Low contrast threshold')),
                      high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
                      invert=self.imager.invflag,
+                     angle_override=(None if self.settings.value('2D Phantom/Angle override') == '0'
+                          else float(self.settings.value('2D Phantom/Angle override'))),
                      ssd=('auto' if self.settings.value('2D Phantom/SSD') == '1000'
                           else float(self.settings.value('2D Phantom/SSD'))))
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
