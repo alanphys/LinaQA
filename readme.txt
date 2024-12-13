@@ -38,6 +38,8 @@ At the minconda command prompt go into python
 from the python prompt
 >>>from PyQt5 import QtCore
 If does not give an error message your installation is active.
+Exit python
+>>>quit()
 
 Install pylinac if it is not already installed. If it is installed consider upgrading to the latest version
 >pip install pylinac
@@ -52,6 +54,8 @@ from the python prompt
 >>>from pylinac import DRGS
 >>>DRGS.run_demo()
 if the DRGS demo windows appears pylinac is active
+Exit python
+>>>quit()
 
 Install LinaQA
 Unzip LinaQA.zip into a suitable directory
@@ -67,7 +71,7 @@ python LinaQA.pyw
 or
 python LinaQA.pyw \Path\to\DICOM\
 
-Open a file either from the menu or toolbar. Drag and drop from your favourite file manager is also supported. Note: For mulitple files such as a CatPhan series the files must be selected in the file open dialog. You can use <ctrl>-A to select all files.
+Open a file either from the menu or toolbar. Drag and drop from your favourite file manager is also supported. Note: For multiple files such as a CatPhan series the files must be selected in the file open dialog. You can use <ctrl>-A to select all files.
 
 Open the reference image if needed.
 
