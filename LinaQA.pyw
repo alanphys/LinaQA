@@ -257,7 +257,7 @@ class LinaQA(QMainWindow):
                 if hasattr(ds, "NumberOfFrames"):
                     frames = ds.NumberOfFrames
                 # cannot mix modalities or multi frame images
-                if (modality != first_modality) or (frames > 1):
+                if (modality != first_modality) or (frames > 1) or not hasattr(ds, 'PixelData'):
                     raise pydicom.errors.InvalidDicomError
                 if ds.file_meta.TransferSyntaxUID.is_compressed:
                     ds.decompress()
@@ -296,7 +296,8 @@ class LinaQA(QMainWindow):
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
             # does the file have a recognised image format?
-            if self.imager.datasets[0].Modality in supported_modalities:
+            if ((self.imager.datasets[0].Modality in supported_modalities)
+                    and hasattr(self.imager.datasets[0], 'PixelData')):
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
                 self.ui.qlImage.show()
             else:

@@ -8,7 +8,7 @@ class Imager:
         self._index = 0
 
         # check if dataset has an image
-        if datasets[0].Modality in supported_modalities:
+        if (datasets[0].Modality in supported_modalities) and hasattr(datasets[0], 'PixelData'):
             self._window_width = 1000
             self._window_center = 0
             self._invflag = False
