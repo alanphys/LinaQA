@@ -537,7 +537,8 @@ class LinaQA(QMainWindow):
                 else:
                     font.setFamily("Courier")
                 self.ui.treeView.setFont(font)
-                self.ui.fsearchbar.setVisible(False)
+                self.ui.action_Find_tag.setChecked(False)
+                self.find_tag()
                 self.show_tree()
             else:
                 self.ui.tabWidget.setTabVisible(1, False)

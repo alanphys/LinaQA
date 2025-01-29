@@ -1,4 +1,4 @@
-LinaQA Readme file (c) Yenzakahle MPI 2024
+LinaQA Readme file (c) Yenzakahle MPI 2024-2025
 
 
 1) Introduction
@@ -26,7 +26,7 @@ LinaQA can read compressed images and save them uncompressed, but to do this it 
 * GDCM (optional depending on type of compression)
 
 5) Installation
-This assumes mini/anaconda or other python interpreter is installed
+This assumes the latest version of mini/anaconda or other python interpreter is installed.
 
 Install PyQt5
 Open miniconda prompt
@@ -41,7 +41,7 @@ If does not give an error message your installation is active.
 Exit python
 >>>quit()
 
-Install pylinac if it is not already installed. If it is installed consider upgrading to the latest version
+Install pylinac if it is not already installed. If it is installed consider upgrading to the latest version.
 >pip install pylinac
 or
 >pip install pylinac --upgrade
