@@ -35,7 +35,7 @@ from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text
 from tablemodel import TableModel
 from pydicom import compat
 import pydicom
-from pylinac import image, picketfence, ct, winston_lutz, planar_imaging, vmat, starshot, log_analyzer, QuartDVT
+from pylinac import image, picketfence, ct, winston_lutz, planar_imaging, vmat, starshot, log_analyzer, QuartDVT, ACRCT, ACRMRILarge
 
 
 class LinaQA(QMainWindow):
@@ -146,6 +146,7 @@ class LinaQA(QMainWindow):
         self.ui.action_CatPhan.triggered.connect(self.analyse_catphan)
         self.ui.action_Picket_Fence.triggered.connect(self.analyse_picket_fence)
         self.ui.action_Winston_Lutz.triggered.connect(self.analyse_winston_lutz)
+        self.ui.action_ACRPhantoms.triggered.connect(self.analyse_acr_phantoms)
         self.ui.action_2DPhantoms.triggered.connect(self.analyse_2d_phantoms)
         self.ui.action_Starshot.triggered.connect(self.analyse_star)
         self.ui.action_VMAT.triggered.connect(self.analyse_vmat)
@@ -767,6 +768,15 @@ class LinaQA(QMainWindow):
 # Analyse section
 # ---------------------------------------------------------------------------------------------------------------------
     @show_wait_cursor
+    def analyse_acr_phantoms(self):
+        dirname = os.path.dirname(self.filenames[0])
+        ct = ACRCT(dirname)
+
+        filename = osp.join(dirname, 'ARC_Phantoms_Analysis.pdf')
+        ct.analyze()
+
+        self.show_results(ct, filename)
+
     def analyse_catphan(self):
         dirname = os.path.dirname(self.filenames[0])
         if self.ui.cbCatPhan.currentText() == 'QuartDVT':
