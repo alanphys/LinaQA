@@ -768,15 +768,6 @@ class LinaQA(QMainWindow):
 # Analyse section
 # ---------------------------------------------------------------------------------------------------------------------
     @show_wait_cursor
-    def analyse_acr_phantoms(self):
-        dirname = os.path.dirname(self.filenames[0])
-        ct = ACRCT(dirname)
-
-        filename = osp.join(dirname, 'ARC_Phantoms_Analysis.pdf')
-        ct.analyze()
-
-        self.show_results(ct, filename)
-
     def analyse_catphan(self):
         dirname = os.path.dirname(self.filenames[0])
         if self.ui.cbCatPhan.currentText() == 'QuartDVT':
@@ -937,6 +928,17 @@ class LinaQA(QMainWindow):
             plt.show()
         else:
             self.ui.tabWidget.setTabVisible(3, False)
+
+    def analyse_acr_phantoms(self):
+        filename, ext = osp.splitext(self.filenames[0])
+        dirname = os.path.dirname(self.filenames[0])
+        if len(self.filenames) == 1 and ext == '.zip':
+            ct=ACRCT.from_zip(self.filenames[0])
+        else:
+            ct = ACRCT(dirname)
+        filename = dirname + '.pdf'
+        ct.analyze()
+        self.show_results(ct, filename)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Reference image section
