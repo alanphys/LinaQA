@@ -465,7 +465,7 @@
   <action name="action_ACRPhantoms">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/Catphan.png</normaloff>:/Icons/Icons/Catphan.png</iconset>
+     <normaloff>:/Icons/Icons/ACRPhantoms.png</normaloff>:/Icons/Icons/Catphan.png</iconset>
    </property>
    <property name="text">
     <string>CatPhan</string>
