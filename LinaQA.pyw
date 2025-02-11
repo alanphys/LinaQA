@@ -14,6 +14,7 @@ import sys
 import os.path as osp
 import os
 import io
+from pylinac.core.io import TemporaryZipDirectory
 from platform import system
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QMessageBox, QComboBox, QLabel, QAction,
                              QInputDialog, QHeaderView)
@@ -50,6 +51,7 @@ class LinaQA(QMainWindow):
         self.filenames = []
         self.ref_filename = ''
         self.working_dir = ''
+        self.zip_dir = None
         self.source_model = None
         self.proxy_model = None
         self.table_model = None
@@ -288,11 +290,19 @@ class LinaQA(QMainWindow):
 
     def open_file(self):
         # is the filename a directory
-        if len(self.filenames) == 1 and os.path.isdir(self.filenames[0]):
-            # get list of files in directory
-            dir_path = osp.realpath(self.filenames[0])
-            self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
-                              if os.path.isfile(os.path.join(dir_path, file_name))]
+        if len(self.filenames) == 1:
+            if os.path.isdir(self.filenames[0]):
+                # get list of files in directory
+                dir_path = osp.realpath(self.filenames[0])
+                self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
+                                  if os.path.isfile(os.path.join(dir_path, file_name))]
+            # check if file is archive
+            else:
+                if osp.splitext(self.filenames[0])[1] == '.zip':
+                    self.zip_dir = TemporaryZipDirectory(self.filenames[0], delete=True)
+                    dir_path = self.zip_dir.name
+                    self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
+                                      if os.path.isfile(os.path.join(dir_path, file_name))]
         # is the file a DICOM file?
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
@@ -332,9 +342,9 @@ class LinaQA(QMainWindow):
             dirpath = self.working_dir
         ostype = system()
         if ostype == 'Windows':
-            file_filter = 'DICOM files (*.dcm);;All files (*.*)'
+            file_filter = 'DICOM files (*.dcm);;ZIP files (*.zip);;All files (*.*)'
         else:
-            file_filter = 'DICOM files (*.dcm);;All files (*)'
+            file_filter = 'DICOM files (*.dcm);;ZIP files (*.zip);;All files (*)'
         self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath, file_filter)[0]
         if len(self.filenames) > 0:
             self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
@@ -777,7 +787,7 @@ class LinaQA(QMainWindow):
         if self.imager.invflag:
             for im in cat.dicom_stack.images:
                 im.invert()
-        filename = osp.join(dirname, 'CBCT Analysis.pdf')
+        filename = osp.join(self.working_dir, 'CBCT Analysis.pdf')
         cat.analyze(hu_tolerance=int(self.settings.value('3D Phantom/HU Tolerance')),
                     thickness_tolerance=float(self.settings.value('3D Phantom/Thickness Tolerance')),
                     scaling_tolerance=float(self.settings.value('3D Phantom/Scaling Tolerance')))
@@ -818,7 +828,7 @@ class LinaQA(QMainWindow):
         wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
                    open_field=to_bool(self.settings.value('Winston-Lutz/Open field')),
                    low_density_bb=to_bool(self.settings.value('Winston-Lutz/Low density BB')))
-        filename = osp.join(dirname, 'W-L Analysis.pdf')
+        filename = osp.join(self.working_dir, 'W-L Analysis.pdf')
         wl.publish_pdf(filename,
                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
                        metadata=self.settings.value('General/Metadata'),
