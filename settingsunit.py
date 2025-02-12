@@ -99,7 +99,7 @@ def set_default_settings(settings):
     if not settings.contains('Global dose'):
         settings.setValue('Global dose', 'True')
     if not settings.contains('Dose threshold'):
-        settings.setValue('Dose threshold', '5')
+        settings.setValue('Dose threshold', '0.05')
     settings.endGroup()
 
     settings.beginGroup("PyDicom")
