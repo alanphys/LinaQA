@@ -297,12 +297,11 @@ class LinaQA(QMainWindow):
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
                                   if os.path.isfile(os.path.join(dir_path, file_name))]
             # check if file is archive
-            else:
-                if osp.splitext(self.filenames[0])[1] == '.zip':
-                    self.zip_dir = TemporaryZipDirectory(self.filenames[0], delete=True)
-                    dir_path = self.zip_dir.name
-                    self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
-                                      if os.path.isfile(os.path.join(dir_path, file_name))]
+            elif osp.splitext(self.filenames[0])[1] == '.zip':
+                self.zip_dir = TemporaryZipDirectory(self.filenames[0], delete=False)
+                dir_path = self.zip_dir.name
+                self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
+                                  if os.path.isfile(os.path.join(dir_path, file_name))]
         # is the file a DICOM file?
         if pydicom.misc.is_dicom(self.filenames[0]):
             self.open_image(self.filenames)
@@ -780,17 +779,23 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_catphan(self):
         dirname = os.path.dirname(self.filenames[0])
+        param_list = {}
         if self.ui.cbCatPhan.currentText() == 'QuartDVT':
             cat = QuartDVT(dirname)
+        elif self.ui.cbCatPhan.currentText() == 'ACR CT':
+            cat = ACRCT(dirname)
+        elif self.ui.cbCatPhan.currentText() == 'ACR MRI':
+            cat = ACRMRILarge(dirname)
         else:
             cat = getattr(ct, self.ui.cbCatPhan.currentText())(dirname)
+            param_list = {"hu_tolerance": int(self.settings.value('3D Phantom/HU Tolerance')),
+                          "thickness_tolerance": float(self.settings.value('3D Phantom/Thickness Tolerance')),
+                          "scaling_tolerance": float(self.settings.value('3D Phantom/Scaling Tolerance'))}
         if self.imager.invflag:
             for im in cat.dicom_stack.images:
                 im.invert()
-        filename = osp.join(self.working_dir, 'CBCT Analysis.pdf')
-        cat.analyze(hu_tolerance=int(self.settings.value('3D Phantom/HU Tolerance')),
-                    thickness_tolerance=float(self.settings.value('3D Phantom/Thickness Tolerance')),
-                    scaling_tolerance=float(self.settings.value('3D Phantom/Scaling Tolerance')))
+        cat.analyze(**param_list)
+        filename = osp.join(self.working_dir, '3D Analysis.pdf')
         self.show_results(cat, filename)
 
     @show_wait_cursor
