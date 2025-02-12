@@ -148,7 +148,6 @@ class LinaQA(QMainWindow):
         self.ui.action_CatPhan.triggered.connect(self.analyse_catphan)
         self.ui.action_Picket_Fence.triggered.connect(self.analyse_picket_fence)
         self.ui.action_Winston_Lutz.triggered.connect(self.analyse_winston_lutz)
-        self.ui.action_ACRPhantoms.triggered.connect(self.analyse_acr_phantoms)
         self.ui.action_2DPhantoms.triggered.connect(self.analyse_2d_phantoms)
         self.ui.action_Starshot.triggered.connect(self.analyse_star)
         self.ui.action_VMAT.triggered.connect(self.analyse_vmat)
@@ -932,13 +931,6 @@ class LinaQA(QMainWindow):
                                    doseTA=float(self.settings.value('Gamma Analysis/Dose to agreement')),
                                    distTA=int(self.settings.value('Gamma Analysis/Distance to agreement')),
                                    threshold=float(self.settings.value('Gamma Analysis/Dose threshold')))
-#            gamma = image.gamma(reference=ref_img.array,
-#                                   evaluation=eval_img.array,
-#                                   dose_to_agreement=float(self.settings.value('Gamma Analysis/Dose to agreement')),
-#                                   distance_to_agreement=int(self.settings.value('Gamma Analysis/Distance to agreement')),
-#                                   gamma_cap_value=float(self.settings.value('Gamma Analysis/Gamma cap')),
-#                                   global_dose=self.settings.value('Gamma Analysis/Global dose', True, type=bool),
-#                                   dose_threshold=float(self.settings.value('Gamma Analysis/Dose threshold')))
             gamma_plot = plt.imshow(gamma)
             gamma_plot.set_cmap('bwr')
             plt.title(f'Gamma Analysis ({self.settings.value("Gamma Analysis/Dose to agreement")}'
@@ -950,17 +942,6 @@ class LinaQA(QMainWindow):
             plt.show()
         else:
             self.ui.tabWidget.setTabVisible(3, False)
-
-    def analyse_acr_phantoms(self):
-        filename, ext = osp.splitext(self.filenames[0])
-        dirname = os.path.dirname(self.filenames[0])
-        if len(self.filenames) == 1 and ext == '.zip':
-            ct=ACRCT.from_zip(self.filenames[0])
-        else:
-            ct = ACRCT(dirname)
-        filename = dirname + '.pdf'
-        ct.analyze()
-        self.show_results(ct, filename)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Reference image section

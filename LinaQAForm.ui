@@ -220,7 +220,6 @@
     <addaction name="action_Starshot"/>
     <addaction name="action_VMAT"/>
     <addaction name="action_Winston_Lutz"/>
-    <addaction name="action_ACRPhantoms"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -336,7 +335,6 @@
    <addaction name="action_Machine_Logs"/>
    <addaction name="action_Starshot"/>
    <addaction name="action_Winston_Lutz"/>
-   <addaction name="action_ACRPhantoms"/>
    <addaction name="action_Gamma"/>
    <addaction name="separator"/>
    <addaction name="action_DICOM_tags"/>
@@ -460,21 +458,6 @@
    </property>
    <property name="toolTip">
     <string>Analyse Winston-Lutz images</string>
-   </property>
-  </action>
-  <action name="action_ACRPhantoms">
-   <property name="icon">
-    <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/ACRPhantoms.png</normaloff>:/Icons/Icons/ACRPhantoms.png</iconset>
-   </property>
-   <property name="text">
-    <string>ACR Phantoms</string>
-   </property>
-   <property name="toolTip">
-    <string>Analyse ACR Phantoms</string>
-   </property>
-   <property name="shortcutContext">
-    <enum>Qt::WindowShortcut</enum>
    </property>
   </action>
   <action name="action_Picket_Fence">
