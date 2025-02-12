@@ -31,7 +31,7 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
 from imageunit import Imager
 from decorators import show_wait_cursor
-from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag, to_bool
+from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag
 
 from tablemodel import TableModel
 from pydicom import compat
@@ -231,7 +231,7 @@ class LinaQA(QMainWindow):
             else:
                 event.ignore()
 
-    def open_image(self, filenames):
+    def open_image(self, filenames, force_read: bool = False):
         num_total = len(filenames)
         num_bad = 0
 
@@ -239,7 +239,7 @@ class LinaQA(QMainWindow):
         datasets = []
         # we have to treat the first file separately to get the image modality
         try:
-            ds = pydicom.dcmread(filenames[0])
+            ds = pydicom.dcmread(filenames[0], force=force_read)
             if 'TransferSyntaxUID' not in ds.file_meta:
                 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
             first_modality = ds.Modality
@@ -252,7 +252,7 @@ class LinaQA(QMainWindow):
 
         for file in filenames[1:]:
             try:
-                ds = pydicom.dcmread(file)
+                ds = pydicom.dcmread(file, force=force_read)
                 if 'TransferSyntaxUID' not in ds.file_meta:
                     ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
                 modality = ds.Modality
@@ -289,7 +289,7 @@ class LinaQA(QMainWindow):
             self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
 
     def open_file(self):
-        # is the filename a directory
+        # is the filename a directory or archive
         if len(self.filenames) == 1:
             if os.path.isdir(self.filenames[0]):
                 # get list of files in directory
@@ -303,8 +303,9 @@ class LinaQA(QMainWindow):
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
                                   if os.path.isfile(os.path.join(dir_path, file_name))]
         # is the file a DICOM file?
-        if pydicom.misc.is_dicom(self.filenames[0]):
-            self.open_image(self.filenames)
+        force_open = self.settings.value('PyDicom/Force', False, type=bool)
+        if pydicom.misc.is_dicom(self.filenames[0]) or force_open:
+            self.open_image(self.filenames, force_open)
             # does the file have a recognised image format?
             if ((self.imager.datasets[0].Modality in supported_modalities)
                     and hasattr(self.imager.datasets[0], 'PixelData')):
@@ -318,7 +319,7 @@ class LinaQA(QMainWindow):
         else:
             the_image = QPixmap(self.filenames[0])
             if the_image.isNull():
-                self.status_error("File is not an image file!")
+                self.status_error("File is not a valid image file!")
             else:
                 self.ui.qlImage.setPixmap(the_image)
                 self.ui.qlImage.setScaledContents(True)
@@ -803,7 +804,7 @@ class LinaQA(QMainWindow):
         stream = io.BytesIO()
         self.imager.datasets[self.imager.index].save_as(stream, True)
         stream.seek(0)
-        if self.settings.value('Picket Fence/Apply median filter'):
+        if self.settings.value('Picket Fence/Apply median filter', False, type=bool):
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText(), filter=3)
         else:
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText())
@@ -831,9 +832,10 @@ class LinaQA(QMainWindow):
             for im in wl.images:
                 im.invert()
         wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
-                   open_field=to_bool(self.settings.value('Winston-Lutz/Open field')),
-                   low_density_bb=to_bool(self.settings.value('Winston-Lutz/Low density BB')))
+                   open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
+                   low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
         filename = osp.join(self.working_dir, 'W-L Analysis.pdf')
+        # TODO use show results
         wl.publish_pdf(filename,
                        notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
                        metadata=self.settings.value('General/Metadata'),
@@ -898,7 +900,7 @@ class LinaQA(QMainWindow):
                                                           dpi=float(self.settings.value('Star shot/DPI')))
         star.analyze(radius=float(self.settings.value('Star shot/Normalised analysis radius')),
                      tolerance=float(self.settings.value('Star shot/Tolerance')),
-                     recursive=to_bool(self.settings.value('Star shot/Recursive analysis')))
+                     recursive=self.settings.value('Star shot/Recursive analysis', False, type=bool))
         filename = filename + '.pdf'
         self.show_results(star, filename)
 
@@ -931,7 +933,7 @@ class LinaQA(QMainWindow):
                                    dose_to_agreement=float(self.settings.value('Gamma Analysis/Dose to agreement')),
                                    distance_to_agreement=int(self.settings.value('Gamma Analysis/Distance to agreement')),
                                    gamma_cap_value=float(self.settings.value('Gamma Analysis/Gamma cap')),
-                                   global_dose=self.settings.value('Gamma Analysis/Global dose'),
+                                   global_dose=self.settings.value('Gamma Analysis/Global dose', True, type=bool),
                                    dose_threshold=float(self.settings.value('Gamma Analysis/Dose threshold')))
             gamma_plot = plt.imshow(gamma)
             gamma_plot.set_cmap('bwr')

@@ -104,14 +104,3 @@ def text_to_tag(tag_text: str) -> tuple:
     else:                     # item is a sequence
         tag_keyword = tag_text.split(':')[0].strip()
     return tag_group, tag_element, tag_keyword, tag_vr, tag_value
-
-
-def to_bool(bool_str):
-    """Parse the string and return the boolean value encoded or raise an exception"""
-    if isinstance(bool_str, str) and bool_str:
-        if bool_str.lower() in ['true', 't', '1']:
-            return True
-        elif bool_str.lower() in ['false', 'f', '0']:
-            return False
-    # if here we couldn't parse it
-    raise ValueError(f"{bool_str} is not recognized as a boolean value")

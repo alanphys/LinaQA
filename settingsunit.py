@@ -102,6 +102,11 @@ def set_default_settings(settings):
         settings.setValue('Dose threshold', '5')
     settings.endGroup()
 
+    settings.beginGroup("PyDicom")
+    if not settings.contains('Force'):
+        settings.setValue('Force', 'False')
+    settings.endGroup()
+
     settings.beginGroup('Window')
     if not settings.contains('Position'):
         settings.setValue('Position', QPoint(100, 200))
