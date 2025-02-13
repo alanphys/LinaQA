@@ -18,7 +18,7 @@ from pylinac.core.io import TemporaryZipDirectory
 from platform import system
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QMessageBox, QComboBox, QLabel, QAction,
                              QInputDialog, QHeaderView)
-from PyQt5.QtGui import QPixmap, QImage, QFont, QMouseEvent, QStandardItemModel, QStandardItem, QPalette
+from PyQt5.QtGui import QPixmap, QImage, QIcon, QFont, QMouseEvent, QStandardItemModel, QStandardItem, QPalette
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
 import matplotlib.pyplot as plt
 import numpy as np
@@ -71,12 +71,14 @@ class LinaQA(QMainWindow):
         self.ui.toolBar_Side.insertWidget(self.ui.action_Picket_Fence, self.ui.cbCatPhan)
         self.ui.cbCatPhan.addItems(catphan_list)
         self.ui.toolBar_Side.insertSeparator(self.ui.action_Picket_Fence)
+        self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
         catphan_type = self.settings.value('3D Phantom/Type')
         index = self.ui.cbCatPhan.findText(catphan_type)
         if index >= 0:
             self.ui.cbCatPhan.setCurrentIndex(index)
         else:
             raise Exception('Invalid setting in 3D Phantom/Type')
+        self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
 
         # we have to insert a Combox for the MLC manually into the toolbar
         self.ui.cbMLC = QComboBox()
@@ -527,6 +529,16 @@ class LinaQA(QMainWindow):
                 self.status_error('No reader to open document')
         else:
             self.status_warn("Results not saved.")
+
+    def on_cbcatphan_changed(self, index_value: str):
+        cb_text = self.ui.cbCatPhan.currentText()
+        if cb_text.find("ACR") >= 0:
+            self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/ACRPhantoms.png"))
+        elif cb_text.find("Quart") >= 0:
+            self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/Quart.png"))
+        else:
+            self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/Catphan.png"))
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section

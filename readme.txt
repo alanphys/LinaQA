@@ -15,8 +15,8 @@ Windows users will need to install a python stack (such as anaconda) and PyQT5/Q
 
 4) Dependencies
 * PyQt5
-* pylinac (tested with pylinac 3.23)
-* pydicom (tested with pydicom 2.4.2)
+* pylinac (tested with pylinac 3.31)
+* pydicom (tested with pydicom 2.4.4)
 * NumPy
 If you install pylinac it will automatically install pydicom and numpy.
 
@@ -83,6 +83,9 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 
 7) Release notes
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
+
+Version 0.06
+Zip files can be uncompressed and displayed on the fly. ACR CT and ACR MRI Large tests have been added. Fixed broken gamma analysis. Force option added to "Settings/Pydicom". If this is set to True will try and load the file as a DICOM image. Useful for DICOM files with badly formed headers but can have unpredictable results.
 
 Version 0.05
 Images are now handled internally uncompressed. Saving an image will save it uncompressed. The entire dataset may be saved. The image invert flag is carried through to analysis methods. Where methods do not have an invert flag the images are explicitly inverted.
