@@ -940,9 +940,9 @@ class LinaQA(QMainWindow):
             eval_img.normalize()
             ref_img.normalize()
             gamma = eval_img.gamma(comparison_image=ref_img,
-                                   doseTA=float(self.settings.value('Gamma Analysis/Dose to agreement')),
-                                   distTA=int(self.settings.value('Gamma Analysis/Distance to agreement')),
-                                   threshold=float(self.settings.value('Gamma Analysis/Dose threshold')))
+                                   doseTA=self.settings.value('Gamma Analysis/Dose to agreement', 2.0, type=float),
+                                   distTA=self.settings.value('Gamma Analysis/Distance to agreement', 2.0, type=float),
+                                   threshold=self.settings.value('Gamma Analysis/Dose threshold', 0.05, type = float))
             gamma_plot = plt.imshow(gamma)
             gamma_plot.set_cmap('bwr')
             plt.title(f'Gamma Analysis ({self.settings.value("Gamma Analysis/Dose to agreement")}'
@@ -950,7 +950,7 @@ class LinaQA(QMainWindow):
             plt.ylabel('Distance (pixels)')
             plt.xlabel('Distance (pixels)')
             plt.colorbar()
-            plt.clim(0,2)
+            plt.clim(0, self.settings.value('Gamma Analysis/Gamma cap', 2.0, type=float))
             plt.show()
         else:
             self.ui.tabWidget.setTabVisible(3, False)

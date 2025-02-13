@@ -91,11 +91,11 @@ def set_default_settings(settings):
 
     settings.beginGroup('Gamma Analysis')
     if not settings.contains('Dose to agreement'):
-        settings.setValue('Dose to agreement', '2')
+        settings.setValue('Dose to agreement', '2.0')
     if not settings.contains('Distance to agreement'):
-        settings.setValue('Distance to agreement', '2')
+        settings.setValue('Distance to agreement', '2.0')
     if not settings.contains('Gamma cap'):
-        settings.setValue('Gamma cap', '2')
+        settings.setValue('Gamma cap', '2.0')
     if not settings.contains('Global dose'):
         settings.setValue('Global dose', 'True')
     if not settings.contains('Dose threshold'):
