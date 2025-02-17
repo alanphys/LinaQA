@@ -596,6 +596,7 @@ class LinaQA(QMainWindow):
     def recurse_tree(self, ds, parent):
         # order the dicom tags
         # write data elements
+        pydicom.config.convert_wrong_length_to_UN = True
         for data_element in ds:
             if isinstance(data_element.value, compat.text_type):
                 item = QStandardItem(compat.text_type(data_element))
