@@ -68,9 +68,9 @@ class LinaQA(QMainWindow):
         # we have to insert a Combox for the CatPhan manually into the toolbar
         self.ui.cbCatPhan = QComboBox()
         self.ui.cbCatPhan.setFixedWidth(120)
-        self.ui.toolBar_Side.insertWidget(self.ui.action_Picket_Fence, self.ui.cbCatPhan)
+        self.ui.toolBar_Rx.insertWidget(self.ui.action_Picket_Fence, self.ui.cbCatPhan)
         self.ui.cbCatPhan.addItems(catphan_list)
-        self.ui.toolBar_Side.insertSeparator(self.ui.action_Picket_Fence)
+        self.ui.toolBar_Rx.insertSeparator(self.ui.action_Picket_Fence)
         self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
         catphan_type = self.settings.value('3D Phantom/Type')
         index = self.ui.cbCatPhan.findText(catphan_type)
@@ -83,10 +83,10 @@ class LinaQA(QMainWindow):
         # we have to insert a Combox for the MLC manually into the toolbar
         self.ui.cbMLC = QComboBox()
         self.ui.cbMLC.setFixedWidth(120)
-        self.ui.toolBar_Side.insertWidget(self.ui.action_VMAT, self.ui.cbMLC)
+        self.ui.toolBar_Rx.insertWidget(self.ui.action_VMAT, self.ui.cbMLC)
         for mlc in picketfence.MLC:
             self.ui.cbMLC.insertItem(0, mlc.value.get("name"))
-        self.ui.toolBar_Side.insertSeparator(self.ui.action_VMAT)
+        self.ui.toolBar_Rx.insertSeparator(self.ui.action_VMAT)
         mlc_type = self.settings.value('Picket Fence/MLC Type')
         index = self.ui.cbMLC.findText(mlc_type)
         if index >= 0:
@@ -97,9 +97,9 @@ class LinaQA(QMainWindow):
         # we have to insert a Combox for the VMAT test manually into the toolbar
         self.ui.cbVMAT = QComboBox()
         self.ui.cbVMAT.setFixedWidth(120)
-        self.ui.toolBar_Side.insertWidget(self.ui.action_2DPhantoms, self.ui.cbVMAT)
+        self.ui.toolBar_Rx.insertWidget(self.ui.action_2DPhantoms, self.ui.cbVMAT)
         self.ui.cbVMAT.addItems(vmat_list)
-        self.ui.toolBar_Side.insertSeparator(self.ui.action_VMAT)
+        self.ui.toolBar_Rx.insertSeparator(self.ui.action_VMAT)
         vmat_type = self.settings.value('VMAT/Test type')
         index = self.ui.cbVMAT.findText(vmat_type)
         if index >= 0:
@@ -110,9 +110,9 @@ class LinaQA(QMainWindow):
         # we have to insert a Combox for the 2D phantoms test manually into the toolbar
         self.ui.cbPhan2D = QComboBox()
         self.ui.cbPhan2D.setFixedWidth(120)
-        self.ui.toolBar_Side.insertWidget(self.ui.action_Machine_Logs, self.ui.cbPhan2D)
+        self.ui.toolBar_Rx.insertWidget(self.ui.action_Machine_Logs, self.ui.cbPhan2D)
         self.ui.cbPhan2D.addItems(phantom2D_list)
-        self.ui.toolBar_Side.insertSeparator(self.ui.action_Machine_Logs)
+        self.ui.toolBar_Rx.insertSeparator(self.ui.action_Machine_Logs)
         phan2d_type = self.settings.value('2D Phantom/Type')
         index = self.ui.cbPhan2D.findText(phan2d_type)
         if index >= 0:
@@ -139,11 +139,12 @@ class LinaQA(QMainWindow):
         self.ui.action_Save.triggered.connect(self.save_file)
         self.ui.action_Save_as.triggered.connect(self.save_file_as)
         self.ui.action_Save_all.triggered.connect(self.save_all)
-        self.ui.action_About.triggered.connect(self.showabout)
+        self.ui.action_About.triggered.connect(self.show_about)
+        self.ui.action_Rx_Toolbar.triggered.connect(self.show_rx_toolbar)
         self.ui.action_PyDicomH.triggered.connect(self.pydicom_help)
         self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
         action_close.triggered.connect(self.close)
-        self.ui.action_Settings.triggered.connect(self.showsettings)
+        self.ui.action_Settings.triggered.connect(self.show_settings)
         self.ui.action_Invert.triggered.connect(self.invert)
         self.ui.action_Auto_Window.triggered.connect(self.auto_window)
         self.ui.action_DICOM_tags.triggered.connect(self.show_dicom_tags)
@@ -405,7 +406,7 @@ class LinaQA(QMainWindow):
                             label.height(),
                             Qt.KeepAspectRatio))
 
-    def showabout(self):
+    def show_about(self):
         about = About()
         about.exec()
 
@@ -415,9 +416,13 @@ class LinaQA(QMainWindow):
     def pylinac_help(self):
         webbrowser.open('https://pylinac.readthedocs.io/en/latest/')
 
-    def showsettings(self):
+    def show_settings(self):
         settings = Settings()
         settings.exec()
+
+    def show_rx_toolbar(self):
+        self.ui.toolBar_Rx.setVisible(self.ui.action_Rx_Toolbar.isChecked())
+
 
     def auto_window(self):
         if self.imager is not None and hasattr(self.imager, "values"):

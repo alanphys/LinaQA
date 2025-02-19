@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="Icons">
+    <file>Icons/LinacIcon.png</file>
     <file>Icons/Quart.png</file>
     <file>Icons/EditNotes.png</file>
     <file>Icons/SearchTag.png</file>

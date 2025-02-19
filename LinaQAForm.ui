@@ -271,6 +271,7 @@
    <addaction name="action_Open_Ref"/>
    <addaction name="action_Save"/>
    <addaction name="separator"/>
+   <addaction name="action_Rx_Toolbar"/>
    <addaction name="action_Auto_Window"/>
    <addaction name="action_Invert"/>
    <addaction name="separator"/>
@@ -303,7 +304,7 @@
    <addaction name="action_Settings"/>
    <addaction name="action_Notes"/>
   </widget>
-  <widget class="QToolBar" name="toolBar_Side">
+  <widget class="QToolBar" name="toolBar_Rx">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
      <horstretch>0</horstretch>
@@ -728,6 +729,24 @@
    </property>
    <property name="toolTip">
     <string>Save all images</string>
+   </property>
+  </action>
+  <action name="action_Rx_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/LinacIcon.png</normaloff>:/Icons/Icons/LinacIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rx</string>
+   </property>
+   <property name="toolTip">
+    <string>Show radiotherapy toolbar</string>
    </property>
   </action>
  </widget>
