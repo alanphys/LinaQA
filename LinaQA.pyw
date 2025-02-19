@@ -141,6 +141,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Save_all.triggered.connect(self.save_all)
         self.ui.action_About.triggered.connect(self.show_about)
         self.ui.action_Rx_Toolbar.triggered.connect(self.show_rx_toolbar)
+        self.ui.action_Dx_Toolbar.triggered.connect(self.show_dx_toolbar)
         self.ui.action_PyDicomH.triggered.connect(self.pydicom_help)
         self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
         action_close.triggered.connect(self.close)
@@ -181,6 +182,8 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
         self.ui.tabWidget.setTabVisible(4, False)
+        self.show_rx_toolbar()
+        self.show_dx_toolbar()
         self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -423,6 +426,8 @@ class LinaQA(QMainWindow):
     def show_rx_toolbar(self):
         self.ui.toolBar_Rx.setVisible(self.ui.action_Rx_Toolbar.isChecked())
 
+    def show_dx_toolbar(self):
+        self.ui.toolBar_Dx.setVisible(self.ui.action_Dx_Toolbar.isChecked())
 
     def auto_window(self):
         if self.imager is not None and hasattr(self.imager, "values"):

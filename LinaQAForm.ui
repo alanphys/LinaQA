@@ -34,7 +34,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
@@ -272,8 +272,7 @@
    <addaction name="action_Save"/>
    <addaction name="separator"/>
    <addaction name="action_Rx_Toolbar"/>
-   <addaction name="action_Auto_Window"/>
-   <addaction name="action_Invert"/>
+   <addaction name="action_Dx_Toolbar"/>
    <addaction name="separator"/>
    <addaction name="action_Find_tag"/>
    <addaction name="action_Insert_tag"/>
@@ -336,9 +335,22 @@
    <addaction name="action_Machine_Logs"/>
    <addaction name="action_Starshot"/>
    <addaction name="action_Winston_Lutz"/>
-   <addaction name="action_Gamma"/>
    <addaction name="separator"/>
    <addaction name="action_DICOM_tags"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_Dx">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Auto_Window"/>
+   <addaction name="action_Invert"/>
+   <addaction name="action_Gamma"/>
    <addaction name="action_Pixel_Data"/>
   </widget>
   <action name="action_Open">
@@ -746,7 +758,28 @@
     <string>Rx</string>
    </property>
    <property name="toolTip">
-    <string>Show radiotherapy toolbar</string>
+    <string>Show/hide radiotherapy toolbar</string>
+   </property>
+  </action>
+  <action name="action_Dx_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/X-rayIcon.png</normaloff>:/Icons/Icons/X-rayIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Dx</string>
+   </property>
+   <property name="toolTip">
+    <string>Show/hide imaging toolbar</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
    </property>
   </action>
  </widget>
