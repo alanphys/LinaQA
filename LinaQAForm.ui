@@ -273,11 +273,8 @@
    <addaction name="separator"/>
    <addaction name="action_Rx_Toolbar"/>
    <addaction name="action_Dx_Toolbar"/>
+   <addaction name="action_DICOM_tags"/>
    <addaction name="separator"/>
-   <addaction name="action_Find_tag"/>
-   <addaction name="action_Insert_tag"/>
-   <addaction name="action_Edit_tag"/>
-   <addaction name="action_Delete_tag"/>
   </widget>
   <widget class="QToolBar" name="toolBar_Right">
    <property name="windowTitle">
@@ -335,8 +332,6 @@
    <addaction name="action_Machine_Logs"/>
    <addaction name="action_Starshot"/>
    <addaction name="action_Winston_Lutz"/>
-   <addaction name="separator"/>
-   <addaction name="action_DICOM_tags"/>
   </widget>
   <widget class="QToolBar" name="toolBar_Dx">
    <property name="windowTitle">
@@ -352,6 +347,21 @@
    <addaction name="action_Invert"/>
    <addaction name="action_Gamma"/>
    <addaction name="action_Pixel_Data"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_DCM">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Find_tag"/>
+   <addaction name="action_Insert_tag"/>
+   <addaction name="action_Edit_tag"/>
+   <addaction name="action_Delete_tag"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -542,6 +552,9 @@
    <property name="text">
     <string>DICOM tags</string>
    </property>
+   <property name="toolTip">
+    <string>Show/hide DICOM toolbar and tags</string>
+   </property>
   </action>
   <action name="action_Gamma">
    <property name="checkable">
@@ -623,7 +636,7 @@
     <bool>true</bool>
    </property>
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="LinaQA.qrc">
@@ -639,7 +652,7 @@
     <string>Ctrl+F</string>
    </property>
    <property name="visible">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
   </action>
   <action name="action_Expand_all">
@@ -660,7 +673,7 @@
   </action>
   <action name="action_Insert_tag">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="LinaQA.qrc">
@@ -673,12 +686,12 @@
     <string>Add DICOM tag</string>
    </property>
    <property name="visible">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
   </action>
   <action name="action_Delete_tag">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="LinaQA.qrc">
@@ -691,12 +704,12 @@
     <string>Remove DICOM tag</string>
    </property>
    <property name="visible">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
   </action>
   <action name="action_Edit_tag">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="LinaQA.qrc">
@@ -709,7 +722,7 @@
     <string>Change DICOM tag</string>
    </property>
    <property name="visible">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
   </action>
   <action name="action_Save_as">

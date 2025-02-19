@@ -142,13 +142,13 @@ class LinaQA(QMainWindow):
         self.ui.action_About.triggered.connect(self.show_about)
         self.ui.action_Rx_Toolbar.triggered.connect(self.show_rx_toolbar)
         self.ui.action_Dx_Toolbar.triggered.connect(self.show_dx_toolbar)
+        self.ui.action_DICOM_tags.triggered.connect(self.show_dicom_toolbar)
         self.ui.action_PyDicomH.triggered.connect(self.pydicom_help)
         self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
         action_close.triggered.connect(self.close)
         self.ui.action_Settings.triggered.connect(self.show_settings)
         self.ui.action_Invert.triggered.connect(self.invert)
         self.ui.action_Auto_Window.triggered.connect(self.auto_window)
-        self.ui.action_DICOM_tags.triggered.connect(self.show_dicom_tags)
         self.ui.action_CatPhan.triggered.connect(self.analyse_catphan)
         self.ui.action_Picket_Fence.triggered.connect(self.analyse_picket_fence)
         self.ui.action_Winston_Lutz.triggered.connect(self.analyse_winston_lutz)
@@ -156,7 +156,6 @@ class LinaQA(QMainWindow):
         self.ui.action_Starshot.triggered.connect(self.analyse_star)
         self.ui.action_VMAT.triggered.connect(self.analyse_vmat)
         self.ui.action_Machine_Logs.triggered.connect(self.analyse_log)
-        self.ui.action_DICOM_tags.triggered.connect(self.show_dicom_tags)
         self.ui.action_Pixel_Data.triggered.connect(self.edit_pixel_data)
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
@@ -319,7 +318,7 @@ class LinaQA(QMainWindow):
             else:
                 self.ui.action_DICOM_tags.setChecked(True)
                 self.ui.tabWidget.setTabVisible(0, False)
-            self.show_dicom_tags()
+            self.show_dicom_toolbar()
             self.edit_pixel_data()
         else:
             the_image = QPixmap(self.filenames[0])
@@ -549,11 +548,11 @@ class LinaQA(QMainWindow):
         else:
             self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/Catphan.png"))
 
-
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section
 # ---------------------------------------------------------------------------------------------------------------------
-    def show_dicom_tags(self):
+    def show_dicom_toolbar(self):
+        self.ui.toolBar_DCM.setVisible(self.ui.action_DICOM_tags.isChecked())
         # create new tab
         if self.imager:
             if self.ui.action_DICOM_tags.isChecked():
@@ -574,8 +573,6 @@ class LinaQA(QMainWindow):
                 self.show_tree()
             else:
                 self.ui.tabWidget.setTabVisible(1, False)
-        else:
-            self.status_error('No DICOM data.')
 
     def show_tree(self):
         self.dataset_to_model()
