@@ -239,6 +239,7 @@ class LinaQA(QMainWindow):
     def open_image(self, filenames, force_read: bool = False):
         num_total = len(filenames)
         num_bad = 0
+        first_modality = ''
 
         # Clear non-dicom files
         datasets = []
