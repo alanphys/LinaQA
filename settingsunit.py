@@ -20,7 +20,7 @@ def set_default_settings(settings):
     if not settings.contains('Logo'):
         settings.setValue('Logo', '')
     if not settings.contains('Metadata'):
-        settings.setValue('Metadata', {})
+        settings.setValue('Metadata', {'Physicist': '', 'Linac': ''})
     settings.endGroup()
 
     settings.beginGroup('3D Phantom')

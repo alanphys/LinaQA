@@ -429,12 +429,6 @@ class LinaQA(QMainWindow):
     def show_dx_toolbar(self):
         self.ui.toolBar_Dx.setVisible(self.ui.action_Dx_Toolbar.isChecked())
 
-    def auto_window(self):
-        if self.imager is not None and hasattr(self.imager, "values"):
-            self.imager.auto_window()
-            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
-
     def wheelEvent(self, e):
         if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.index += int(e.angleDelta().y()/120)
@@ -997,7 +991,7 @@ class LinaQA(QMainWindow):
             datasets.append(ds)
             self.ref_imager = Imager(datasets)
         except pydicom.errors.InvalidDicomError:
-            self.status_error('Error reeading DICOM image file.')
+            self.status_error('Error reading DICOM image file.')
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Image processing and editing
@@ -1008,6 +1002,12 @@ class LinaQA(QMainWindow):
         else:
             self.imager.invflag = True
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+
+    def auto_window(self):
+        if self.imager is not None and hasattr(self.imager, "values"):
+            self.imager.auto_window()
+            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+            self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
 
     def edit_pixel_data(self):
         if self.imager:
