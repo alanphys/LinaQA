@@ -208,6 +208,7 @@
     </property>
     <addaction name="action_Auto_Window"/>
     <addaction name="action_Invert"/>
+    <addaction name="action_Gamma"/>
    </widget>
    <widget class="QMenu" name="menu_Analyse">
     <property name="title">

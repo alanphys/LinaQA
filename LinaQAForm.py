@@ -321,6 +321,7 @@ class Ui_LinaQAForm(object):
         self.menu_File.addAction(self.action_Save_all)
         self.menu_Image.addAction(self.action_Auto_Window)
         self.menu_Image.addAction(self.action_Invert)
+        self.menu_Image.addAction(self.action_Gamma)
         self.menu_Analyse.addAction(self.action_2DPhantoms)
         self.menu_Analyse.addAction(self.action_CatPhan)
         self.menu_Analyse.addAction(self.action_Machine_Logs)
