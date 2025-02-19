@@ -209,6 +209,7 @@
     <addaction name="action_Auto_Window"/>
     <addaction name="action_Invert"/>
     <addaction name="action_Gamma"/>
+    <addaction name="action_Sum_Image"/>
    </widget>
    <widget class="QMenu" name="menu_Analyse">
     <property name="title">
@@ -347,6 +348,7 @@
    <addaction name="action_Auto_Window"/>
    <addaction name="action_Invert"/>
    <addaction name="action_Gamma"/>
+   <addaction name="action_Sum_Image"/>
    <addaction name="action_Pixel_Data"/>
   </widget>
   <widget class="QToolBar" name="toolBar_DCM">
@@ -794,6 +796,18 @@
    </property>
    <property name="visible">
     <bool>true</bool>
+   </property>
+  </action>
+  <action name="action_Sum_Image">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/ImageSum.png</normaloff>:/Icons/Icons/ImageSum.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sum Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Sum and average images</string>
    </property>
   </action>
  </widget>

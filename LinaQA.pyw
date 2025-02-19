@@ -158,6 +158,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Machine_Logs.triggered.connect(self.analyse_log)
         self.ui.action_Pixel_Data.triggered.connect(self.edit_pixel_data)
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
+        self.ui.action_Sum_Image.triggered.connect(self.avg_image)
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
         self.ui.qle_filter_tag.textChanged.connect(self.filter_tag)
         self.ui.action_Insert_tag.triggered.connect(self.insert_tag)
@@ -481,13 +482,6 @@ class LinaQA(QMainWindow):
     def resizeEvent(self, event):
         if self.imager is not None and hasattr(self.imager, "values"):
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-
-    def invert(self):
-        if self.imager.invflag:
-            self.imager.invflag = False
-        else:
-            self.imager.invflag = True
-        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
     def tab_changed(self, index):
         self.ui.action_DICOM_tags.setChecked(self.ui.tabWidget.isTabVisible(1))
@@ -1006,8 +1000,15 @@ class LinaQA(QMainWindow):
             self.status_error('Error reeading DICOM image file.')
 
 # ---------------------------------------------------------------------------------------------------------------------
-# Pixel Data Section
+# Image processing and editing
 # ---------------------------------------------------------------------------------------------------------------------
+    def invert(self):
+        if self.imager.invflag:
+            self.imager.invflag = False
+        else:
+            self.imager.invflag = True
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+
     def edit_pixel_data(self):
         if self.imager:
             if self.ui.action_Pixel_Data.isChecked():
@@ -1019,6 +1020,12 @@ class LinaQA(QMainWindow):
                 self.is_changed = True
             else:
                 self.ui.tabWidget.setTabVisible(3, False)
+
+    def avg_image(self):
+        num_images = self.imager.size[2]
+        self.imager.avg_images()
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.status_message(f'{num_images} images were averaged')
 
 
 def main():

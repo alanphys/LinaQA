@@ -127,3 +127,16 @@ class Imager:
         win_min = np.min(self.values)
         self._window_width = win_max-win_min
         self._window_center = (win_max + win_min)//2
+
+    def avg_images(self):
+        # collapse the images into one image.
+        if (self.values is not None) and (self.values.ndim == 3):
+            image_sum = np.sum(self.values, axis=2)
+            image_sum = image_sum/self.size[2]
+            self.datasets[0].PixelData = image_sum.astype(np.uint16, casting='unsafe').tobytes()
+            self.size = (int(self.datasets[0].Rows), int(self.datasets[0].Columns), 1)
+            self.values = image_sum.reshape(int(self.datasets[0].Rows),  int(self.datasets[0].Columns), 1)
+            for image in self.datasets[1:]:
+                self.datasets.remove(image)
+            self.index = 0
+            self.auto_window()
