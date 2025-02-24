@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="Icons">
+    <file>Icons/ScaleImage.png</file>
     <file>Icons/ImageSum.png</file>
     <file>Icons/LinacIcon.png</file>
     <file>Icons/X-rayIcon.png</file>

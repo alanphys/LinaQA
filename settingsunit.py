@@ -105,6 +105,8 @@ def set_default_settings(settings):
     settings.beginGroup("PyDicom")
     if not settings.contains('Force'):
         settings.setValue('Force', 'False')
+    if not settings.contains('Scale factor'):
+        settings.setValue('Scale factor', '1.0')
     settings.endGroup()
 
     settings.beginGroup('Window')

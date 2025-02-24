@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>678</width>
-    <height>682</height>
+    <height>883</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -347,6 +347,7 @@
    </attribute>
    <addaction name="action_Auto_Window"/>
    <addaction name="action_Invert"/>
+   <addaction name="action_Scale_Image"/>
    <addaction name="action_Gamma"/>
    <addaction name="action_Sum_Image"/>
    <addaction name="action_Pixel_Data"/>
@@ -808,6 +809,18 @@
    </property>
    <property name="toolTip">
     <string>Sum and average images</string>
+   </property>
+  </action>
+  <action name="action_Scale_Image">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/ScaleImage.png</normaloff>:/Icons/Icons/ScaleImage.png</iconset>
+   </property>
+   <property name="text">
+    <string>Scale Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Scale image maximum</string>
    </property>
   </action>
  </widget>

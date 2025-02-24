@@ -140,3 +140,14 @@ class Imager:
                 self.datasets.remove(image)
             self.index = 0
             self.auto_window()
+
+    def scale_images(self, factor: float):
+        if self.values is not None:
+            self.values = self.values*factor
+            if self.datasets[0].pixel_array.ndim == 3:
+                self.datasets[0].PixelData = self.values.astype(np.uint16, casting='unsafe').tobytes()
+            else:
+                for i, image in enumerate(self.datasets):
+                    image.PixelData = self.values[:, :, i].astype(np.uint16, casting='unsafe').tobytes()
+            self.auto_window()
+

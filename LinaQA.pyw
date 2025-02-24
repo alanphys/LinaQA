@@ -17,7 +17,7 @@ import io
 from pylinac.core.io import TemporaryZipDirectory
 from platform import system
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QMessageBox, QComboBox, QLabel, QAction,
-                             QInputDialog, QHeaderView)
+                             QInputDialog, QHeaderView, QDoubleSpinBox)
 from PyQt5.QtGui import QPixmap, QImage, QIcon, QFont, QMouseEvent, QStandardItemModel, QStandardItem, QPalette
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
 import matplotlib.pyplot as plt
@@ -99,7 +99,7 @@ class LinaQA(QMainWindow):
         self.ui.cbVMAT.setFixedWidth(120)
         self.ui.toolBar_Rx.insertWidget(self.ui.action_2DPhantoms, self.ui.cbVMAT)
         self.ui.cbVMAT.addItems(vmat_list)
-        self.ui.toolBar_Rx.insertSeparator(self.ui.action_VMAT)
+        self.ui.toolBar_Rx.insertSeparator(self.ui.action_2DPhantoms)
         vmat_type = self.settings.value('VMAT/Test type')
         index = self.ui.cbVMAT.findText(vmat_type)
         if index >= 0:
@@ -119,6 +119,17 @@ class LinaQA(QMainWindow):
             self.ui.cbPhan2D.setCurrentIndex(index)
         else:
             raise Exception('Invalid setting in 2D Phantom/Type')
+
+        # we have to insert a double spinbox for the image scaling manually into the toolbar
+        self.ui.toolBar_Dx.insertSeparator(self.ui.action_Scale_Image)
+        self.ui.lScaleFactor = QLabel('Scale Factor:')
+        self.ui.toolBar_Dx.insertWidget(self.ui.action_Gamma, self.ui.lScaleFactor)
+        self.ui.dsbScaleFactor = QDoubleSpinBox()
+        self.ui.dsbScaleFactor.setFixedWidth(120)
+        self.ui.dsbScaleFactor.setSingleStep(0.01)
+        self.ui.toolBar_Dx.insertWidget(self.ui.action_Gamma, self.ui.dsbScaleFactor)
+        self.ui.toolBar_Dx.insertSeparator(self.ui.action_Gamma)
+        self.ui.dsbScaleFactor.setValue(self.settings.value('PyDicom/Scale factor', 1.0, type=float))
 
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
@@ -157,6 +168,7 @@ class LinaQA(QMainWindow):
         self.ui.action_VMAT.triggered.connect(self.analyse_vmat)
         self.ui.action_Machine_Logs.triggered.connect(self.analyse_log)
         self.ui.action_Pixel_Data.triggered.connect(self.edit_pixel_data)
+        self.ui.action_Scale_Image.triggered.connect(self.scale_image)
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
         self.ui.action_Sum_Image.triggered.connect(self.avg_image)
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
@@ -1027,6 +1039,12 @@ class LinaQA(QMainWindow):
         self.imager.avg_images()
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
         self.status_message(f'{num_images} images were averaged')
+
+    def scale_image(self):
+        num_images = self.imager.size[2]
+        self.imager.scale_images(self.ui.dsbScaleFactor.value())
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.status_message(f'{num_images} images were scaled')
 
 
 def main():

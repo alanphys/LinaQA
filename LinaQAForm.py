@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_LinaQAForm(object):
     def setupUi(self, LinaQAForm):
         LinaQAForm.setObjectName("LinaQAForm")
-        LinaQAForm.resize(678, 682)
+        LinaQAForm.resize(678, 883)
         LinaQAForm.setAcceptDrops(True)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/Icons/Icons/LinacToolkit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -319,6 +319,11 @@ class Ui_LinaQAForm(object):
         icon26.addPixmap(QtGui.QPixmap(":/Icons/Icons/ImageSum.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_Sum_Image.setIcon(icon26)
         self.action_Sum_Image.setObjectName("action_Sum_Image")
+        self.action_Scale_Image = QtWidgets.QAction(LinaQAForm)
+        icon27 = QtGui.QIcon()
+        icon27.addPixmap(QtGui.QPixmap(":/Icons/Icons/ScaleImage.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_Scale_Image.setIcon(icon27)
+        self.action_Scale_Image.setObjectName("action_Scale_Image")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addAction(self.action_Open_Ref)
         self.menu_File.addAction(self.action_Save)
@@ -374,6 +379,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_Rx.addAction(self.action_Winston_Lutz)
         self.toolBar_Dx.addAction(self.action_Auto_Window)
         self.toolBar_Dx.addAction(self.action_Invert)
+        self.toolBar_Dx.addAction(self.action_Scale_Image)
         self.toolBar_Dx.addAction(self.action_Gamma)
         self.toolBar_Dx.addAction(self.action_Sum_Image)
         self.toolBar_Dx.addAction(self.action_Pixel_Data)
@@ -479,4 +485,6 @@ class Ui_LinaQAForm(object):
         self.action_Dx_Toolbar.setToolTip(_translate("LinaQAForm", "Show/hide imaging toolbar"))
         self.action_Sum_Image.setText(_translate("LinaQAForm", "Sum Image"))
         self.action_Sum_Image.setToolTip(_translate("LinaQAForm", "Sum and average images"))
+        self.action_Scale_Image.setText(_translate("LinaQAForm", "Scale Image"))
+        self.action_Scale_Image.setToolTip(_translate("LinaQAForm", "Scale image maximum"))
 import LinaQA_rc
