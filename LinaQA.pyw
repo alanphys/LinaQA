@@ -16,8 +16,16 @@ import os
 import io
 from pylinac.core.io import TemporaryZipDirectory
 from platform import system
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QMessageBox, QComboBox, QLabel, QAction,
-                             QInputDialog, QHeaderView, QDoubleSpinBox)
+from PyQt5.QtWidgets import (
+     QApplication,
+     QMainWindow,
+     QFileDialog,
+     QMessageBox,
+     QComboBox,
+     QLabel,
+     QAction,
+     QInputDialog,
+     QHeaderView)
 from PyQt5.QtGui import QPixmap, QImage, QIcon, QFont, QMouseEvent, QStandardItemModel, QStandardItem, QPalette
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
 import matplotlib.pyplot as plt
@@ -25,7 +33,15 @@ import numpy as np
 import webbrowser
 
 from LinaQAForm import Ui_LinaQAForm
-from linaqa_types import supported_modalities, catphan_list, vmat_list, phantom2D_list, faint_red, faint_green, faint_yellow
+from linaqa_types import (
+    supported_modalities,
+    catphan_list,
+    vmat_list,
+    phantom2D_list,
+    faint_red,
+    faint_green,
+    faint_yellow,
+    MyDoubleSpinBox)
 from aboutpackage import About
 from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
@@ -36,7 +52,18 @@ from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text
 from tablemodel import TableModel
 from pydicom import compat
 import pydicom
-from pylinac import image, picketfence, ct, winston_lutz, planar_imaging, vmat, starshot, log_analyzer, QuartDVT, ACRCT, ACRMRILarge
+from pylinac import (
+    image,
+    picketfence,
+    ct,
+    winston_lutz,
+    planar_imaging,
+    vmat,
+    starshot,
+    log_analyzer,
+    QuartDVT,
+    ACRCT,
+    ACRMRILarge)
 
 
 class LinaQA(QMainWindow):
@@ -124,7 +151,7 @@ class LinaQA(QMainWindow):
         self.ui.toolBar_Dx.insertSeparator(self.ui.action_Scale_Image)
         self.ui.lScaleFactor = QLabel('Scale Factor:')
         self.ui.toolBar_Dx.insertWidget(self.ui.action_Gamma, self.ui.lScaleFactor)
-        self.ui.dsbScaleFactor = QDoubleSpinBox()
+        self.ui.dsbScaleFactor = MyDoubleSpinBox()
         self.ui.dsbScaleFactor.setFixedWidth(120)
         self.ui.dsbScaleFactor.setSingleStep(0.01)
         self.ui.toolBar_Dx.insertWidget(self.ui.action_Gamma, self.ui.dsbScaleFactor)

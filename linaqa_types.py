@@ -5,6 +5,8 @@ Type definitions for LinaQA
 """
 # Author: AC Chamberlain
 
+from PyQt5.QtWidgets import QDoubleSpinBox
+
 supported_modalities = ['RTIMAGE', 'CT', 'NM', 'PT', 'MR', 'OT', 'XA']
 catphan_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "QuartDVT", "ACR CT", "ACR MRI"]
 vmat_list = ["DRGS", "DRMLC"]
@@ -24,3 +26,12 @@ phantom2D_list = ["Doselab MC2 MV",
 faint_red = '#ff7979'
 faint_yellow = '#fffccf'
 faint_green = '#d3ffe4'
+
+class MyDoubleSpinBox(QDoubleSpinBox):
+    def validate(self, text: str, pos: int) -> object:
+        text = text.replace(".", ",")
+        return QDoubleSpinBox.validate(self, text, pos)
+
+    def valueFromText(self, text: str) -> float:
+        text = text.replace(",", ".")
+        return float(text)
