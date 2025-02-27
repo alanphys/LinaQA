@@ -887,15 +887,7 @@ class LinaQA(QMainWindow):
                    open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
                    low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
         filename = osp.join(self.working_dir, 'W-L Analysis.pdf')
-        # TODO use show results
-        wl.publish_pdf(filename,
-                       notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
-                       metadata=self.settings.value('General/Metadata'),
-                       logo=self.settings.value('General/Logo'))
-        if open_path(filename):
-            self.status_message('Results displayed in PDF')
-        else:
-            self.status_error('No reader to open document')
+        self.show_results(wl, filename)
 
     @show_wait_cursor
     def analyse_2d_phantoms(self):
