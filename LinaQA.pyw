@@ -47,7 +47,7 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
 from imageunit import Imager
 from decorators import show_wait_cursor
-from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag
+from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag, dataset_to_stream
 
 from tablemodel import TableModel
 from pydicom import compat
@@ -848,9 +848,7 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_picket_fence(self):
-        stream = io.BytesIO()
-        self.imager.datasets[self.imager.index].save_as(stream, True)
-        stream.seek(0)
+        stream = dataset_to_stream(self.imager.datasets[self.imager.index])
         if self.settings.value('Picket Fence/Apply median filter', False, type=bool):
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText(), filter=3)
         else:
@@ -894,9 +892,7 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_2d_phantoms(self):
-        stream = io.BytesIO()
-        self.imager.datasets[self.imager.index].save_as(stream, True)
-        stream.seek(0)
+        stream = dataset_to_stream(self.imager.datasets[self.imager.index])
         phan = getattr(planar_imaging, self.ui.cbPhan2D.currentText().replace(' ', ''))(stream)
         phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantom/Low contrast threshold')),
                      high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
@@ -910,14 +906,8 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_vmat(self):
-        stream = io.BytesIO()
-        self.imager.datasets[self.imager.index].save_as(stream, True)
-        stream.seek(0)
-
-        ref_stream = io.BytesIO()
-        self.ref_imager.datasets[self.imager.index].save_as(ref_stream, True)
-        ref_stream.seek(0)
-
+        stream = dataset_to_stream(self.imager.datasets[self.imager.index])
+        ref_stream = dataset_to_stream(self.ref_imager.datasets[self.imager.index])
         images = (stream, ref_stream)
         if self.ui.cbVMAT.currentText() == 'DRGS':
             v = vmat.DRGS(image_paths=images)
