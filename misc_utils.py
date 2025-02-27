@@ -3,10 +3,10 @@
 Miscellaneous tools for LinaQA
 ==============================
 """
-import io
 # Author: AC Chamberlain
 
 import os
+import io
 import subprocess
 from pydicom import FileDataset
 
@@ -109,7 +109,14 @@ def text_to_tag(tag_text: str) -> tuple:
 
 
 def dataset_to_stream(ds: FileDataset) -> io.BytesIO():
+    # Create an in-memory stream for a single file
     stream = io.BytesIO()
     ds.save_as(stream, True)
     stream.seek(0)
     return stream
+
+
+def datasets_to_stream(ds_list: list) -> io.BytesIO():
+    # Create a list of individual file streams
+    file_streams = [dataset_to_stream(ds) for ds in ds_list]
+    return file_streams

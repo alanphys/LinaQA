@@ -47,7 +47,14 @@ from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
 from imageunit import Imager
 from decorators import show_wait_cursor
-from misc_utils import open_path, get_dot_attr, set_dot_attr, del_dot_attr, text_to_tag, dataset_to_stream
+from misc_utils import (
+    open_path,
+    get_dot_attr,
+    set_dot_attr,
+    del_dot_attr,
+    text_to_tag,
+    dataset_to_stream,
+    datasets_to_stream)
 
 from tablemodel import TableModel
 from pydicom import compat
@@ -826,16 +833,16 @@ class LinaQA(QMainWindow):
 # ---------------------------------------------------------------------------------------------------------------------
     @show_wait_cursor
     def analyse_catphan(self):
-        dirname = os.path.dirname(self.filenames[0])
+        streams = datasets_to_stream(self.imager.datasets)
         param_list = {}
         if self.ui.cbCatPhan.currentText() == 'QuartDVT':
-            cat = QuartDVT(dirname)
+            cat = QuartDVT(streams)
         elif self.ui.cbCatPhan.currentText() == 'ACR CT':
-            cat = ACRCT(dirname)
+            cat = ACRCT(streams)
         elif self.ui.cbCatPhan.currentText() == 'ACR MRI':
-            cat = ACRMRILarge(dirname)
+            cat = ACRMRILarge(streams)
         else:
-            cat = getattr(ct, self.ui.cbCatPhan.currentText())(dirname)
+            cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
             param_list = {"hu_tolerance": int(self.settings.value('3D Phantom/HU Tolerance')),
                           "thickness_tolerance": float(self.settings.value('3D Phantom/Thickness Tolerance')),
                           "scaling_tolerance": float(self.settings.value('3D Phantom/Scaling Tolerance'))}
@@ -871,8 +878,8 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_winston_lutz(self):
-        dirname = os.path.dirname(self.filenames[0])
-        wl = winston_lutz.WinstonLutz(dirname)
+        streams = datasets_to_stream(self.imager.datasets)
+        wl = winston_lutz.WinstonLutz(streams)
         if self.imager.invflag:
             for im in wl.images:
                 im.invert()
@@ -951,14 +958,8 @@ class LinaQA(QMainWindow):
     def analyse_gamma(self):
         # TODO put this in pdf maybe create its own class in pylinac
         if len(self.ref_filename) >> 0:
-            stream = io.BytesIO()
-            self.imager.datasets[self.imager.index].save_as(stream, True)
-            stream.seek(0)
-
-            ref_stream = io.BytesIO()
-            self.ref_imager.datasets[self.imager.index].save_as(ref_stream, True)
-            ref_stream.seek(0)
-
+            stream = dataset_to_stream(self.imager.datasets[self.imager.index])
+            ref_stream = dataset_to_stream(self.ref_imager.datasets[self.imager.index])
             eval_img = image.load(stream)
             if self.imager.invflag:
                 eval_img.invert()
