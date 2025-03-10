@@ -59,6 +59,7 @@ from misc_utils import (
 from tablemodel import TableModel
 from pydicom import compat
 import pydicom
+from pylinac.core.image import DicomImageStack
 from pylinac import (
     image,
     picketfence,
@@ -187,6 +188,7 @@ class LinaQA(QMainWindow):
         self.ui.action_About.triggered.connect(self.show_about)
         self.ui.action_Rx_Toolbar.triggered.connect(self.show_rx_toolbar)
         self.ui.action_Dx_Toolbar.triggered.connect(self.show_dx_toolbar)
+        self.ui.action_NM_Toolbar.triggered.connect(self.show_nm_toolbar)
         self.ui.action_DICOM_tags.triggered.connect(self.show_dicom_toolbar)
         self.ui.action_PyDicomH.triggered.connect(self.pydicom_help)
         self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
@@ -230,6 +232,7 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(4, False)
         self.show_rx_toolbar()
         self.show_dx_toolbar()
+        self.show_nm_toolbar()
         self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -475,6 +478,9 @@ class LinaQA(QMainWindow):
 
     def show_dx_toolbar(self):
         self.ui.toolBar_Dx.setVisible(self.ui.action_Dx_Toolbar.isChecked())
+
+    def show_nm_toolbar(self):
+        self.ui.toolBar_NM.setVisible(self.ui.action_NM_Toolbar.isChecked())
 
     def wheelEvent(self, e):
         if self.imager is not None and hasattr(self.imager, "values"):
@@ -833,7 +839,12 @@ class LinaQA(QMainWindow):
 # ---------------------------------------------------------------------------------------------------------------------
     @show_wait_cursor
     def analyse_catphan(self):
-        streams = datasets_to_stream(self.imager.datasets)
+        try:
+            # see if we have a new version of pylinac that can create direct from the dataset
+            streams = DicomImageStack(self.imager.datasets)
+        except TypeError:
+            # if not fall back to stream
+            streams = datasets_to_stream(self.imager.datasets)
         param_list = {}
         if self.ui.cbCatPhan.currentText() == 'QuartDVT':
             cat = QuartDVT(streams)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>678</width>
-    <height>883</height>
+    <height>682</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -275,6 +275,7 @@
    <addaction name="separator"/>
    <addaction name="action_Rx_Toolbar"/>
    <addaction name="action_Dx_Toolbar"/>
+   <addaction name="action_NM_Toolbar"/>
    <addaction name="action_DICOM_tags"/>
    <addaction name="separator"/>
   </widget>
@@ -366,6 +367,17 @@
    <addaction name="action_Insert_tag"/>
    <addaction name="action_Edit_tag"/>
    <addaction name="action_Delete_tag"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_NM">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -821,6 +833,21 @@
    </property>
    <property name="toolTip">
     <string>Scale image maximum</string>
+   </property>
+  </action>
+  <action name="action_NM_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/GammaCamera.png</normaloff>:/Icons/Icons/GammaCamera.png</iconset>
+   </property>
+   <property name="text">
+    <string>NM</string>
+   </property>
+   <property name="toolTip">
+    <string>Show/hide nuclear medicine toolbar</string>
    </property>
   </action>
  </widget>
