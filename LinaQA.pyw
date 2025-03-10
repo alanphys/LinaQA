@@ -544,10 +544,7 @@ class LinaQA(QMainWindow):
                 self.ui.action_Delete_tag.setEnabled(False)
                 self.ui.action_Delete_tag.setVisible(False)
             if index == 0:
-                ds = self.imager.datasets[self.imager.index]
-                if self.imager.datasets[self.imager.index].Modality in ['RTIMAGE', 'CT', 'NM', 'PT']:
-                    np.copyto(self.imager.values[:, :, self.imager.index], ds.pixel_array, 'unsafe')
-                    self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+                self.show_image(self.imager.get_current_image(), self.ui.qlImage)
             elif index == 1:
                 self.ui.action_Find_tag.setEnabled(True)
                 self.ui.action_Find_tag.setVisible(True)
@@ -624,11 +621,12 @@ class LinaQA(QMainWindow):
     def dataset_to_model(self):
         self.source_model.clear()
         model_header = list()
-        model_header.append(self.filenames[self.imager.index])
+        idx = self.imager.index if len(self.imager.datasets) > 1 else 0
+        model_header.append(self.filenames[idx])
         self.source_model.setHorizontalHeaderLabels(model_header)
         parent_item = self.source_model.invisibleRootItem()
-        self.write_header(self.imager.datasets[self.imager.index], parent_item)
-        self.recurse_tree(self.imager.datasets[self.imager.index], parent_item)
+        self.write_header(self.imager.datasets[idx], parent_item)
+        self.recurse_tree(self.imager.datasets[idx], parent_item)
         return
 
     def write_header(self, ds, parent):
