@@ -59,6 +59,7 @@ from misc_utils import (
 from tablemodel import TableModel
 from pydicom import compat
 import pydicom
+from pylinac.core import pdf
 from pylinac.core.image import DicomImageStack
 from pylinac import (
     image,
@@ -981,7 +982,24 @@ class LinaQA(QMainWindow):
             plt.xlabel('Distance (pixels)')
             plt.colorbar()
             plt.clim(0, self.settings.value('Gamma Analysis/Gamma cap', 2.0, type=float))
-            plt.show()
+#            plt.show()
+            filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+            canvas = pdf.PylinacCanvas(filename,
+                                       page_title='Gamma analysis',
+                                       metadata=self.settings.value('General/Metadata'),
+                                       logo=self.settings.value('General/Logo'))
+            notes = self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+            if notes is not None:
+                canvas.add_text(text="Notes:", location=(1, 4.5), font_size=14)
+                canvas.add_text(text=notes, location=(1, 4))
+            img = io.BytesIO()
+            plt.savefig(img)
+            canvas.add_image(img, location=(1, 5), dimensions=(18, 18))
+            canvas.finish()
+            if open_path(filename):
+                self.status_message('Results displayed in PDF')
+            else:
+                self.status_error('No reader to open document')
         else:
             self.ui.tabWidget.setTabVisible(3, False)
 
