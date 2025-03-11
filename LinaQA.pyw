@@ -72,6 +72,7 @@ from pylinac import (
     QuartDVT,
     ACRCT,
     ACRMRILarge)
+from pylinac.nuclear import MaxCountRate
 
 
 class LinaQA(QMainWindow):
@@ -207,6 +208,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Scale_Image.triggered.connect(self.scale_image)
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
         self.ui.action_Sum_Image.triggered.connect(self.avg_image)
+        self.ui.action_MCR.triggered.connect(self.max_count_rate)
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
         self.ui.qle_filter_tag.textChanged.connect(self.filter_tag)
         self.ui.action_Insert_tag.triggered.connect(self.insert_tag)
@@ -833,7 +835,7 @@ class LinaQA(QMainWindow):
             self.status_warn('No tag selected!')
 
 # ---------------------------------------------------------------------------------------------------------------------
-# Analyse section
+# Radiotherapy analysis
 # ---------------------------------------------------------------------------------------------------------------------
     @show_wait_cursor
     def analyse_catphan(self):
@@ -1065,6 +1067,15 @@ class LinaQA(QMainWindow):
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
         self.status_message(f'{num_images} images were scaled')
 
+# ---------------------------------------------------------------------------------------------------------------------
+# Nuclear medicine analysis
+# ---------------------------------------------------------------------------------------------------------------------
+
+    @show_wait_cursor
+    def max_count_rate(self):
+        mcr = MaxCountRate(self.filenames[0])
+        mcr.analyze()
+        mcr.plot()
 
 def main():
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"

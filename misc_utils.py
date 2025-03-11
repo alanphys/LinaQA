@@ -111,6 +111,9 @@ def text_to_tag(tag_text: str) -> tuple:
 def dataset_to_stream(ds: FileDataset) -> io.BytesIO():
     # Create an in-memory stream for a single file
     stream = io.BytesIO()
+    if hasattr(ds, 'pixel_array'):
+        arr = ds.pixel_array
+        ds.PixelData = arr.tobytes()
     ds.save_as(stream, True)
     stream.seek(0)
     return stream

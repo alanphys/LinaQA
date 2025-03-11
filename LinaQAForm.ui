@@ -378,6 +378,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_MCR"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -848,6 +849,18 @@
    </property>
    <property name="toolTip">
     <string>Show/hide nuclear medicine toolbar</string>
+   </property>
+  </action>
+  <action name="action_MCR">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/MaxCount.png</normaloff>:/Icons/Icons/MaxCount.png</iconset>
+   </property>
+   <property name="text">
+    <string>MCR</string>
+   </property>
+   <property name="toolTip">
+    <string>Calcluate maximum count rate</string>
    </property>
   </action>
  </widget>

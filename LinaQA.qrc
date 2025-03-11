@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="Icons">
     <file>Icons/GammaCamera.png</file>
+    <file>Icons/MaxCount.png</file>
     <file>Icons/ScaleImage.png</file>
     <file>Icons/ImageSum.png</file>
     <file>Icons/LinacIcon.png</file>

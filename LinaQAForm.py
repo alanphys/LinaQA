@@ -333,6 +333,11 @@ class Ui_LinaQAForm(object):
         icon28.addPixmap(QtGui.QPixmap(":/Icons/Icons/GammaCamera.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_NM_Toolbar.setIcon(icon28)
         self.action_NM_Toolbar.setObjectName("action_NM_Toolbar")
+        self.action_MCR = QtWidgets.QAction(LinaQAForm)
+        icon29 = QtGui.QIcon()
+        icon29.addPixmap(QtGui.QPixmap(":/Icons/Icons/MaxCount.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_MCR.setIcon(icon29)
+        self.action_MCR.setObjectName("action_MCR")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addAction(self.action_Open_Ref)
         self.menu_File.addAction(self.action_Save)
@@ -397,6 +402,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_DCM.addAction(self.action_Insert_tag)
         self.toolBar_DCM.addAction(self.action_Edit_tag)
         self.toolBar_DCM.addAction(self.action_Delete_tag)
+        self.toolBar_NM.addAction(self.action_MCR)
 
         self.retranslateUi(LinaQAForm)
         self.tabWidget.setCurrentIndex(0)
@@ -500,4 +506,6 @@ class Ui_LinaQAForm(object):
         self.action_Scale_Image.setToolTip(_translate("LinaQAForm", "Scale image maximum"))
         self.action_NM_Toolbar.setText(_translate("LinaQAForm", "NM"))
         self.action_NM_Toolbar.setToolTip(_translate("LinaQAForm", "Show/hide nuclear medicine toolbar"))
+        self.action_MCR.setText(_translate("LinaQAForm", "MCR"))
+        self.action_MCR.setToolTip(_translate("LinaQAForm", "Calcluate maximum count rate"))
 import LinaQA_rc
