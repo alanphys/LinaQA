@@ -567,6 +567,7 @@ class LinaQA(QMainWindow):
 
     def show_results(self, test, filename):
         if osp.exists(filename):
+            QApplication.restoreOverrideCursor()
             filename = QFileDialog.getSaveFileName(self, "File exists, save file as:", filename, "PDF files (*.pdf)")[0]
         if len(filename) > 0:
             test.publish_pdf(filename,
@@ -1095,6 +1096,11 @@ class LinaQA(QMainWindow):
         mcr.analyze()
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         self.show_results(mcr, filename)
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------------------------------------------------
+
 
 def main():
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
