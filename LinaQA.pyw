@@ -55,6 +55,7 @@ from misc_utils import (
     text_to_tag,
     dataset_to_stream,
     datasets_to_stream)
+from pylinac_subclasses import MyMaxCountRate
 
 from tablemodel import TableModel
 from pydicom import compat
@@ -73,7 +74,6 @@ from pylinac import (
     QuartDVT,
     ACRCT,
     ACRMRILarge)
-from pylinac.nuclear import MaxCountRate
 
 
 class LinaQA(QMainWindow):
@@ -1091,9 +1091,10 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def max_count_rate(self):
-        mcr = MaxCountRate(self.filenames[0])
+        mcr = MyMaxCountRate(self.filenames[0])
         mcr.analyze()
-        mcr.plot()
+        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+        self.show_results(mcr, filename)
 
 def main():
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
