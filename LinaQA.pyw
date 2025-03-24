@@ -8,7 +8,7 @@ Usage: python LinaQA.pyw
 
 """
 # author : AC Chamberlain <alanphys@yahoo.co.uk>
-# copyright: AC Chamberlain (c) 2023, 2024
+# copyright: AC Chamberlain (c) 2023-2025
 
 import sys
 import os.path as osp
@@ -55,7 +55,7 @@ from misc_utils import (
     text_to_tag,
     dataset_to_stream,
     datasets_to_stream)
-from pylinac_subclasses import MyMaxCountRate
+from pylinac_subclasses import MyMaxCountRate, MyPlanarUniformity
 
 from tablemodel import TableModel
 from pydicom import compat
@@ -210,6 +210,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
         self.ui.action_Sum_Image.triggered.connect(self.avg_image)
         self.ui.action_MCR.triggered.connect(self.max_count_rate)
+        self.ui.action_Uniformity.triggered.connect(self.planar_uniformity)
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
         self.ui.qle_filter_tag.textChanged.connect(self.filter_tag)
         self.ui.action_Insert_tag.triggered.connect(self.insert_tag)
@@ -961,7 +962,6 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def analyse_gamma(self):
-        # TODO put this in pdf maybe create its own class in pylinac
         if len(self.ref_filename) >> 0:
             stream = dataset_to_stream(self.imager.datasets[self.imager.index])
             ref_stream = dataset_to_stream(self.ref_imager.datasets[self.imager.index])
@@ -1096,6 +1096,14 @@ class LinaQA(QMainWindow):
         mcr.analyze()
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         self.show_results(mcr, filename)
+
+    @show_wait_cursor
+    def planar_uniformity(self):
+        pu = MyPlanarUniformity(self.filenames[0])
+        pu.analyze()
+        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+        self.show_results(pu, filename)
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Main

@@ -6,13 +6,13 @@ Show a tabbed help window
 Show a tabbed help window displaying the readme, licence and credits
 """
 # author : AC Chamberlain <alanphys@yahoo.co.uk>
-# copyright: AC Chamberlain (c) 2019-2024
+# copyright: AC Chamberlain (c) 2019-2025
 
 from .aboutformui import Ui_AboutForm
 from PyQt5.QtWidgets import QDialog
 import os
 
-version = '0.06.144'  # previous git commit 7c6998b7
+version = '0.06.152'  # previous git commit 44a77b14
 
 
 class About(QDialog):

@@ -338,6 +338,11 @@ class Ui_LinaQAForm(object):
         icon29.addPixmap(QtGui.QPixmap(":/Icons/Icons/MaxCount.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_MCR.setIcon(icon29)
         self.action_MCR.setObjectName("action_MCR")
+        self.action_Uniformity = QtWidgets.QAction(LinaQAForm)
+        icon30 = QtGui.QIcon()
+        icon30.addPixmap(QtGui.QPixmap(":/Icons/Icons/UniSmall.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_Uniformity.setIcon(icon30)
+        self.action_Uniformity.setObjectName("action_Uniformity")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addAction(self.action_Open_Ref)
         self.menu_File.addAction(self.action_Save)
@@ -403,6 +408,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_DCM.addAction(self.action_Edit_tag)
         self.toolBar_DCM.addAction(self.action_Delete_tag)
         self.toolBar_NM.addAction(self.action_MCR)
+        self.toolBar_NM.addAction(self.action_Uniformity)
 
         self.retranslateUi(LinaQAForm)
         self.tabWidget.setCurrentIndex(0)
@@ -508,4 +514,6 @@ class Ui_LinaQAForm(object):
         self.action_NM_Toolbar.setToolTip(_translate("LinaQAForm", "Show/hide nuclear medicine toolbar"))
         self.action_MCR.setText(_translate("LinaQAForm", "MCR"))
         self.action_MCR.setToolTip(_translate("LinaQAForm", "Calcluate maximum count rate"))
+        self.action_Uniformity.setText(_translate("LinaQAForm", "Uniformity"))
+        self.action_Uniformity.setToolTip(_translate("LinaQAForm", "Calculate planar uniformity "))
 import LinaQA_rc

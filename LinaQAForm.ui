@@ -379,6 +379,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_MCR"/>
+   <addaction name="action_Uniformity"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -861,6 +862,18 @@
    </property>
    <property name="toolTip">
     <string>Calcluate maximum count rate</string>
+   </property>
+  </action>
+  <action name="action_Uniformity">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/UniSmall.png</normaloff>:/Icons/Icons/UniSmall.png</iconset>
+   </property>
+   <property name="text">
+    <string>Uniformity</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate planar uniformity </string>
    </property>
   </action>
  </widget>
