@@ -333,15 +333,20 @@ class LinaQA(QMainWindow):
         # Try to sort based on instance number then SOPInstanceUID
         sorted_method = "filenames"
         try:
-            datasets.sort(key=lambda x: x.InstanceNumber)
+            order = sorted(range(len(datasets)), key=lambda i: datasets[i].InstanceNumber)
+            datasets = [datasets[i] for i in order]
+            filenames = [filenames[i] for i in order]
             sorted_method = "instance number"
         except (TypeError, AttributeError):
             try:
-                datasets.sort(key=lambda x: x.SOPInstanceUID)
+                order = sorted(range(len(datasets)), key=lambda i: datasets[i].SOPInstanceUID)
+                datasets = [datasets[i] for i in order]
+                filenames = [filenames[i] for i in order]
                 sorted_method = "SOP instance UID"
             except (TypeError, AttributeError):
                 pass
         self.imager = Imager(datasets)
+        self.filenames = filenames
         if num_bad == 0:
             self.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
         else:
