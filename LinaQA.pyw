@@ -540,29 +540,34 @@ class LinaQA(QMainWindow):
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
     def tab_changed(self, index):
-        self.ui.action_DICOM_tags.setChecked(self.ui.tabWidget.isTabVisible(1))
+        # self.ui.action_DICOM_tags.setChecked(self.ui.tabWidget.isTabVisible(1))
         if self.imager:
             if index != 1:
-                self.ui.action_DICOM_tags.setChecked(self.ui.tabWidget.isTabVisible(1))
-                self.ui.action_Find_tag.setEnabled(False)
+                self.ui.action_DICOM_tags.setChecked(False)
+                self.show_dicom_toolbar()
+                """self.ui.action_Find_tag.setEnabled(False)
                 self.ui.action_Find_tag.setVisible(False)
                 self.ui.action_Insert_tag.setEnabled(False)
                 self.ui.action_Insert_tag.setVisible(False)
                 self.ui.action_Edit_tag.setEnabled(False)
                 self.ui.action_Edit_tag.setVisible(False)
                 self.ui.action_Delete_tag.setEnabled(False)
-                self.ui.action_Delete_tag.setVisible(False)
+                self.ui.action_Delete_tag.setVisible(False)"""
             if index == 0:
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+                self.ui.tabWidget.setTabVisible(0, True)
+                self.ui.tabWidget.setCurrentIndex(0)
             elif index == 1:
-                self.ui.action_Find_tag.setEnabled(True)
+                self.ui.action_DICOM_tags.setChecked(True)
+                self.show_dicom_toolbar()
+                """self.ui.action_Find_tag.setEnabled(True)
                 self.ui.action_Find_tag.setVisible(True)
                 self.ui.action_Insert_tag.setEnabled(True)
                 self.ui.action_Insert_tag.setVisible(True)
                 self.ui.action_Edit_tag.setEnabled(True)
                 self.ui.action_Edit_tag.setVisible(True)
                 self.ui.action_Delete_tag.setEnabled(True)
-                self.ui.action_Delete_tag.setVisible(True)
+                self.ui.action_Delete_tag.setVisible(True)"""
 
     def show_notes(self):
         if self.ui.action_Notes.isChecked():
@@ -620,7 +625,8 @@ class LinaQA(QMainWindow):
                 self.find_tag()
                 self.show_tree()
             else:
-                self.ui.tabWidget.setTabVisible(1, False)
+                # self.ui.tabWidget.setTabVisible(1, False)
+                self.ui.tabWidget.setCurrentIndex(0)
 
     def show_tree(self):
         self.dataset_to_model()
