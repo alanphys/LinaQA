@@ -545,14 +545,6 @@ class LinaQA(QMainWindow):
             if index != 1:
                 self.ui.action_DICOM_tags.setChecked(False)
                 self.show_dicom_toolbar()
-                """self.ui.action_Find_tag.setEnabled(False)
-                self.ui.action_Find_tag.setVisible(False)
-                self.ui.action_Insert_tag.setEnabled(False)
-                self.ui.action_Insert_tag.setVisible(False)
-                self.ui.action_Edit_tag.setEnabled(False)
-                self.ui.action_Edit_tag.setVisible(False)
-                self.ui.action_Delete_tag.setEnabled(False)
-                self.ui.action_Delete_tag.setVisible(False)"""
             if index == 0:
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
                 self.ui.tabWidget.setTabVisible(0, True)
@@ -560,14 +552,10 @@ class LinaQA(QMainWindow):
             elif index == 1:
                 self.ui.action_DICOM_tags.setChecked(True)
                 self.show_dicom_toolbar()
-                """self.ui.action_Find_tag.setEnabled(True)
-                self.ui.action_Find_tag.setVisible(True)
-                self.ui.action_Insert_tag.setEnabled(True)
-                self.ui.action_Insert_tag.setVisible(True)
-                self.ui.action_Edit_tag.setEnabled(True)
-                self.ui.action_Edit_tag.setVisible(True)
-                self.ui.action_Delete_tag.setEnabled(True)
-                self.ui.action_Delete_tag.setVisible(True)"""
+            elif (index == 2) and (self.ref_imager is not None):
+                self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
+                self.ui.tabWidget.setTabVisible(2, True)
+                self.ui.tabWidget.setCurrentIndex(2)
 
     def show_notes(self):
         if self.ui.action_Notes.isChecked():
@@ -625,9 +613,6 @@ class LinaQA(QMainWindow):
                 self.find_tag()
                 self.filter_tag()
                 self.show_tree()
-            else:
-                # self.ui.tabWidget.setTabVisible(1, False)
-                self.ui.tabWidget.setCurrentIndex(0)
 
     def show_tree(self):
         self.dataset_to_model()
@@ -1041,8 +1026,9 @@ class LinaQA(QMainWindow):
         if self.ref_filename:
             if pydicom.misc.is_dicom(self.ref_filename):
                 self.open_ref_image(self.ref_filename)
-                self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
-                self.ui.qlRef.show()
+                # self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
+                # self.ui.qlRef.show()
+                self.tab_changed(2)
             else:
                 self.status_error('Not a DICOM image file.')
 
