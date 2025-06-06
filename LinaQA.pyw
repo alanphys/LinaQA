@@ -373,12 +373,15 @@ class LinaQA(QMainWindow):
             # does the file have a recognised image format?
             if ((self.imager.datasets[0].Modality in supported_modalities)
                     and hasattr(self.imager.datasets[0], 'PixelData')):
-                self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-                self.ui.qlImage.show()
+                self.tab_changed(0)
+                # self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+                # self.ui.qlImage.show()
             else:
-                self.ui.action_DICOM_tags.setChecked(True)
                 self.ui.tabWidget.setTabVisible(0, False)
-            self.show_dicom_toolbar()
+                self.ui.action_DICOM_tags.setChecked(True)
+                self.tab_changed(1)
+                # self.ui.tabWidget.setTabVisible(0, False)
+            # self.show_dicom_toolbar()
             self.edit_pixel_data()
         else:
             the_image = QPixmap(self.filenames[0])
@@ -545,7 +548,7 @@ class LinaQA(QMainWindow):
             if index != 1:
                 self.ui.action_DICOM_tags.setChecked(False)
                 self.show_dicom_toolbar()
-            if index == 0:
+            if (index == 0) and (self.imager is not None):
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
                 self.ui.tabWidget.setTabVisible(0, True)
                 self.ui.tabWidget.setCurrentIndex(0)
@@ -613,6 +616,8 @@ class LinaQA(QMainWindow):
                 self.find_tag()
                 self.filter_tag()
                 self.show_tree()
+            else:
+                self.ui.tabWidget.setTabVisible(1, False)
 
     def show_tree(self):
         self.dataset_to_model()

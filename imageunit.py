@@ -95,7 +95,7 @@ class Imager:
         self._invflag = value
 
     def get_image(self, index):
-        if self.values is not None:
+        if hasattr(self, "values") and self.values is not None:
             # int32 true values (HU or brightness units)
             img = self.values[:, :, index]
 
