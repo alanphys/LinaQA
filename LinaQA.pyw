@@ -26,7 +26,16 @@ from PyQt5.QtWidgets import (
      QAction,
      QInputDialog,
      QHeaderView)
-from PyQt5.QtGui import QPixmap, QImage, QIcon, QFont, QMouseEvent, QStandardItemModel, QStandardItem, QPalette
+from PyQt5.QtGui import (
+     QGuiApplication,
+     QPixmap,
+     QImage,
+     QIcon,
+     QFont,
+     QMouseEvent,
+     QStandardItemModel,
+     QStandardItem,
+     QPalette)
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1121,7 +1130,11 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("LinaQA")
     app.setOrganizationName("YenzakahleMPI")
-    app.setWindowIcon(QIcon(":/icons/icons/LinacToolKit.png"))
+    platform = QGuiApplication.platformName()
+    if "wayland" in platform:
+        QGuiApplication.setDesktopFileName("LinaQA")
+    else:
+        app.setWindowIcon(QIcon(":/icons/icons/LinacToolKit.png"))
     window = LinaQA()
     window.show()
     if len(sys.argv) > 1:
