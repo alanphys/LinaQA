@@ -1121,6 +1121,7 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("LinaQA")
     app.setOrganizationName("YenzakahleMPI")
+    app.setWindowIcon(QIcon(":/icons/icons/LinacToolKit.png"))
     window = LinaQA()
     window.show()
     if len(sys.argv) > 1:
