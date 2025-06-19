@@ -29,6 +29,6 @@ class TableModel(QAbstractTableModel):
     def setData(self, index, value, role):
         if role == Qt.EditRole:
             # Set the value into the frame.
-            self._data[index.row(), index.column()] = value
+            self._data[index.row(), index.column()] = value if value != '' else 0
             return True
         return False
