@@ -102,6 +102,7 @@ class LinaQA(QMainWindow):
         self.proxy_model = None
         self.table_model = None
         self.is_changed = False
+        self.old_tab = 0
         self.ui = Ui_LinaQAForm()
         self.ui.setupUi(self)
         self.settings = QSettings()
@@ -558,6 +559,11 @@ class LinaQA(QMainWindow):
                 self.ui.action_DICOM_tags.setChecked(False)
                 self.show_dicom_toolbar()
             if (index == 0) and (self.imager is not None):
+                if self.old_tab == 3:
+                    if hasattr(self.imager.datasets[self.imager.index], 'pixel_array'):
+                        self.imager.datasets[self.imager.index].PixelData = (
+                            self.imager.datasets[self.imager.index].pixel_array.tobytes())
+                        self.imager.load_pixel_data(self.imager.datasets)
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
                 self.ui.tabWidget.setTabVisible(0, True)
                 self.ui.tabWidget.setCurrentIndex(0)
@@ -568,6 +574,9 @@ class LinaQA(QMainWindow):
                 self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
                 self.ui.tabWidget.setTabVisible(2, True)
                 self.ui.tabWidget.setCurrentIndex(2)
+            elif (index ==3) and (self.imager is not None):
+                self.edit_pixel_data()
+        self.old_tab = index
 
     def show_notes(self):
         if self.ui.action_Notes.isChecked():
