@@ -555,9 +555,6 @@ class LinaQA(QMainWindow):
     def tab_changed(self, index):
         # self.ui.action_DICOM_tags.setChecked(self.ui.tabWidget.isTabVisible(1))
         if self.imager:
-            if index != 1:
-                self.ui.action_DICOM_tags.setChecked(False)
-                self.show_dicom_toolbar()
             if (index == 0) and (self.imager is not None):
                 if self.old_tab == 3:
                     if hasattr(self.imager.datasets[self.imager.index], 'pixel_array'):
