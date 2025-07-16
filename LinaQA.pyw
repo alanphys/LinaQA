@@ -245,6 +245,7 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(3, False)
         self.ui.tabWidget.setTabVisible(4, False)
         self.show_rx_toolbar()
+        self.show_dicom_toolbar()
         self.show_dx_toolbar()
         self.show_nm_toolbar()
         self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
