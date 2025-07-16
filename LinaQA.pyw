@@ -218,7 +218,8 @@ class LinaQA(QMainWindow):
         self.ui.action_Pixel_Data.triggered.connect(self.edit_pixel_data)
         self.ui.action_Scale_Image.triggered.connect(self.scale_image)
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
-        self.ui.action_Sum_Image.triggered.connect(self.avg_image)
+        self.ui.action_Sum_Image.triggered.connect(self.sum_image)
+        self.ui.action_Ave_Image.triggered.connect(self.avg_image)
         self.ui.action_MCR.triggered.connect(self.max_count_rate)
         self.ui.action_Uniformity.triggered.connect(self.planar_uniformity)
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
@@ -1092,6 +1093,12 @@ class LinaQA(QMainWindow):
                 self.is_changed = True
             else:
                 self.ui.tabWidget.setTabVisible(3, False)
+
+    def sum_image(self):
+        num_images = self.imager.size[2]
+        self.imager.avg_images(avg=False)
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.status_message(f'{num_images} images were summed')
 
     def avg_image(self):
         num_images = self.imager.size[2]

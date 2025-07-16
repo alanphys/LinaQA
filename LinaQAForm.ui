@@ -351,6 +351,7 @@
    <addaction name="action_Scale_Image"/>
    <addaction name="action_Gamma"/>
    <addaction name="action_Sum_Image"/>
+   <addaction name="action_Ave_Image"/>
    <addaction name="action_Pixel_Data"/>
   </widget>
   <widget class="QToolBar" name="toolBar_DCM">
@@ -822,7 +823,7 @@
     <string>Sum Image</string>
    </property>
    <property name="toolTip">
-    <string>Sum and average images</string>
+    <string>Sum images</string>
    </property>
   </action>
   <action name="action_Scale_Image">
@@ -874,6 +875,18 @@
    </property>
    <property name="toolTip">
     <string>Calculate planar uniformity </string>
+   </property>
+  </action>
+  <action name="action_Ave_Image">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/ImageAve.png</normaloff>:/Icons/Icons/ImageAve.png</iconset>
+   </property>
+   <property name="text">
+    <string>Average Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Average images</string>
    </property>
   </action>
  </widget>
