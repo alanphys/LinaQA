@@ -136,6 +136,8 @@ class Imager:
             image_sum = np.sum(self.values, axis=2)
             if avg:
                 image_sum = image_sum/self.size[2]
+            if np.max(image_sum) > np.iinfo(np.uint16).max:
+                raise OverflowError
             self.datasets[0].PixelData = image_sum.astype(np.uint16, casting='unsafe').tobytes()
             self.size = (int(self.datasets[0].Rows), int(self.datasets[0].Columns), 1)
             self.values = image_sum.reshape(int(self.datasets[0].Rows),  int(self.datasets[0].Columns), 1)

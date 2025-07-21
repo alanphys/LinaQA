@@ -1096,9 +1096,12 @@ class LinaQA(QMainWindow):
 
     def sum_image(self):
         num_images = self.imager.size[2]
-        self.imager.avg_images(avg=False)
-        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-        self.status_message(f'{num_images} images were summed')
+        try:
+            self.imager.avg_images(avg=False)
+            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+            self.status_message(f'{num_images} images were summed')
+        except OverflowError as e:
+            self.status_error('Image sum is resulting in integer overflow')
 
     def avg_image(self):
         num_images = self.imager.size[2]
