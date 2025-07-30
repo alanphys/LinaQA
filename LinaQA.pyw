@@ -1095,13 +1095,12 @@ class LinaQA(QMainWindow):
                 self.ui.tabWidget.setTabVisible(3, False)
 
     def sum_image(self):
+        # We can't simply sum the images as it can give an integer overflow.
+        # We must sum and rescale.
         num_images = self.imager.size[2]
-        try:
-            self.imager.avg_images(avg=False)
-            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f'{num_images} images were summed')
-        except OverflowError as e:
-            self.status_error('Image sum is resulting in integer overflow')
+        self.imager.sum_images()
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.status_message(f'{num_images} images were summed. Image has been rescaled.')
 
     def avg_image(self):
         num_images = self.imager.size[2]

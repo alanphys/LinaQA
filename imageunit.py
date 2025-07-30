@@ -130,14 +130,45 @@ class Imager:
         self._window_width = win_max-win_min
         self._window_center = (win_max + win_min)//2
 
-    def avg_images(self, avg: bool = True):
+    def sum_images(self):
+        # collapse the images into one image.
+        if (self.values is not None) and (self.values.ndim == 3):
+            # create floating point matrix same size as values
+            fpvalues = np.array(self.values, dtype=float)
+            # for each image rescale pixel values to calibrated units.
+            for i, ds in enumerate(self.datasets):
+                if hasattr(ds, 'RescaleSlope') and hasattr(ds, 'RescaleIntercept'):
+                    slope = ds.RescaleSlope
+                    intercept = ds.RescaleIntercept
+                else:
+                    slope = 1
+                    intercept = 1
+                fpvalues[:, :, i] = fpvalues[:, :, i]*slope + intercept
+            image_sum = np.sum(fpvalues, axis=2)
+            # get slope to rescale values to max int16
+            slope = np.max(image_sum)/np.iinfo(np.uint16).max
+            image_sum = image_sum/slope
+            self.datasets[0].PixelData = image_sum.astype(np.uint16, casting='unsafe').tobytes()
+            self.size = (int(self.datasets[0].Rows), int(self.datasets[0].Columns), 1)
+            self.values = image_sum.reshape(int(self.datasets[0].Rows),  int(self.datasets[0].Columns), 1)
+            # A rescale relationship must be established even if it didn't exist before
+            if not hasattr(self.datasets[0], 'PixelIntensityRelationship'):
+                self.datasets[0].PixelIntensityRelationship = 'LIN'
+            if not hasattr(self.datasets[0], 'PixelIntensityRelationshipSign'):
+                self.datasets[0].PixelIntensityRelationshipSign = 1
+            self.datasets[0].RescaleSlope = slope
+            self.datasets[0].RescaleIntercept = 0
+            self.datasets[0].RescaleType = 'CU'
+            for image in self.datasets[1:]:
+                self.datasets.remove(image)
+            self.index = 0
+            self.auto_window()
+
+    def avg_images(self):
         # collapse the images into one image.
         if (self.values is not None) and (self.values.ndim == 3):
             image_sum = np.sum(self.values, axis=2)
-            if avg:
-                image_sum = image_sum/self.size[2]
-            if np.max(image_sum) > np.iinfo(np.uint16).max:
-                raise OverflowError
+            image_sum = image_sum/self.size[2]
             self.datasets[0].PixelData = image_sum.astype(np.uint16, casting='unsafe').tobytes()
             self.size = (int(self.datasets[0].Rows), int(self.datasets[0].Columns), 1)
             self.values = image_sum.reshape(int(self.datasets[0].Rows),  int(self.datasets[0].Columns), 1)
