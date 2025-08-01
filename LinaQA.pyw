@@ -683,7 +683,19 @@ class LinaQA(QMainWindow):
     def copy_tag(self):
         clipboard = QApplication.clipboard()
         selected_tags = ''
-        for index in self.ui.treeView.selectedIndexes():
+        indexes = self.ui.treeView.selectedIndexes()
+
+        # Sort indexes by row to maintain order
+        def get_hierarchical_path(index):
+            path = []
+            current = index
+            while current.isValid():
+                path.append(current.row())
+                current = current.parent()
+            return path[::-1]  # Reverse to get root-to-leaf order
+
+        sorted_indexes = sorted(indexes, key=get_hierarchical_path)
+        for index in sorted_indexes:
             selected_tags = selected_tags + self.ui.treeView.model().itemData(index)[0] + '\n'
         clipboard.setText(selected_tags)
 
