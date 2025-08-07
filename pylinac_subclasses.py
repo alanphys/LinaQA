@@ -12,6 +12,7 @@ from matplotlib import pyplot as plt
 from pylinac.nuclear import MaxCountRate, PlanarUniformity
 from pylinac.core import pdf
 
+
 class MyMaxCountRate(MaxCountRate):
     _model = "Maximum Count Rate"
 

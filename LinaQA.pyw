@@ -67,7 +67,6 @@ from misc_utils import (
 from pylinac_subclasses import MyMaxCountRate, MyPlanarUniformity
 
 from tablemodel import TableModel
-from pydicom import compat
 import pydicom
 from pylinac.core import pdf
 from pylinac.core.image import DicomImageStack
@@ -657,10 +656,7 @@ class LinaQA(QMainWindow):
         # write meta data
         fm = ds.file_meta
         for data_element in fm:
-            if isinstance(data_element.value, compat.text_type):
-                item = QStandardItem(compat.text_type(data_element))
-            else:
-                item = QStandardItem(str(data_element))
+            item = QStandardItem(str(data_element))
             parent.appendRow(item)
 
     def recurse_tree(self, ds, parent):
@@ -668,10 +664,7 @@ class LinaQA(QMainWindow):
         # write data elements
         pydicom.config.convert_wrong_length_to_UN = True
         for data_element in ds:
-            if isinstance(data_element.value, compat.text_type):
-                item = QStandardItem(compat.text_type(data_element))
-            else:
-                item = QStandardItem(str(data_element))
+            item = QStandardItem(str(data_element))
             parent.appendRow(item)
             if data_element.VR == "SQ":   # a sequence
                 for i, ds in enumerate(data_element.value):
