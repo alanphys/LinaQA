@@ -97,13 +97,15 @@ def del_dot_attr(obj, att_name):
 def text_to_tag(tag_text: str) -> tuple:
     tag_element = tag_keyword = tag_vr = tag_value = ''
     tag_group = tag_text[1:5]
-    if tag_group.isnumeric(): # item is a tag
+    try:
+        int(tag_group, 16)
+        # item is a tag
         tag_group = '0x' + tag_group
         tag_element = '0x' + tag_text[7:11]
         tag_vr = tag_text.split(':')[0][-2:]
         tag_keyword = tag_text.split(':')[0].split(')')[1][:-2].strip()
         tag_value = tag_text.split(':')[1].strip()
-    else:                     # item is a sequence
+    except ValueError:                     # item is a sequence
         tag_keyword = tag_text.split(':')[0].strip()
     return tag_group, tag_element, tag_keyword, tag_vr, tag_value
 
