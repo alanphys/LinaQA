@@ -733,7 +733,10 @@ class LinaQA(QMainWindow):
         # get path for tag insertion
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
-        tag_parent = source_index.parent()
+        tag_parent = source_index
+        tag_group, _, _, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
+        if tag_group != '':                 # tag is leaf and we must select parent
+            tag_parent = source_index.parent()
         tag_path = ''
         while tag_parent.data(Qt.DisplayRole) is not None:
             _, _, parent_lable, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
@@ -771,7 +774,10 @@ class LinaQA(QMainWindow):
                 self.status_message('Inserted ' + tag_path + ' (' + tag_group + ', ' + tag_element + ') '
                                     + tag_keyword + ' ' + tag_vr + ':' + tag_value)
             except AttributeError:
-                self.status_error('Could not insert ' + tag_path)
+                self.status_error('Could not insert ' + tag_path + '.')
+
+            except TypeError:
+                self.status_error('You may not insert a tag as a sequence.')
 
     def edit_tag(self):
         # get current tag

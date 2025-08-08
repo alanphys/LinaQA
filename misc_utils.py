@@ -106,6 +106,7 @@ def text_to_tag(tag_text: str) -> tuple:
         tag_keyword = tag_text.split(':')[0].split(')')[1][:-2].strip()
         tag_value = tag_text.split(':')[1].strip()
     except ValueError:                     # item is a sequence
+        tag_group = ''
         tag_keyword = tag_text.split(':')[0].strip()
     return tag_group, tag_element, tag_keyword, tag_vr, tag_value
 
