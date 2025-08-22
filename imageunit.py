@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 from linaqa_types import supported_modalities
 
@@ -137,17 +139,20 @@ class Imager:
             fpvalues = np.array(self.values, dtype=float)
             # for each image rescale pixel values to calibrated units.
             for i, ds in enumerate(self.datasets):
-                if hasattr(ds, 'RescaleSlope') and hasattr(ds, 'RescaleIntercept'):
-                    slope = ds.RescaleSlope
-                    intercept = ds.RescaleIntercept
-                else:
-                    slope = 1
-                    intercept = 1
+                slope = ds.RescaleSlope if hasattr(ds, 'RescaleSlope') else 1
+                intercept = ds.RescaleIntercept if hasattr(ds, 'RescaleIntercept') else 0
+                sign = ds.PixelIntensityRelationship if hasattr(ds, 'PixelIntensityRelationship') \
+                    else math.copysign(1, slope)
                 fpvalues[:, :, i] = fpvalues[:, :, i]*slope + intercept
             image_sum = np.sum(fpvalues, axis=2)
-            # get slope to rescale values to max int16
-            slope = np.max(image_sum)/np.iinfo(np.uint16).max
-            image_sum = image_sum/slope
+            if sign == 1:   # if sign=1 pixel values increase with x-ray intensity
+                # get slope to rescale values to max int16
+                intercept = np.min(image_sum)
+                slope = (np.max(image_sum) - intercept)/np.iinfo(np.uint16).max
+            else:           # if sign = -1 pixel values decrease with x-ray intensity
+                intercept = np.max(image_sum)
+                slope = (np.min(image_sum) - intercept)/np.iinfo(np.uint16).max
+            image_sum = (image_sum - intercept)/slope
             self.datasets[0].PixelData = image_sum.astype(np.uint16, casting='unsafe').tobytes()
             self.size = (int(self.datasets[0].Rows), int(self.datasets[0].Columns), 1)
             self.values = image_sum.reshape(int(self.datasets[0].Rows),  int(self.datasets[0].Columns), 1)
@@ -155,7 +160,7 @@ class Imager:
             if not hasattr(self.datasets[0], 'PixelIntensityRelationship'):
                 self.datasets[0].PixelIntensityRelationship = 'LIN'
             if not hasattr(self.datasets[0], 'PixelIntensityRelationshipSign'):
-                self.datasets[0].PixelIntensityRelationshipSign = 1
+                self.datasets[0].PixelIntensityRelationshipSign = int(sign)
             self.datasets[0].RescaleSlope = slope
             self.datasets[0].RescaleIntercept = 0
             self.datasets[0].RescaleType = 'CU'
