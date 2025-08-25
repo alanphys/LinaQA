@@ -13,7 +13,7 @@ from pylinac.nuclear import MaxCountRate, PlanarUniformity
 from pylinac.core import pdf
 
 
-class MyMaxCountRate(MaxCountRate):
+class LinaQAMaxCountRate(MaxCountRate):
     _model = "Maximum Count Rate"
 
     def publish_pdf(
@@ -59,7 +59,7 @@ class MyMaxCountRate(MaxCountRate):
         canvas.finish()
 
 
-class MyPlanarUniformity(PlanarUniformity):
+class LinaQAPlanarUniformity(PlanarUniformity):
     _model = "Planar Uniformity"
 
     def publish_pdf(
