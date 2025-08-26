@@ -162,7 +162,7 @@ class Imager:
             if not hasattr(self.datasets[0], 'PixelIntensityRelationshipSign'):
                 self.datasets[0].PixelIntensityRelationshipSign = int(sign)
             self.datasets[0].RescaleSlope = slope
-            self.datasets[0].RescaleIntercept = 0
+            self.datasets[0].RescaleIntercept = intercept
             self.datasets[0].RescaleType = 'CU'
             for image in self.datasets[1:]:
                 self.datasets.remove(image)
