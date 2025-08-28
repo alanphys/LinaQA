@@ -64,7 +64,7 @@ from misc_utils import (
     text_to_tag,
     dataset_to_stream,
     datasets_to_stream)
-from pylinac_subclasses import LinaQAMaxCountRate, LinaQAPlanarUniformity
+import pylinac_subclasses
 
 from tablemodel import TableModel
 import pydicom
@@ -1131,14 +1131,14 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def max_count_rate(self):
-        mcr = LinaQAMaxCountRate(self.filenames[0])
+        mcr = pylinac_subclasses.LinaQAMaxCountRate(self.imager.datasets)
         mcr.analyze()
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         self.show_results(mcr, filename)
 
     @show_wait_cursor
     def planar_uniformity(self):
-        pu = LinaQAPlanarUniformity(self.filenames[0])
+        pu = pylinac_subclasses.LinaQAPlanarUniformity(self.filenames[0])
         pu.analyze()
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         self.show_results(pu, filename)

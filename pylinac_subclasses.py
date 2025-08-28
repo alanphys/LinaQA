@@ -3,18 +3,64 @@
 Extra functionality for pylinac classes. Merge into pylinac at some stage
 =========================================================================
 """
-import io
 # Author: AC Chamberlain
 
+import io
 import textwrap
 from pathlib import Path
 from matplotlib import pyplot as plt
+from pydicom import Dataset
+
+# We need to monkey patch NMImageStack to accept a dataset. This is bad practice, very bad, but the only
+# workaround I have at the moment.
+from pylinac.core.image import DicomImage, NMImageStack
+import functools
+
+
+def patch_nm_image_stack():
+    original_init = NMImageStack.__init__
+
+    @functools.wraps(original_init)
+    def enhanced_init(self, path: str | Path | list[Dataset]):
+        if isinstance(path[0], Dataset):
+            self.path = path
+            self.metadata = path[0]
+            self.frames = []
+            for ds in path:
+                if ds.Modality != 'NM':
+                    raise TypeError('The file is not a NM image')
+                full_array = ds.pixel_array
+                # we may have a single dataset with multiple frames
+                if hasattr(ds, 'NumberOfFrames') and (ds.NumberOfFrames > 1):
+                    for i in range(ds.NumberOfFrames):
+                        array = full_array[i]
+                        img = DicomImage.from_dataset(ds)
+                        img.array = array
+                        self.frames.append(img)
+                # or we may have multiple images with one frame
+                else:
+                    img = DicomImage.from_dataset(ds)
+                    img.array = full_array
+                    self.frames.append(img)
+        else:
+            original_init
+
+    NMImageStack.__init__ = enhanced_init
+
+
+# apply the patch
+patch_nm_image_stack()
+
 from pylinac.nuclear import MaxCountRate, PlanarUniformity
 from pylinac.core import pdf
 
 
 class LinaQAMaxCountRate(MaxCountRate):
     _model = "Maximum Count Rate"
+
+    def __init__(self, path: str | Path | list[Dataset]) -> None:
+        self.stack = NMImageStack(path)
+
 
     def publish_pdf(
         self,
