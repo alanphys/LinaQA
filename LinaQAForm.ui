@@ -381,6 +381,7 @@
    </attribute>
    <addaction name="action_MCR"/>
    <addaction name="action_Uniformity"/>
+   <addaction name="action_Tomo_Uni"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -887,6 +888,18 @@
    </property>
    <property name="toolTip">
     <string>Average images</string>
+   </property>
+  </action>
+  <action name="action_Tomo_Uni">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/TomoUniSmall.png</normaloff>:/Icons/Icons/TomoUniSmall.png</iconset>
+   </property>
+   <property name="text">
+    <string>Tomographic Uniformity</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate tomographic uniformity</string>
    </property>
   </action>
  </widget>

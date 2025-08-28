@@ -221,6 +221,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Ave_Image.triggered.connect(self.avg_image)
         self.ui.action_MCR.triggered.connect(self.max_count_rate)
         self.ui.action_Uniformity.triggered.connect(self.planar_uniformity)
+        self.ui.action_Tomo_Uni.triggered.connect(self.tomographic_uniformity)
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
         self.ui.qle_filter_tag.textChanged.connect(self.filter_tag)
         self.ui.action_Insert_tag.triggered.connect(self.insert_tag)
@@ -588,8 +589,9 @@ class LinaQA(QMainWindow):
             QApplication.restoreOverrideCursor()
             filename = QFileDialog.getSaveFileName(self, "File exists, save file as:", filename, "PDF files (*.pdf)")[0]
         if len(filename) > 0:
+            notes = self.ui.pte_notes.toPlainText().split('\n') if self.ui.pte_notes.toPlainText() != '' else None
             test.publish_pdf(filename,
-                             notes=self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                             notes=notes,
                              metadata=self.settings.value('General/Metadata'),
                              logo=self.settings.value('General/Logo'))
             if open_path(filename):
@@ -1004,7 +1006,7 @@ class LinaQA(QMainWindow):
             gamma = eval_img.gamma(comparison_image=ref_img,
                                    doseTA=self.settings.value('Gamma Analysis/Dose to agreement', 2.0, type=float),
                                    distTA=self.settings.value('Gamma Analysis/Distance to agreement', 2.0, type=float),
-                                   threshold=self.settings.value('Gamma Analysis/Dose threshold', 0.05, type = float))
+                                   threshold=self.settings.value('Gamma Analysis/Dose threshold', 0.05, type=float))
             gamma_plot = plt.imshow(gamma)
             gamma_plot.set_cmap('bwr')
             plt.title(f'Gamma Analysis ({self.settings.value("Gamma Analysis/Dose to agreement")}'
@@ -1143,6 +1145,18 @@ class LinaQA(QMainWindow):
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         self.show_results(pu, filename)
 
+    @show_wait_cursor
+    def tomographic_uniformity(self):
+        tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets)
+        tu.analyze(first_frame=self.settings.value('Tomographic Uniformity/First frame', 0, type=int),
+                   last_frame=self.settings.value('Tomographic Uniformity/Last frame', -1, type=int),
+                   ufov_ratio=self.settings.value('Tomographic Uniformity/ufov ratio', 0.80, type=float),
+                   cfov_ratio=self.settings.value('Tomographic Uniformity/cfov ratio', 0.75, type=float),
+                   center_ratio=self.settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
+                   threshold=self.settings.value('Tomographic Uniformity/Threshold', 0.75, type=float),
+                   window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
+        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+        self.show_results(tu, filename)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Main

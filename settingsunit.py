@@ -116,6 +116,23 @@ def set_default_settings(settings):
         settings.setValue('Size', QSize(678, 682))
     settings.endGroup()
 
+    settings.beginGroup("Tomographic Uniformity")
+    if not settings.contains('First frame'):
+        settings.setValue('First frame', '0')
+    if not settings.contains('Last frame'):
+        settings.setValue('Last frame', '-1')
+    if not settings.contains('ufov ratio'):
+        settings.setValue('ufov ratio', '0.80')
+    if not settings.contains('cfov ratio'):
+        settings.setValue('cfov ratio', '0.75')
+    if not settings.contains('Center ratio'):
+        settings.setValue('Center ratio', '0.4')
+    if not settings.contains('Threshold'):
+        settings.setValue('Threshold', '0.75')
+    if not settings.contains('Window size'):
+        settings.setValue('Window size', '5')
+    settings.endGroup()
+
 
 class TypeChecker:
     def __init__(self, parent=None):

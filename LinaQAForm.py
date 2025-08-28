@@ -348,6 +348,11 @@ class Ui_LinaQAForm(object):
         icon31.addPixmap(QtGui.QPixmap(":/Icons/Icons/ImageAve.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_Ave_Image.setIcon(icon31)
         self.action_Ave_Image.setObjectName("action_Ave_Image")
+        self.action_Tomo_Uni = QtWidgets.QAction(LinaQAForm)
+        icon32 = QtGui.QIcon()
+        icon32.addPixmap(QtGui.QPixmap(":/Icons/Icons/TomoUniSmall.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_Tomo_Uni.setIcon(icon32)
+        self.action_Tomo_Uni.setObjectName("action_Tomo_Uni")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addAction(self.action_Open_Ref)
         self.menu_File.addAction(self.action_Save)
@@ -415,6 +420,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_DCM.addAction(self.action_Delete_tag)
         self.toolBar_NM.addAction(self.action_MCR)
         self.toolBar_NM.addAction(self.action_Uniformity)
+        self.toolBar_NM.addAction(self.action_Tomo_Uni)
 
         self.retranslateUi(LinaQAForm)
         self.tabWidget.setCurrentIndex(0)
@@ -524,4 +530,6 @@ class Ui_LinaQAForm(object):
         self.action_Uniformity.setToolTip(_translate("LinaQAForm", "Calculate planar uniformity "))
         self.action_Ave_Image.setText(_translate("LinaQAForm", "Average Image"))
         self.action_Ave_Image.setToolTip(_translate("LinaQAForm", "Average images"))
+        self.action_Tomo_Uni.setText(_translate("LinaQAForm", "Tomographic Uniformity"))
+        self.action_Tomo_Uni.setToolTip(_translate("LinaQAForm", "Calculate tomographic uniformity"))
 import LinaQA_rc
