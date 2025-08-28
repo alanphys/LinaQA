@@ -1138,7 +1138,7 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def planar_uniformity(self):
-        pu = pylinac_subclasses.LinaQAPlanarUniformity(self.filenames[0])
+        pu = pylinac_subclasses.LinaQAPlanarUniformity(self.imager.datasets)
         pu.analyze()
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         self.show_results(pu, filename)

@@ -43,7 +43,7 @@ def patch_nm_image_stack():
                     img.array = full_array
                     self.frames.append(img)
         else:
-            original_init
+            original_init(self, path)
 
     NMImageStack.__init__ = enhanced_init
 
@@ -60,7 +60,6 @@ class LinaQAMaxCountRate(MaxCountRate):
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
         self.stack = NMImageStack(path)
-
 
     def publish_pdf(
         self,
@@ -107,6 +106,10 @@ class LinaQAMaxCountRate(MaxCountRate):
 
 class LinaQAPlanarUniformity(PlanarUniformity):
     _model = "Planar Uniformity"
+
+    def __init__(self, path: str | Path | list[Dataset]) -> None:
+        self.stack = NMImageStack(path)
+        # self.path = Path(path)
 
     def publish_pdf(
         self,
