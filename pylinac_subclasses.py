@@ -143,7 +143,11 @@ class LinaQAPlanarUniformity(PlanarUniformity):
             canvas.add_text(text="Notes:", location=(1, 2.5), font_size=12)
             canvas.add_text(text=notes, location=(1, 2))
 
-        figs, axs = self.plot(show=False)
+        analysis_images = io.BytesIO()
+        self.plot(show=False)
+        plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        plt.tight_layout()
+        plt.savefig(analysis_images, bbox_inches='tight')
         for key, result in self.frame_results.items():
             if key != "1":
                 canvas.add_new_page()
@@ -163,9 +167,7 @@ class LinaQAPlanarUniformity(PlanarUniformity):
                 text=f"CFOV differential uniformity {result['cfov'].differential_uniformity: .2f}%",
                 location=(2.0, 20.0))
 
-            analysis_image = io.BytesIO()
-            figs[int(key) - 1].savefig(analysis_image)
-            canvas.add_image(analysis_image, location=(1, 3), dimensions=(18, 18))
+        canvas.add_image(analysis_images, location=(1, 3), dimensions=(18, 18))
         canvas.finish()
 
 
@@ -208,7 +210,9 @@ class LinaQATomoUniformity(TomographicUniformity):
         analysis_title = f"{self._model} Analysis"
         analysis_images = io.BytesIO()
         self.plot(show=False)
-        plt.savefig(analysis_images)
+        plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        plt.tight_layout()
+        plt.savefig(analysis_images, bbox_inches='tight')
         results_text = self.results().splitlines()
 
         canvas = pdf.PylinacCanvas(filename, page_title=analysis_title, metadata=metadata, logo=logo)
@@ -218,5 +222,5 @@ class LinaQATomoUniformity(TomographicUniformity):
 
         for idx, text in enumerate(results_text):
             canvas.add_text(text=text, location=(2.0, 22-idx*0.5))
-        canvas.add_image(analysis_images, location=(1, 3), dimensions=(18, 18))
+        canvas.add_image(analysis_images, location=(1, 3), dimensions=(18, 18), preserve_aspect_ratio=True)
         canvas.finish()
