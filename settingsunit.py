@@ -114,6 +114,14 @@ def set_default_settings(settings):
         settings.setValue('Position', QPoint(100, 200))
     if not settings.contains('Size'):
         settings.setValue('Size', QSize(678, 682))
+    if not settings.contains('Show Rx Toolbar'):
+        settings.setValue('Show Rx Toolbar', 'True')
+    if not settings.contains('Show Dx Toolbar'):
+        settings.setValue('Show Dx Toolbar', 'False')
+    if not settings.contains('Show NM Toolbar'):
+        settings.setValue('Show NM Toolbar', 'False')
+    if not settings.contains('Show DCM Toolbar'):
+        settings.setValue('Show DCM Toolbar', 'False')
     settings.endGroup()
 
     settings.beginGroup("Tomographic Uniformity")
