@@ -589,7 +589,13 @@ class LinaQA(QMainWindow):
         else:
             self.ui.tabWidget.setTabVisible(4, False)
 
-    def show_results(self, test, filename):
+    def show_results(self, test, filename=''):
+        if filename == '':
+            if len(self.filenames) == 1:
+                filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+            elif len(self.filenames) > 1:
+                filename = test._model + ' Analysis.pdf' if hasattr(test, '_model') else '3D Analysis.pdf'
+                filename = osp.join(self.working_dir, filename)
         if osp.exists(filename):
             QApplication.restoreOverrideCursor()
             filename = QFileDialog.getSaveFileName(self, "File exists, save file as:", filename, "PDF files (*.pdf)")[0]
@@ -901,8 +907,7 @@ class LinaQA(QMainWindow):
             for im in cat.dicom_stack.images:
                 im.invert()
         cat.analyze(**param_list)
-        filename = osp.join(self.working_dir, '3D Analysis.pdf')
-        self.show_results(cat, filename)
+        self.show_results(cat)
 
     @show_wait_cursor
     def analyse_picket_fence(self):
@@ -924,8 +929,7 @@ class LinaQA(QMainWindow):
                        invert=self.imager.invflag,
                        required_prominence=0.1)
             self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
-        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        self.show_results(pf, filename)
+        self.show_results(pf)
 
     @show_wait_cursor
     def analyse_winston_lutz(self):
@@ -937,8 +941,7 @@ class LinaQA(QMainWindow):
         wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
                    open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
                    low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
-        filename = osp.join(self.working_dir, 'W-L Analysis.pdf')
-        self.show_results(wl, filename)
+        self.show_results(wl)
 
     @show_wait_cursor
     def analyse_2d_phantoms(self):
@@ -951,8 +954,7 @@ class LinaQA(QMainWindow):
                           else float(self.settings.value('2D Phantom/Angle override'))),
                      ssd=('auto' if self.settings.value('2D Phantom/SSD') == '1000'
                           else float(self.settings.value('2D Phantom/SSD'))))
-        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        self.show_results(phan, filename)
+        self.show_results(phan)
 
     @show_wait_cursor
     def analyse_vmat(self):
@@ -966,8 +968,7 @@ class LinaQA(QMainWindow):
         v.analyze(tolerance=float(self.settings.value('VMAT/Tolerance')))
         v.open_image.base_path = self.filenames[0]
         v.dmlc_image.base_path = self.ref_filename
-        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        self.show_results(v, filename)
+        self.show_results(v)
 
     @show_wait_cursor
     def analyse_star(self):
@@ -994,8 +995,7 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_log(self):
         log = log_analyzer.load_log(self.filenames[0])
-        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        self.show_results(log, filename)
+        self.show_results(log)
 
     @show_wait_cursor
     def analyse_gamma(self):
@@ -1140,15 +1140,13 @@ class LinaQA(QMainWindow):
     def max_count_rate(self):
         mcr = pylinac_subclasses.LinaQAMaxCountRate(self.imager.datasets)
         mcr.analyze()
-        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        self.show_results(mcr, filename)
+        self.show_results(mcr)
 
     @show_wait_cursor
     def planar_uniformity(self):
         pu = pylinac_subclasses.LinaQAPlanarUniformity(self.imager.datasets)
         pu.analyze()
-        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        self.show_results(pu, filename)
+        self.show_results(pu)
 
     @show_wait_cursor
     def tomographic_uniformity(self):
@@ -1160,14 +1158,12 @@ class LinaQA(QMainWindow):
                    center_ratio=self.settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
                    threshold=self.settings.value('Tomographic Uniformity/Threshold', 0.75, type=float),
                    window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
-        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        self.show_results(tu, filename)
+        self.show_results(tu)
 
     def tomographic_resolution(self):
         tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets)
         tr.analyze()
-        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-        self.show_results(tr, filename)
+        self.show_results(tr)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Main
