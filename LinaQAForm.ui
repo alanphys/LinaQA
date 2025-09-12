@@ -382,6 +382,7 @@
    <addaction name="action_MCR"/>
    <addaction name="action_Uniformity"/>
    <addaction name="action_Tomo_Uni"/>
+   <addaction name="action_Tomo_Res"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -863,7 +864,7 @@
     <string>MCR</string>
    </property>
    <property name="toolTip">
-    <string>Calcluate maximum count rate</string>
+    <string>Calculate maximum count rate</string>
    </property>
   </action>
   <action name="action_Uniformity">
@@ -900,6 +901,18 @@
    </property>
    <property name="toolTip">
     <string>Calculate tomographic uniformity</string>
+   </property>
+  </action>
+  <action name="action_Tomo_Res">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/TomoRes.png</normaloff>:/Icons/Icons/TomoRes.png</iconset>
+   </property>
+   <property name="text">
+    <string>Tomo Res</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate tomographic resolution</string>
    </property>
   </action>
  </widget>

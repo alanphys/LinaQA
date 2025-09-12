@@ -222,6 +222,7 @@ class LinaQA(QMainWindow):
         self.ui.action_MCR.triggered.connect(self.max_count_rate)
         self.ui.action_Uniformity.triggered.connect(self.planar_uniformity)
         self.ui.action_Tomo_Uni.triggered.connect(self.tomographic_uniformity)
+        self.ui.action_Tomo_Res.triggered.connect(self.tomographic_resolution)
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
         self.ui.qle_filter_tag.textChanged.connect(self.filter_tag)
         self.ui.action_Insert_tag.triggered.connect(self.insert_tag)
@@ -1157,6 +1158,12 @@ class LinaQA(QMainWindow):
                    window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
         filename = osp.splitext(self.filenames[0])[0] + '.pdf'
         self.show_results(tu, filename)
+
+    def tomographic_resolution(self):
+        tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets)
+        tr.analyze()
+        filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+        self.show_results(tr, filename)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Main
