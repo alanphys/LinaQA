@@ -12,7 +12,7 @@ from .aboutformui import Ui_AboutForm
 from PyQt5.QtWidgets import QDialog
 import os
 
-version = '0.06.230'  # previous git commit b22c4879
+version = '0.06.232'  # previous git commit ac36c242
 
 
 class About(QDialog):

@@ -314,6 +314,8 @@ class LinaQA(QMainWindow):
             ds = pydicom.dcmread(filenames[0], force=force_read)
             if 'TransferSyntaxUID' not in ds.file_meta:
                 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+            if 'SpacingBetweenSlices' not in ds:
+                ds.SpacingBetweenSlices = ds.SliceThickness if hasattr(ds, 'SliceThickness') else 1
             first_modality = ds.Modality
             if ds.file_meta.TransferSyntaxUID.is_compressed:
                 ds.decompress()
@@ -327,6 +329,8 @@ class LinaQA(QMainWindow):
                 ds = pydicom.dcmread(file, force=force_read)
                 if 'TransferSyntaxUID' not in ds.file_meta:
                     ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+                if 'SpacingBetweenSlices' not in ds:
+                    ds.SpacingBetweenSlices = ds.SliceThickness if hasattr(ds, 'SliceThickness') else 1
                 modality = ds.Modality
                 frames = 1
                 if hasattr(ds, "NumberOfFrames"):
