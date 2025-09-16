@@ -205,8 +205,7 @@ class LinaQA(QMainWindow):
         self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
         action_close.triggered.connect(self.close)
         self.ui.action_Settings.triggered.connect(self.show_settings)
-        self.ui.action_Invert.triggered.connect(self.invert)
-        self.ui.action_Auto_Window.triggered.connect(self.auto_window)
+        # RX toolbar
         self.ui.action_CatPhan.triggered.connect(self.analyse_catphan)
         self.ui.action_Picket_Fence.triggered.connect(self.analyse_picket_fence)
         self.ui.action_Winston_Lutz.triggered.connect(self.analyse_winston_lutz)
@@ -214,15 +213,22 @@ class LinaQA(QMainWindow):
         self.ui.action_Starshot.triggered.connect(self.analyse_star)
         self.ui.action_VMAT.triggered.connect(self.analyse_vmat)
         self.ui.action_Machine_Logs.triggered.connect(self.analyse_log)
+        # DX toolbar
+        self.ui.action_Invert.triggered.connect(self.invert)
+        self.ui.action_Auto_Window.triggered.connect(self.auto_window)
         self.ui.action_Pixel_Data.triggered.connect(self.edit_pixel_data)
         self.ui.action_Scale_Image.triggered.connect(self.scale_image)
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
         self.ui.action_Sum_Image.triggered.connect(self.sum_image)
         self.ui.action_Ave_Image.triggered.connect(self.avg_image)
+        # NM toolbar
         self.ui.action_MCR.triggered.connect(self.max_count_rate)
+        self.ui.action_Simple_Sens.triggered.connect(self.simple_sensitivity)
         self.ui.action_Uniformity.triggered.connect(self.planar_uniformity)
         self.ui.action_Tomo_Uni.triggered.connect(self.tomographic_uniformity)
         self.ui.action_Tomo_Res.triggered.connect(self.tomographic_resolution)
+        self.ui.action_COR.triggered.connect(self.centre_of_rotation)
+        # DICOM toolbar
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
         self.ui.qle_filter_tag.textChanged.connect(self.filter_tag)
         self.ui.action_Insert_tag.triggered.connect(self.insert_tag)
@@ -1147,6 +1153,16 @@ class LinaQA(QMainWindow):
         self.show_results(mcr)
 
     @show_wait_cursor
+    def simple_sensitivity(self):
+        phantom_image = self.imager.datasets[self.imager.index]
+        background_image = self.ref_imager.datasets[0] if self.ref_imager is not None else None
+        ss = pylinac_subclasses.LinaQASimpleSensitivity(phantom_image, background_image)
+        ss.analyze(activity_mbq=self.settings.value('Simple Sensitivity/Activity MBq', 40.0, type=float),
+                   nuclide=getattr(pylinac_subclasses.Nuclide,
+                                   self.settings.value('Simple Sensitivity/Nuclide', 'Tc99m', type=str)))
+        self.show_results(ss)
+
+    @show_wait_cursor
     def planar_uniformity(self):
         pu = pylinac_subclasses.LinaQAPlanarUniformity(self.imager.datasets)
         pu.analyze()
@@ -1164,10 +1180,17 @@ class LinaQA(QMainWindow):
                    window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
         self.show_results(tu)
 
+    @show_wait_cursor
     def tomographic_resolution(self):
         tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets)
         tr.analyze()
         self.show_results(tr)
+
+    @show_wait_cursor
+    def centre_of_rotation(self):
+        cor = pylinac_subclasses.LinaQACenterOfRotation(self.imager.datasets)
+        cor.analyze()
+        self.show_results(cor)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Main

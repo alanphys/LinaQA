@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="Icons">
+    <file>Icons/SimpleSensitivity.png</file>
+    <file>Icons/COR.png</file>
     <file>Icons/TomoRes.png</file>
     <file>Icons/TomoUniSmall.png</file>
     <file>Icons/ImageAve.png</file>

@@ -380,9 +380,11 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_MCR"/>
+   <addaction name="action_Simple_Sens"/>
    <addaction name="action_Uniformity"/>
    <addaction name="action_Tomo_Uni"/>
    <addaction name="action_Tomo_Res"/>
+   <addaction name="action_COR"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -913,6 +915,30 @@
    </property>
    <property name="toolTip">
     <string>Calculate tomographic resolution</string>
+   </property>
+  </action>
+  <action name="action_COR">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/COR.png</normaloff>:/Icons/Icons/COR.png</iconset>
+   </property>
+   <property name="text">
+    <string>COR</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate centre of rotation</string>
+   </property>
+  </action>
+  <action name="action_Simple_Sens">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/SimpleSensitivity.png</normaloff>:/Icons/Icons/SimpleSensitivity.png</iconset>
+   </property>
+   <property name="text">
+    <string>Simple Sensitivity</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate simple sensitivity</string>
    </property>
   </action>
  </widget>

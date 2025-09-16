@@ -141,6 +141,13 @@ def set_default_settings(settings):
         settings.setValue('Window size', '5')
     settings.endGroup()
 
+    settings.beginGroup("Simple Sensitivity")
+    if not settings.contains('Nuclide'):
+        settings.setValue('Nuclide', 'Tc99m')
+    if not settings.contains('Activity'):
+        settings.setValue('Activity MBq', '40.0')
+    settings.endGroup()
+
 
 class TypeChecker:
     def __init__(self, parent=None):
