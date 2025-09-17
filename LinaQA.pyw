@@ -1195,7 +1195,15 @@ class LinaQA(QMainWindow):
             sr = pylinac_subclasses.LinaQAFourBarRes(self.imager.datasets)
             sr.analyze(
                 separation_mm=self.settings.value('Spatial Resolution/Separation mm', 100, type=float),
-                roi_width_mm=self.settings.value('Spatial Resolution/ROI width mm', 10, type=float))
+                roi_width_mm=self.settings.value('Spatial Resolution/ROI width mm', 10, type=float)
+            )
+        elif self.ui.cbSpatialRes.currentText() == spatial_res_list[1]:
+            sr = pylinac_subclasses.LinaQAQuadrantRes(self.imager.datasets)
+            sr.analyze(
+                bar_widths=list(self.settings.value('Spatial Resolution/Bar widths mm', (4.23, 3.18, 2.54, 2.12), type=tuple)),
+                roi_diameter_mm=self.settings.value('Spatial Resolution/ROI diameter mm', 70.0, type=float),
+                distance_from_center_mm=self.settings.value('Spatial Resolution/Distance from center mm', 130.0, type=float)
+            )
         self.show_results(sr)
 
     @show_wait_cursor

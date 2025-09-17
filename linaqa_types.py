@@ -8,6 +8,7 @@ Type definitions for LinaQA
 from PyQt5.QtWidgets import QDoubleSpinBox
 
 supported_modalities = ['RTIMAGE', 'RTDOSE', 'CT', 'NM', 'PT', 'MR', 'OT', 'XA']
+# TODO pull these directly from class def
 catphan_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "QuartDVT", "ACR CT", "ACR MRI"]
 vmat_list = ["DRGS", "DRMLC"]
 

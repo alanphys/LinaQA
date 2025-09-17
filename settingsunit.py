@@ -152,9 +152,15 @@ def set_default_settings(settings):
     if not settings.contains('Test type'):
         settings.setValue('Test type', 'Four Bar')
     if not settings.contains('Separation mm'):
-        settings.setValue('Separation mm', '100')
+        settings.setValue('Separation mm', '100.0')
     if not settings.contains('ROI width mm'):
-        settings.setValue('ROI width mm', '10')
+        settings.setValue('ROI width mm', '10.0')
+    if not settings.contains('Bar widths mm'):
+        settings.setValue('Bar widths mm', (4.23, 3.18, 2.54, 2.12))
+    if not settings.contains('ROI diameter mm'):
+        settings.setValue('ROI diameter mm', '70.0')
+    if not settings.contains('Distance from center mm'):
+        settings.setValue('Distance from center mm', '130')
     settings.endGroup()
 
 

@@ -351,6 +351,70 @@ class LinaQAFourBarRes(FourBarResolution):
         canvas.finish()
 
 
+class LinaQAQuadrantRes(QuadrantResolution):
+    _model = "Quadrant Resolution"
+
+    def __init__(self, path: str | Path | list[Dataset]) -> None:
+        self.stack = NMImageStack(path)
+        if isinstance(path[0], Dataset):
+            self.path = Path(path[0].filename)
+        else:
+            self.path = Path(path)
+
+    def publish_pdf(
+        self,
+        filename: str | Path,
+        notes: str | None = None,
+        metadata: dict | None = None,
+        logo: Path | str | None = None,
+        ) -> None:
+        """Publish (print) a PDF containing the analysis and quantitative results.
+
+        Parameters
+        ----------
+        filename : (str, file-like object}
+            The file to write the results to.
+        notes : str, list of strings
+            Text; if str, prints single line.
+            If list of strings, each list item is printed on its own line.
+        metadata : dict
+            Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
+            E.g. passing {'Author': 'James', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            --------------
+            Author: James
+            Unit: TrueBeam
+            --------------
+        logo: Path, str
+            A custom logo to use in the PDF report. If nothing is passed, the default pylinac logo is used.
+        """
+        analysis_title = f"{self._model} Analysis"
+        canvas = pdf.PylinacCanvas(filename, page_title=analysis_title, metadata=metadata, logo=logo)
+
+        results_text = self.results().splitlines()
+        for idx, text in enumerate(results_text):
+            canvas.add_text(text=text, location=(2.0, 22 - idx * 0.5))
+
+        plt.clf()
+        figs, axs = self.plot(show=False)
+        analysis_image = io.BytesIO()
+        figs[0].savefig(analysis_image, bbox_inches='tight')
+        canvas.add_image(analysis_image, location=(1, 3), dimensions=(15, 15), preserve_aspect_ratio=True)
+
+        if notes is not None:
+            canvas.add_text(text="Notes:", location=(1, 2.5), font_size=12)
+            canvas.add_text(text=notes, location=(1, 2))
+
+        canvas.add_new_page()
+        analysis_image = io.BytesIO()
+        figs[1].savefig(analysis_image)
+        canvas.add_image(analysis_image, location=(1, 13), dimensions=(15, 15), preserve_aspect_ratio=True)
+
+        analysis_image = io.BytesIO()
+        figs[2].savefig(analysis_image)
+        canvas.add_image(analysis_image, location=(1, 0), dimensions=(15, 15), preserve_aspect_ratio=True)
+        canvas.finish()
+
+
 class LinaQATomoUniformity(TomographicUniformity):
     _model = "Tomographic Uniformity"
 
