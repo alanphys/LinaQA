@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="Icons">
+    <file>Icons/SpatialRes.png</file>
     <file>Icons/SimpleSensitivity.png</file>
     <file>Icons/COR.png</file>
     <file>Icons/TomoRes.png</file>

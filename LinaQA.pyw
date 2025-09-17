@@ -47,6 +47,7 @@ from linaqa_types import (
     catphan_list,
     vmat_list,
     phantom2D_list,
+    spatial_res_list,
     faint_red,
     faint_green,
     faint_yellow,
@@ -177,6 +178,20 @@ class LinaQA(QMainWindow):
         self.ui.toolBar_Dx.insertSeparator(self.ui.action_Gamma)
         self.ui.dsbScaleFactor.setValue(self.settings.value('PyDicom/Scale factor', 1.0, type=float))
 
+        # we have to insert a Combox for the spatial resolution test manually into the toolbar
+        self.ui.toolBar_NM.insertSeparator(self.ui.action_Spatial_Res)
+        self.ui.cbSpatialRes = QComboBox()
+        self.ui.cbSpatialRes.setFixedWidth(120)
+        self.ui.toolBar_NM.insertWidget(self.ui.action_Tomo_Uni, self.ui.cbSpatialRes)
+        self.ui.cbSpatialRes.addItems(spatial_res_list)
+        self.ui.toolBar_NM.insertSeparator(self.ui.action_Tomo_Uni)
+        spatial_res_type = self.settings.value('Spatial Resolution/Type', 'Four Bar', type=str)
+        index = self.ui.cbSpatialRes.findText(spatial_res_type)
+        if index >= 0:
+            self.ui.cbSpatialRes.setCurrentIndex(index)
+        else:
+            raise Exception('Invalid setting in Spatial Resolution/Type')
+
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
         action_close.setText("E&xit")
@@ -224,6 +239,7 @@ class LinaQA(QMainWindow):
         # NM toolbar
         self.ui.action_MCR.triggered.connect(self.max_count_rate)
         self.ui.action_Simple_Sens.triggered.connect(self.simple_sensitivity)
+        self.ui.action_Spatial_Res.triggered.connect(self.spatial_resolution)
         self.ui.action_Uniformity.triggered.connect(self.planar_uniformity)
         self.ui.action_Tomo_Uni.triggered.connect(self.tomographic_uniformity)
         self.ui.action_Tomo_Res.triggered.connect(self.tomographic_resolution)
@@ -1172,6 +1188,15 @@ class LinaQA(QMainWindow):
         pu = pylinac_subclasses.LinaQAPlanarUniformity(self.imager.datasets)
         pu.analyze()
         self.show_results(pu)
+
+    @show_wait_cursor
+    def spatial_resolution(self):
+        if self.ui.cbSpatialRes.currentText() == spatial_res_list[0]:
+            sr = pylinac_subclasses.LinaQAFourBarRes(self.imager.datasets)
+            sr.analyze(
+                separation_mm=self.settings.value('Spatial Resolution/Separation mm', 100, type=float),
+                roi_width_mm=self.settings.value('Spatial Resolution/ROI width mm', 10, type=float))
+        self.show_results(sr)
 
     @show_wait_cursor
     def tomographic_uniformity(self):

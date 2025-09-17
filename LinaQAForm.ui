@@ -382,6 +382,7 @@
    <addaction name="action_MCR"/>
    <addaction name="action_Simple_Sens"/>
    <addaction name="action_Uniformity"/>
+   <addaction name="action_Spatial_Res"/>
    <addaction name="action_Tomo_Uni"/>
    <addaction name="action_Tomo_Res"/>
    <addaction name="action_COR"/>
@@ -939,6 +940,18 @@
    </property>
    <property name="toolTip">
     <string>Calculate simple sensitivity</string>
+   </property>
+  </action>
+  <action name="action_Spatial_Res">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/SpatialRes.png</normaloff>:/Icons/Icons/SpatialRes.png</iconset>
+   </property>
+   <property name="text">
+    <string>Spacial Resolution</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate spatial resolution</string>
    </property>
   </action>
  </widget>

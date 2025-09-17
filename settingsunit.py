@@ -148,6 +148,15 @@ def set_default_settings(settings):
         settings.setValue('Activity MBq', '40.0')
     settings.endGroup()
 
+    settings.beginGroup('Spatial Resolution')
+    if not settings.contains('Test type'):
+        settings.setValue('Test type', 'Four Bar')
+    if not settings.contains('Separation mm'):
+        settings.setValue('Separation mm', '100')
+    if not settings.contains('ROI width mm'):
+        settings.setValue('ROI width mm', '10')
+    settings.endGroup()
+
 
 class TypeChecker:
     def __init__(self, parent=None):
