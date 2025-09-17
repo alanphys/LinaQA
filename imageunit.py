@@ -49,16 +49,19 @@ class Imager:
             self.auto_window()
 
     def load_pixel_data(self, datasets):
+        # standard set of 2D images
         if datasets[0].pixel_array.ndim == 2:
             self.values = np.zeros(self.size, dtype='int32')
             for i, d in enumerate(datasets):
                 # Also performs rescaling. 'unsafe' since it converts from float64 to int32
                 np.copyto(self.values[:, :, i], d.pixel_array, 'unsafe')
+        # colour image 3 sample RGB per pixel
         elif (datasets[0].pixel_array.ndim == 3) and (hasattr(datasets[0], "SamplesPerPixel")) and (datasets[0].SamplesPerPixel == 3):
             self.values = np.zeros((self.size[0], self.size[1], len(datasets)), dtype='int32')
             for i, d in enumerate(datasets):
                 # Convert RBG image to Grayscale
                 np.copyto(self.values[:, :, i], np.dot(d.pixel_array[...,:3], [0.2989, 0.5870, 0.1140]), 'unsafe')
+        # multi-frame image or 3D image
         elif datasets[0].pixel_array.ndim == 3:
             self.values = datasets[0].pixel_array.transpose(1, 2, 0)
 
