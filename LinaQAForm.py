@@ -373,6 +373,11 @@ class Ui_LinaQAForm(object):
         icon36.addPixmap(QtGui.QPixmap(":/Icons/Icons/SpatialRes.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_Spatial_Res.setIcon(icon36)
         self.action_Spatial_Res.setObjectName("action_Spatial_Res")
+        self.action_Tomo_Contrast = QtWidgets.QAction(LinaQAForm)
+        icon37 = QtGui.QIcon()
+        icon37.addPixmap(QtGui.QPixmap(":/Icons/Icons/TomoContrast.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_Tomo_Contrast.setIcon(icon37)
+        self.action_Tomo_Contrast.setObjectName("action_Tomo_Contrast")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addAction(self.action_Open_Ref)
         self.menu_File.addAction(self.action_Save)
@@ -445,6 +450,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_NM.addAction(self.action_Tomo_Uni)
         self.toolBar_NM.addAction(self.action_Tomo_Res)
         self.toolBar_NM.addAction(self.action_COR)
+        self.toolBar_NM.addAction(self.action_Tomo_Contrast)
 
         self.retranslateUi(LinaQAForm)
         self.tabWidget.setCurrentIndex(0)
@@ -564,4 +570,6 @@ class Ui_LinaQAForm(object):
         self.action_Simple_Sens.setToolTip(_translate("LinaQAForm", "Calculate simple sensitivity"))
         self.action_Spatial_Res.setText(_translate("LinaQAForm", "Spacial Resolution"))
         self.action_Spatial_Res.setToolTip(_translate("LinaQAForm", "Calculate spatial resolution"))
+        self.action_Tomo_Contrast.setText(_translate("LinaQAForm", "Tomo Contrast"))
+        self.action_Tomo_Contrast.setToolTip(_translate("LinaQAForm", "Calculate tomographic contrast"))
 import LinaQA_rc

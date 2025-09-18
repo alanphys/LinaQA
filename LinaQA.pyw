@@ -243,6 +243,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Uniformity.triggered.connect(self.planar_uniformity)
         self.ui.action_Tomo_Uni.triggered.connect(self.tomographic_uniformity)
         self.ui.action_Tomo_Res.triggered.connect(self.tomographic_resolution)
+        self.ui.action_Tomo_Contrast.triggered.connect(self.tomographic_contrast)
         self.ui.action_COR.triggered.connect(self.centre_of_rotation)
         # DICOM toolbar
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
@@ -1211,8 +1212,8 @@ class LinaQA(QMainWindow):
         tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets)
         tu.analyze(first_frame=self.settings.value('Tomographic Uniformity/First frame', 0, type=int),
                    last_frame=self.settings.value('Tomographic Uniformity/Last frame', -1, type=int),
-                   ufov_ratio=self.settings.value('Tomographic Uniformity/ufov ratio', 0.80, type=float),
-                   cfov_ratio=self.settings.value('Tomographic Uniformity/cfov ratio', 0.75, type=float),
+                   ufov_ratio=self.settings.value('Tomographic Uniformity/UFOV ratio', 0.80, type=float),
+                   cfov_ratio=self.settings.value('Tomographic Uniformity/CFOV ratio', 0.75, type=float),
                    center_ratio=self.settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
                    threshold=self.settings.value('Tomographic Uniformity/Threshold', 0.75, type=float),
                    window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
@@ -1223,6 +1224,16 @@ class LinaQA(QMainWindow):
         tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets)
         tr.analyze()
         self.show_results(tr)
+
+    @show_wait_cursor
+    def tomographic_contrast(self):
+        tc = pylinac_subclasses.LinaQATomoContrast(self.imager.datasets)
+        tc.analyze(
+            sphere_diameters_mm=list(self.settings.value('Tomographic Contrast/Sphere diameters mm', (38, 31.8, 25.4, 19.1, 15.9, 12.7), type=tuple)),
+            sphere_angles=list(self.settings.value('Tomographic Contrast/Sphere diameters mm', (-10, -70, -130, -190, 110, 50), type=tuple)),
+            ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float)
+        )
+        self.show_results(tc)
 
     @show_wait_cursor
     def centre_of_rotation(self):

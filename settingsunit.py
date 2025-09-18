@@ -129,10 +129,10 @@ def set_default_settings(settings):
         settings.setValue('First frame', '0')
     if not settings.contains('Last frame'):
         settings.setValue('Last frame', '-1')
-    if not settings.contains('ufov ratio'):
-        settings.setValue('ufov ratio', '0.80')
-    if not settings.contains('cfov ratio'):
-        settings.setValue('cfov ratio', '0.75')
+    if not settings.contains('UFOV ratio'):
+        settings.setValue('UFOV ratio', '0.80')
+    if not settings.contains('CFOV ratio'):
+        settings.setValue('CFOV ratio', '0.75')
     if not settings.contains('Center ratio'):
         settings.setValue('Center ratio', '0.4')
     if not settings.contains('Threshold'):
@@ -161,6 +161,19 @@ def set_default_settings(settings):
         settings.setValue('ROI diameter mm', '70.0')
     if not settings.contains('Distance from center mm'):
         settings.setValue('Distance from center mm', '130')
+    settings.endGroup()
+
+    settings.beginGroup('Tomgraphic Contrast')
+    if not settings.contains('Sphere diameters mm'):
+        settings.setValue('Sphere diameters mm', (38, 31.8, 25.4, 19.1, 15.9, 12.7))
+    if not settings.contains('Sphere angles'):
+        settings.setValue('Sphere angles', (-10, -70, -130, -190, 110, 50))
+    if not settings.contains('UFOV ratio'):
+        settings.setValue('UFOV ratio', '0.8')
+    if not settings.contains('Search window px'):
+        settings.setValue('Search window px', '5')
+    if not settings.contains('Search slices'):
+        settings.setValue('Search slices', '3')
     settings.endGroup()
 
 

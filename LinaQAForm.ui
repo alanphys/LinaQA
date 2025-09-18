@@ -386,6 +386,7 @@
    <addaction name="action_Tomo_Uni"/>
    <addaction name="action_Tomo_Res"/>
    <addaction name="action_COR"/>
+   <addaction name="action_Tomo_Contrast"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -952,6 +953,18 @@
    </property>
    <property name="toolTip">
     <string>Calculate spatial resolution</string>
+   </property>
+  </action>
+  <action name="action_Tomo_Contrast">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/TomoContrast.png</normaloff>:/Icons/Icons/TomoContrast.png</iconset>
+   </property>
+   <property name="text">
+    <string>Tomo Contrast</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate tomographic contrast</string>
    </property>
   </action>
  </widget>
