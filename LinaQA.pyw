@@ -1229,8 +1229,14 @@ class LinaQA(QMainWindow):
     def tomographic_contrast(self):
         tc = pylinac_subclasses.LinaQATomoContrast(self.imager.datasets)
         tc.analyze(
-            sphere_diameters_mm=list(self.settings.value('Tomographic Contrast/Sphere diameters mm', (38, 31.8, 25.4, 19.1, 15.9, 12.7), type=tuple)),
-            sphere_angles=list(self.settings.value('Tomographic Contrast/Sphere diameters mm', (-10, -70, -130, -190, 110, 50), type=tuple)),
+            sphere_diameters_mm=list(
+                self.settings.value('Tomographic Contrast/Sphere diameters mm',
+                                    (38, 31.8, 25.4, 19.1, 15.9, 12.7),
+                                    type=tuple)),
+            sphere_angles=list(
+                self.settings.value('Tomographic Contrast/Sphere diameters mm',
+                                    (-10, -70, -130, -190, 110, 50),
+                                    type=tuple)),
             ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float)
         )
         self.show_results(tc)

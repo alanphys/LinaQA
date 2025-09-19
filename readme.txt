@@ -85,7 +85,7 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
 
 Current
-Image sum from a set of images added. Image rescaling added. Nuclear medicine toolbar added. Toolbars can be made persistent in the settings. Implemented Maximum Count Rate, Simple Sensitivity, Planar Uniformity, Tomographic Uniformity, Tomographic resolution, and Centre of Rotation analysis. Added handling of multiframe images.
+Image sum from a set of images added. Image rescaling added. Nuclear medicine toolbar added. Toolbars can be made persistent in the settings. Implemented Maximum Count Rate, Simple Sensitivity, Planar Uniformity, Planar Spatial Resolution, Tomographic Uniformity, Tomographic Resolution, Tomographic Contrast and Centre of Rotation analysis. Added handling of multiframe images.
 
 Version 0.06
 Zip files can be uncompressed and displayed on the fly. ACR CT and ACR MRI Large tests have been added. Fixed broken gamma analysis. Force option added to "Settings/Pydicom". If this is set to True will try and load the file as a DICOM image. Useful for DICOM files with badly formed headers but can have unpredictable results. Imaging and DICOM toolbars have been added. Toolbars can be toggled on/off. Imaging auto window and Invert icons moved to Imaging tool bar along with Gamma comparison. DICOM Find, Add, Edit and Delete icons moved to DICOM toolbar. Gamma analysis and DICOM icons removed from Radiotherapy toolbar. This is a GUI redesign to enable future expansion. Compute average image from a set of images added to imaging toolbar.
@@ -114,7 +114,6 @@ See GIT log.
 Run on PySide or PyQt, which ever is available.
 Integrate PDFs
 Implement integrity checking
-Add customisable logo on publish_pdf
 
 10) Known issues
-DICOM tag insert and delete does not work on sequences.
+DICOM sequences cannot be inserted, deleted or edited.

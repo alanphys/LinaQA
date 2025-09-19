@@ -13,6 +13,7 @@ from PyQt5.QtGui import (QColor, QIcon, QIntValidator, QDoubleValidator, QRegula
 from PyQt5.QtWidgets import (QAbstractItemView, QCheckBox, QDialog, QDialogButtonBox, QGridLayout,
      QHeaderView, QItemDelegate, QLineEdit, QStyle, QSpinBox, QStyleOptionViewItem,
      QTableWidgetItem, QTreeWidget, QTreeWidgetItem)
+from linaqa_types import MyDoubleSpinBox
 
 
 def set_default_settings(settings):
@@ -193,6 +194,10 @@ class TypeChecker:
         self.int_exp = QRegularExpression(pattern)
         assert self.int_exp.isValid()
 
+        pattern = r'^-?(?:\d+\.\d*|\.\d+)(?:[eE][+-]?\d+)?$'
+        self.float_exp = QRegularExpression(pattern)
+        assert self.float_exp.isValid()
+
         pattern = r'^\(([0-9]*),([0-9]*),([0-9]*),([0-9]*)\)$'
         self.color_exp = QRegularExpression(pattern)
         assert self.color_exp.isValid()
@@ -224,6 +229,8 @@ class TypeChecker:
             return bool
         if self.int_exp.match(text).hasMatch():
             return int
+        if self.float_exp.match(text).hasMatch():
+            return float
         return None
 
     def create_validator(self, value, parent):
@@ -615,6 +622,9 @@ class VariantDelegate(QItemDelegate):
         elif isinstance(original_value, int):
             editor = QSpinBox(parent)
             editor.setRange(-32767, 32767)
+        elif isinstance(original_value, float):
+            editor = MyDoubleSpinBox(parent)
+            editor.setRange(-1000, 1000)
         else:
             editor = QLineEdit(parent)
             editor.setFrame(False)
@@ -630,6 +640,8 @@ class VariantDelegate(QItemDelegate):
         if isinstance(editor, QCheckBox):
             editor.setCheckState(Qt.Checked if value else Qt.Unchecked)
         elif isinstance(editor, QSpinBox):
+            editor.setValue(value)
+        elif isinstance(editor, MyDoubleSpinBox):
             editor.setValue(value)
         else:
             editor.setText(self.display_text(value))
@@ -651,6 +663,8 @@ class VariantDelegate(QItemDelegate):
         if isinstance(editor, QCheckBox):
             value = editor.checkState() == Qt.Checked
         elif isinstance(editor, QSpinBox):
+            value = editor.value()
+        elif isinstance(editor, MyDoubleSpinBox):
             value = editor.value()
         else:
             value = self.value_from_lineedit(editor, model, index)
