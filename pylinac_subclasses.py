@@ -3,6 +3,7 @@
 Extra functionality for pylinac classes. Merge into pylinac at some stage
 =========================================================================
 """
+import enum
 # Author: AC Chamberlain
 
 import io

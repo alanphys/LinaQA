@@ -48,6 +48,7 @@ from linaqa_types import (
     vmat_list,
     phantom2D_list,
     spatial_res_list,
+    mlc_list,
     faint_red,
     faint_green,
     faint_yellow,
@@ -119,20 +120,19 @@ class LinaQA(QMainWindow):
         self.ui.cbCatPhan.addItems(catphan_list)
         self.ui.toolBar_Rx.insertSeparator(self.ui.action_Picket_Fence)
         self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
-        catphan_type = self.settings.value('3D Phantom/Type')
+        catphan_type = self.settings.value('3D Phantom/3D Type')
         index = self.ui.cbCatPhan.findText(catphan_type)
         if index >= 0:
             self.ui.cbCatPhan.setCurrentIndex(index)
         else:
-            raise Exception('Invalid setting in 3D Phantom/Type')
+            raise Exception('Invalid setting in 3D Phantom/3D Type')
         self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
 
         # we have to insert a Combox for the MLC manually into the toolbar
         self.ui.cbMLC = QComboBox()
         self.ui.cbMLC.setFixedWidth(120)
         self.ui.toolBar_Rx.insertWidget(self.ui.action_VMAT, self.ui.cbMLC)
-        for mlc in picketfence.MLC:
-            self.ui.cbMLC.insertItem(0, mlc.value.get("name"))
+        self.ui.cbMLC.addItems(mlc_list)
         self.ui.toolBar_Rx.insertSeparator(self.ui.action_VMAT)
         mlc_type = self.settings.value('Picket Fence/MLC Type')
         index = self.ui.cbMLC.findText(mlc_type)
@@ -147,12 +147,12 @@ class LinaQA(QMainWindow):
         self.ui.toolBar_Rx.insertWidget(self.ui.action_2DPhantoms, self.ui.cbVMAT)
         self.ui.cbVMAT.addItems(vmat_list)
         self.ui.toolBar_Rx.insertSeparator(self.ui.action_2DPhantoms)
-        vmat_type = self.settings.value('VMAT/Test type')
+        vmat_type = self.settings.value('VMAT/VMAT test')
         index = self.ui.cbVMAT.findText(vmat_type)
         if index >= 0:
             self.ui.cbVMAT.setCurrentIndex(index)
         else:
-            raise Exception('Invalid setting in VMAT/Test type')
+            raise Exception('Invalid setting in VMAT/VMAT test')
 
         # we have to insert a Combox for the 2D phantoms test manually into the toolbar
         self.ui.cbPhan2D = QComboBox()
@@ -160,12 +160,12 @@ class LinaQA(QMainWindow):
         self.ui.toolBar_Rx.insertWidget(self.ui.action_Machine_Logs, self.ui.cbPhan2D)
         self.ui.cbPhan2D.addItems(phantom2D_list)
         self.ui.toolBar_Rx.insertSeparator(self.ui.action_Machine_Logs)
-        phan2d_type = self.settings.value('2D Phantom/Type')
+        phan2d_type = self.settings.value('2D Phantom/2D Type')
         index = self.ui.cbPhan2D.findText(phan2d_type)
         if index >= 0:
             self.ui.cbPhan2D.setCurrentIndex(index)
         else:
-            raise Exception('Invalid setting in 2D Phantom/Type')
+            raise Exception('Invalid setting in 2D Phantom/2D Type')
 
         # we have to insert a double spinbox for the image scaling manually into the toolbar
         self.ui.toolBar_Dx.insertSeparator(self.ui.action_Scale_Image)
@@ -185,12 +185,12 @@ class LinaQA(QMainWindow):
         self.ui.toolBar_NM.insertWidget(self.ui.action_Tomo_Uni, self.ui.cbSpatialRes)
         self.ui.cbSpatialRes.addItems(spatial_res_list)
         self.ui.toolBar_NM.insertSeparator(self.ui.action_Tomo_Uni)
-        spatial_res_type = self.settings.value('Spatial Resolution/Type', 'Four Bar', type=str)
+        spatial_res_type = self.settings.value('Spatial Resolution/Resolution test', 'Four Bar', type=str)
         index = self.ui.cbSpatialRes.findText(spatial_res_type)
         if index >= 0:
             self.ui.cbSpatialRes.setCurrentIndex(index)
         else:
-            raise Exception('Invalid setting in Spatial Resolution/Type')
+            raise Exception('Invalid setting in Spatial Resolution/Resolution test')
 
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
@@ -1192,12 +1192,14 @@ class LinaQA(QMainWindow):
 
     @show_wait_cursor
     def spatial_resolution(self):
+        # four bar test
         if self.ui.cbSpatialRes.currentText() == spatial_res_list[0]:
             sr = pylinac_subclasses.LinaQAFourBarRes(self.imager.datasets)
             sr.analyze(
                 separation_mm=self.settings.value('Spatial Resolution/Separation mm', 100, type=float),
                 roi_width_mm=self.settings.value('Spatial Resolution/ROI width mm', 10, type=float)
             )
+        # quadrant test
         elif self.ui.cbSpatialRes.currentText() == spatial_res_list[1]:
             sr = pylinac_subclasses.LinaQAQuadrantRes(self.imager.datasets)
             sr.analyze(

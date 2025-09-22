@@ -6,6 +6,8 @@ Type definitions for LinaQA
 # Author: AC Chamberlain
 
 from PyQt5.QtWidgets import QDoubleSpinBox
+from pylinac.picketfence import MLC
+from pylinac.nuclear import Nuclide
 
 supported_modalities = ['RTIMAGE', 'RTDOSE', 'CT', 'NM', 'PT', 'MR', 'OT', 'XA']
 # TODO pull these directly from class def
@@ -26,6 +28,10 @@ phantom2D_list = ["Doselab MC2 MV",
                   "IBA Primus A"]
 
 spatial_res_list = ['Four Bar', 'Quadrant']
+
+mlc_list = [mlc.value.get("name") for mlc in MLC]
+
+nuclide_list = [str(name) for name, value in vars(Nuclide).items() if not name.startswith('__')]
 
 # colours for status bar messages
 faint_red = '#ff7979'

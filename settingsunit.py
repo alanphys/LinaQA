@@ -6,27 +6,40 @@
    Back ported to PyQt5 and adapted by AC Chamberlain"""
 
 import sys
-
-from PyQt5.QtCore import (QByteArray, QDate, QDateTime, QDir, QEvent, QPoint,
+import os.path as path
+import inspect
+from PyQt5.QtCore import (
+     QByteArray, QDate, QDateTime, QDir, QEvent, QPoint,
      QRect, QRegularExpression, QSettings, QSize, QTime, QTimer, Qt, pyqtSlot as Slot)
 from PyQt5.QtGui import (QColor, QIcon, QIntValidator, QDoubleValidator, QRegularExpressionValidator, QValidator)
-from PyQt5.QtWidgets import (QAbstractItemView, QCheckBox, QDialog, QDialogButtonBox, QGridLayout,
-     QHeaderView, QItemDelegate, QLineEdit, QStyle, QSpinBox, QStyleOptionViewItem,
+from PyQt5.QtWidgets import (
+     QAbstractItemView, QCheckBox, QDialog, QDialogButtonBox, QGridLayout, QLineEdit,
+     QHeaderView, QItemDelegate, QComboBox, QStyle, QSpinBox, QStyleOptionViewItem,
      QTableWidgetItem, QTreeWidget, QTreeWidgetItem)
-from linaqa_types import MyDoubleSpinBox
+from linaqa_types import (
+     MyDoubleSpinBox,
+     phantom2D_list,
+     catphan_list,
+     vmat_list,
+     spatial_res_list,
+     mlc_list,
+     nuclide_list)
+
+sys_path = path.dirname(path.realpath(inspect.getframeinfo(inspect.currentframe()).filename))
+logo_path = path.join(sys_path, 'Icons/LinacToolkit.png')
 
 
 def set_default_settings(settings):
     settings.beginGroup('General')
     if not settings.contains('Logo'):
-        settings.setValue('Logo', '')
+        settings.setValue('Logo', logo_path)
     if not settings.contains('Metadata'):
         settings.setValue('Metadata', {'Physicist': '', 'Linac': ''})
     settings.endGroup()
 
     settings.beginGroup('3D Phantom')
-    if not settings.contains('Type'):
-        settings.setValue('Type', 'CatPhan604')
+    if not settings.contains('3D Type'):
+        settings.setValue('3D Type', 'CatPhan604')
     if not settings.contains('HU Tolerance'):
         settings.setValue('HU Tolerance', '40')
     if not settings.contains('Thickness Tolerance'):
@@ -62,8 +75,8 @@ def set_default_settings(settings):
     settings.endGroup()
 
     settings.beginGroup('VMAT')
-    if not settings.contains('Test type'):
-        settings.setValue('Test type', 'DRGS')
+    if not settings.contains('VMAT test'):
+        settings.setValue('VMAT test', 'DRGS')
     if not settings.contains('Tolerance'):
         settings.setValue('Tolerance', '1.5')
     settings.endGroup()
@@ -78,8 +91,8 @@ def set_default_settings(settings):
     settings.endGroup()
 
     settings.beginGroup('2D Phantom')
-    if not settings.contains('Type'):
-        settings.setValue('Type', 'Leeds TOR')
+    if not settings.contains('2D Type'):
+        settings.setValue('2D Type', 'Leeds TOR')
     if not settings.contains('Low contrast threshold'):
         settings.setValue('Low contrast threshold', '0.1')
     if not settings.contains('High contrast threshold'):
@@ -150,14 +163,14 @@ def set_default_settings(settings):
     settings.endGroup()
 
     settings.beginGroup('Spatial Resolution')
-    if not settings.contains('Test type'):
-        settings.setValue('Test type', 'Four Bar')
+    if not settings.contains('Resolution test'):
+        settings.setValue('Resolution test', 'Four Bar')
     if not settings.contains('Separation mm'):
         settings.setValue('Separation mm', '100.0')
     if not settings.contains('ROI width mm'):
         settings.setValue('ROI width mm', '10.0')
     if not settings.contains('Bar widths mm'):
-        settings.setValue('Bar widths mm', (4.23, 3.18, 2.54, 2.12))
+        settings.setValue('Bar widths mm', '(4.23, 3.18, 2.54, 2.12)')
     if not settings.contains('ROI diameter mm'):
         settings.setValue('ROI diameter mm', '70.0')
     if not settings.contains('Distance from center mm'):
@@ -166,9 +179,9 @@ def set_default_settings(settings):
 
     settings.beginGroup('Tomgraphic Contrast')
     if not settings.contains('Sphere diameters mm'):
-        settings.setValue('Sphere diameters mm', (38, 31.8, 25.4, 19.1, 15.9, 12.7))
+        settings.setValue('Sphere diameters mm', '(38, 31.8, 25.4, 19.1, 15.9, 12.7)')
     if not settings.contains('Sphere angles'):
-        settings.setValue('Sphere angles', (-10, -70, -130, -190, 110, 50))
+        settings.setValue('Sphere angles', '(-10, -70, -130, -190, 110, 50)')
     if not settings.contains('UFOV ratio'):
         settings.setValue('UFOV ratio', '0.8')
     if not settings.contains('Search window px'):
@@ -304,6 +317,7 @@ class Settings(QDialog):
         self.setLayout(self.gridLayout)
         self.gridLayout.setObjectName("gridLayout")
         self.settings_tree = SettingsTree()
+        self.settings_tree.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.gridLayout.addWidget(self.settings_tree, 0, 0, 1, 1)
         self.setWindowTitle("Settings Editor")
         self.resize(500, 600)
@@ -581,15 +595,15 @@ class SettingsTree(QTreeWidget):
         else:
             return self.topLevelItemCount()
 
-    def find_child(self, parent, text, startIndex):
+    def find_child(self, parent, text, start_index):
         for i in range(self.child_count(parent)):
             if self.child_at(parent, i).text(0) == text:
                 return i
         return -1
 
-    def move_item_forward(self, parent, oldIndex, newIndex):
-        for int in range(oldIndex - newIndex):
-            self.delete_item(parent, newIndex)
+    def move_item_forward(self, parent, old_index, new_index):
+        for i in range(old_index - new_index):
+            self.delete_item(parent, new_index)
 
 
 class VariantDelegate(QItemDelegate):
@@ -612,11 +626,14 @@ class VariantDelegate(QItemDelegate):
         if index.column() != 2:
             return None
 
-        original_value = index.model().data(index, Qt.UserRole)
+        # original_value = index.model().data(index, Qt.UserRole)
+        original_value = index.data(Qt.UserRole)
+        key = index.model().data(index.sibling(index.row(), 0))
         if not self.is_supported_type(original_value):
             return None
 
         editor = None
+        key = index.model().data(index.sibling(index.row(), 0))
         if isinstance(original_value, bool):
             editor = QCheckBox(parent)
         elif isinstance(original_value, int):
@@ -625,6 +642,22 @@ class VariantDelegate(QItemDelegate):
         elif isinstance(original_value, float):
             editor = MyDoubleSpinBox(parent)
             editor.setRange(-1000, 1000)
+        elif isinstance(original_value, str) and key in ['2D Type', '3D Type', 'MLC Type', 'VMAT test', 'Nuclide', 'Resolution test']:
+            editor = QComboBox(parent)
+            editor.setFrame(False)
+            key = index.model().data(index.sibling(index.row(), 0))
+            if key == '2D Type':
+                editor.addItems(phantom2D_list)
+            elif key == '3D Type':
+                editor.addItems(catphan_list)
+            elif key == 'MLC Type':
+                editor.addItems(mlc_list)
+            elif key == 'VMAT test':
+                editor.addItems(vmat_list)
+            elif key == 'Nuclide':
+                editor.addItems(nuclide_list)
+            elif key == 'Resolution test':
+                editor.addItems(spatial_res_list)
         else:
             editor = QLineEdit(parent)
             editor.setFrame(False)
@@ -643,6 +676,8 @@ class VariantDelegate(QItemDelegate):
             editor.setValue(value)
         elif isinstance(editor, MyDoubleSpinBox):
             editor.setValue(value)
+        elif isinstance(editor, QComboBox):
+            editor.setCurrentText(value)
         else:
             editor.setText(self.display_text(value))
 
@@ -666,6 +701,8 @@ class VariantDelegate(QItemDelegate):
             value = editor.value()
         elif isinstance(editor, MyDoubleSpinBox):
             value = editor.value()
+        elif isinstance(editor, QComboBox):
+            value = editor.currentText()
         else:
             value = self.value_from_lineedit(editor, model, index)
         if value is not None:
