@@ -208,20 +208,47 @@
     </property>
     <addaction name="action_Auto_Window"/>
     <addaction name="action_Invert"/>
-    <addaction name="action_Gamma"/>
     <addaction name="action_Sum_Image"/>
+    <addaction name="action_Ave_Image"/>
    </widget>
    <widget class="QMenu" name="menu_Analyse">
     <property name="title">
      <string>&amp;Analyse</string>
     </property>
-    <addaction name="action_2DPhantoms"/>
-    <addaction name="action_CatPhan"/>
-    <addaction name="action_Machine_Logs"/>
-    <addaction name="action_Picket_Fence"/>
-    <addaction name="action_Starshot"/>
-    <addaction name="action_VMAT"/>
-    <addaction name="action_Winston_Lutz"/>
+    <widget class="QMenu" name="menuRadiology">
+     <property name="title">
+      <string>Radiology</string>
+     </property>
+     <addaction name="action_Gamma"/>
+    </widget>
+    <widget class="QMenu" name="menuRadiotherapy">
+     <property name="title">
+      <string>Radiotherapy</string>
+     </property>
+     <addaction name="action_CatPhan"/>
+     <addaction name="action_Picket_Fence"/>
+     <addaction name="action_VMAT"/>
+     <addaction name="action_2DPhantoms"/>
+     <addaction name="action_Machine_Logs"/>
+     <addaction name="action_Starshot"/>
+     <addaction name="action_Winston_Lutz"/>
+    </widget>
+    <widget class="QMenu" name="menuNuclear_Medicine">
+     <property name="title">
+      <string>Nuclear Medicine</string>
+     </property>
+     <addaction name="action_MCR"/>
+     <addaction name="action_Simple_Sens"/>
+     <addaction name="action_Uniformity"/>
+     <addaction name="action_Spatial_Res"/>
+     <addaction name="action_Tomo_Uni"/>
+     <addaction name="action_Tomo_Res"/>
+     <addaction name="action_Tomo_Contrast"/>
+     <addaction name="action_COR"/>
+    </widget>
+    <addaction name="menuRadiotherapy"/>
+    <addaction name="menuRadiology"/>
+    <addaction name="menuNuclear_Medicine"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -913,7 +940,7 @@
      <normaloff>:/Icons/Icons/TomoRes.png</normaloff>:/Icons/Icons/TomoRes.png</iconset>
    </property>
    <property name="text">
-    <string>Tomo Res</string>
+    <string>Tomographic Resolution</string>
    </property>
    <property name="toolTip">
     <string>Calculate tomographic resolution</string>
@@ -961,7 +988,7 @@
      <normaloff>:/Icons/Icons/TomoContrast.png</normaloff>:/Icons/Icons/TomoContrast.png</iconset>
    </property>
    <property name="text">
-    <string>Tomo Contrast</string>
+    <string>Tomographic Contrast</string>
    </property>
    <property name="toolTip">
     <string>Calculate tomographic contrast</string>

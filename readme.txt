@@ -9,14 +9,14 @@ Please read the file Licence.txt. This means that if as a result of using this p
 
 3) System Requirements
 Currently tested on
-* Fedora 40/KDE 6.05/QT 5.15
+* Fedora 42/KDE 6.05/QT 5.15
 * Window 10/Miniconda3
 Windows users will need to install a python stack (such as anaconda) and PyQT5/QT5.
 
 4) Dependencies
 * PyQt5
-* pylinac (tested with pylinac 3.31)
-* pydicom (tested with pydicom 2.4.4)
+* pylinac (tested with pylinac 3.35)
+* pydicom (tested with pydicom 3.0.1)
 * NumPy
 If you install pylinac it will automatically install pydicom and numpy.
 
@@ -85,7 +85,7 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
 
 Current
-Image sum from a set of images added. Image rescaling added. Nuclear medicine toolbar added. Toolbars can be made persistent in the settings. Implemented Maximum Count Rate, Simple Sensitivity, Planar Uniformity, Planar Spatial Resolution, Tomographic Uniformity, Tomographic Resolution, Tomographic Contrast and Centre of Rotation analysis. Added handling of multiframe images.
+Image sum from a set of images added. Image rescaling added. Nuclear medicine toolbar added. Toolbars can be made persistent in the settings. Implemented Maximum Count Rate, Simple Sensitivity, Planar Uniformity, Planar Spatial Resolution, Tomographic Uniformity, Tomographic Resolution, Tomographic Contrast and Centre of Rotation analysis. Added handling of multiframe images. Settings unit has been overhauled.
 
 Version 0.06
 Zip files can be uncompressed and displayed on the fly. ACR CT and ACR MRI Large tests have been added. Fixed broken gamma analysis. Force option added to "Settings/Pydicom". If this is set to True will try and load the file as a DICOM image. Useful for DICOM files with badly formed headers but can have unpredictable results. Imaging and DICOM toolbars have been added. Toolbars can be toggled on/off. Imaging auto window and Invert icons moved to Imaging tool bar along with Gamma comparison. DICOM Find, Add, Edit and Delete icons moved to DICOM toolbar. Gamma analysis and DICOM icons removed from Radiotherapy toolbar. This is a GUI redesign to enable future expansion. Compute average image from a set of images added to imaging toolbar.
@@ -114,6 +114,8 @@ See GIT log.
 Run on PySide or PyQt, which ever is available.
 Integrate PDFs
 Implement integrity checking
+Add documentation
+Migrate to Qt6
 
 10) Known issues
 DICOM sequences cannot be inserted, deleted or edited.
