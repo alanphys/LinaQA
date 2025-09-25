@@ -592,7 +592,9 @@ class LinaQA(QMainWindow):
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
     def tab_changed(self, index):
-        # self.ui.action_DICOM_tags.setChecked(self.ui.tabWidget.isTabVisible(1))
+        if index != 1:
+            self.ui.action_DICOM_tags.setChecked(False)
+            self.show_dicom_toolbar()
         if self.imager:
             if (index == 0) and (self.imager is not None):
                 if self.old_tab == 3:
@@ -610,7 +612,7 @@ class LinaQA(QMainWindow):
                 self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
                 self.ui.tabWidget.setTabVisible(2, True)
                 self.ui.tabWidget.setCurrentIndex(2)
-            elif (index ==3) and (self.imager is not None):
+            elif (index == 3) and (self.imager is not None):
                 self.edit_pixel_data()
         self.old_tab = index
 
