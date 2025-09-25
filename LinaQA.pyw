@@ -659,26 +659,35 @@ class LinaQA(QMainWindow):
     def show_dicom_toolbar(self):
         self.ui.toolBar_DCM.setVisible(self.ui.action_DICOM_tags.isChecked())
         # create new tab
-        if self.imager:
-            if self.ui.action_DICOM_tags.isChecked():
-                self.ui.tabWidget.setTabVisible(1, True)
-                self.ui.tabWidget.setCurrentIndex(1)
+        if self.ui.action_DICOM_tags.isChecked():
+            self.ui.tabWidget.setTabVisible(1, True)
+            self.ui.tabWidget.setCurrentIndex(1)
+            if self.imager:
                 self.source_model = QStandardItemModel()
                 self.proxy_model = QSortFilterProxyModel()
-                font = QFont()
-                if os == 'Linux':
-                    font.setFamily("Monospace")
-                elif os == 'Windows':
-                    font.setFamily("Courier New")
-                else:
-                    font.setFamily("Courier")
-                self.ui.treeView.setFont(font)
-                # self.ui.action_Find_tag.setChecked(False)
-                self.find_tag()
-                self.filter_tag()
-                self.show_tree()
+            font = QFont()
+            if os == 'Linux':
+                font.setFamily("Monospace")
+            elif os == 'Windows':
+                font.setFamily("Courier New")
             else:
-                self.ui.tabWidget.setTabVisible(1, False)
+                font.setFamily("Courier")
+            self.ui.treeView.setFont(font)
+            # enable the tag operations on the edit menu
+            self.ui.action_Find_tag.setVisible(True)
+            self.ui.action_Insert_tag.setVisible(True)
+            self.ui.action_Edit_tag.setVisible(True)
+            self.ui.action_Delete_tag.setVisible(True)
+            # self.ui.action_Find_tag.setChecked(False)
+            self.find_tag()
+            self.filter_tag()
+            self.show_tree()
+        else:
+            self.ui.tabWidget.setTabVisible(1, False)
+            self.ui.action_Find_tag.setVisible(False)
+            self.ui.action_Insert_tag.setVisible(False)
+            self.ui.action_Edit_tag.setVisible(False)
+            self.ui.action_Delete_tag.setVisible(False)
 
     def show_tree(self):
         self.dataset_to_model()
