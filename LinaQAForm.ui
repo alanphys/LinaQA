@@ -208,6 +208,7 @@
     </property>
     <addaction name="action_Auto_Window"/>
     <addaction name="action_Invert"/>
+    <addaction name="action_Scale_Image"/>
     <addaction name="action_Sum_Image"/>
     <addaction name="action_Ave_Image"/>
    </widget>
