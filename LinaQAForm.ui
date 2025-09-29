@@ -467,7 +467,7 @@
      <normaloff>:/Icons/Icons/Catphan.png</normaloff>:/Icons/Icons/Catphan.png</iconset>
    </property>
    <property name="text">
-    <string>CatPhan</string>
+    <string>3D Phantoms</string>
    </property>
    <property name="toolTip">
     <string>Analyse 3D Phantoms</string>

@@ -508,7 +508,7 @@ class Ui_LinaQAForm(object):
         self.action_Open_Ref.setToolTip(_translate("LinaQAForm", "Open reference image"))
         self.action_Auto_Window.setText(_translate("LinaQAForm", "Auto &Window"))
         self.action_Invert.setText(_translate("LinaQAForm", "&Invert"))
-        self.action_CatPhan.setText(_translate("LinaQAForm", "CatPhan"))
+        self.action_CatPhan.setText(_translate("LinaQAForm", "3D Phantoms"))
         self.action_CatPhan.setToolTip(_translate("LinaQAForm", "Analyse 3D Phantoms"))
         self.action_2DPhantoms.setText(_translate("LinaQAForm", "2D Phantoms"))
         self.action_2DPhantoms.setToolTip(_translate("LinaQAForm", "Analyse 2D Phantoms"))
