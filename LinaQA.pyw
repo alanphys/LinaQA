@@ -459,9 +459,15 @@ class LinaQA(QMainWindow):
             dirpath = self.working_dir
         ostype = system()
         if ostype == 'Windows':
-            file_filter = 'DICOM files (*.dcm);;ZIP files (*.zip);;All files (*.*)'
+            file_filter = ('DICOM files (*.dcm *.2 *.img);;'
+                           'ZIP files (*.zip);;'
+                           'Machine log files (*.bin *.txt);;'
+                           'All files (*.*)')
         else:
-            file_filter = 'DICOM files (*.dcm);;ZIP files (*.zip);;All files (*)'
+            file_filter = ('DICOM files (*.dcm *.2 *.img);;'
+                           'ZIP files (*.zip);;'
+                           'Machine log files (*.bin *.txt);;'
+                           'All files (*)')
         self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath, file_filter)[0]
         if len(self.filenames) > 0:
             self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
