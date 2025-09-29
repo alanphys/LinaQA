@@ -11,6 +11,7 @@ Usage: python LinaQA.pyw
 # copyright: AC Chamberlain (c) 2023-2025
 
 import sys
+import inspect
 import os.path as osp
 import os
 import io
@@ -44,7 +45,7 @@ import webbrowser
 from LinaQAForm import Ui_LinaQAForm
 from linaqa_types import (
     supported_modalities,
-    catphan_list,
+    phantom3D_list,
     vmat_list,
     phantom2D_list,
     spatial_res_list,
@@ -117,7 +118,7 @@ class LinaQA(QMainWindow):
         self.ui.cbCatPhan = QComboBox()
         self.ui.cbCatPhan.setFixedWidth(120)
         self.ui.toolBar_Rx.insertWidget(self.ui.action_Picket_Fence, self.ui.cbCatPhan)
-        self.ui.cbCatPhan.addItems(catphan_list)
+        self.ui.cbCatPhan.addItems(phantom3D_list)
         self.ui.toolBar_Rx.insertSeparator(self.ui.action_Picket_Fence)
         self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
         catphan_type = self.settings.value('3D Phantom/3D Type')
@@ -989,7 +990,9 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_2d_phantoms(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
-        phan = getattr(planar_imaging, self.ui.cbPhan2D.currentText().replace(' ', ''))(stream)
+        phantom_class = [name for name, obj in inspect.getmembers(planar_imaging)
+                         if hasattr(obj, 'common_name') and obj.common_name == self.ui.cbPhan2D.currentText()]
+        phan = getattr(planar_imaging, phantom_class[0])(stream)
         phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantom/Low contrast threshold')),
                      high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
                      invert=self.imager.invflag,

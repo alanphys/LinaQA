@@ -5,27 +5,19 @@ Type definitions for LinaQA
 """
 # Author: AC Chamberlain
 
+import inspect
 from PyQt5.QtWidgets import QDoubleSpinBox
 from pylinac.picketfence import MLC
 from pylinac.nuclear import Nuclide
+from pylinac import planar_imaging
 
 supported_modalities = ['RTIMAGE', 'RTDOSE', 'CT', 'NM', 'PT', 'MR', 'OT', 'XA']
 # TODO pull these directly from class def
-catphan_list = ['CatPhan503', 'CatPhan504', 'CatPhan600', 'CatPhan604', 'CatPhan700', 'QuartDVT', 'ACR CT', 'ACR MRI']
+phantom3D_list = ['CatPhan503', 'CatPhan504', 'CatPhan600', 'CatPhan604', 'CatPhan700', 'QuartDVT', 'ACR CT', 'ACR MRI']
+
 vmat_list = ['DRGS', 'DRMLC']
 
-phantom2D_list = ['Doselab MC2 MV',
-                  'Doselab MC2 kV',
-                  'Las Vegas',
-                  'Elekta Las Vegas',
-                  'Leeds TOR',
-                  'PTW EPID QC',
-                  'SNC MV-QA',
-                  'SNC kV-QA',
-                  'SI FC-2',
-                  'SI QC-3',
-                  'SI QC-kV',
-                  'IBA Primus A']
+phantom2D_list = [obj.common_name for name, obj in inspect.getmembers(planar_imaging) if hasattr(obj, 'common_name')]
 
 spatial_res_list = ['Four Bar', 'Quadrant']
 

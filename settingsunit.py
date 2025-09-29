@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
 from linaqa_types import (
      MyDoubleSpinBox,
      phantom2D_list,
-     catphan_list,
+     phantom3D_list,
      vmat_list,
      spatial_res_list,
      mlc_list,
@@ -92,7 +92,7 @@ def set_default_settings(settings):
 
     settings.beginGroup('2D Phantom')
     if not settings.contains('2D Type'):
-        settings.setValue('2D Type', 'Leeds TOR')
+        settings.setValue('2D Type', 'Leeds')
     if not settings.contains('Low contrast threshold'):
         settings.setValue('Low contrast threshold', '0.1')
     if not settings.contains('High contrast threshold'):
@@ -649,7 +649,7 @@ class VariantDelegate(QItemDelegate):
             if key == '2D Type':
                 editor.addItems(phantom2D_list)
             elif key == '3D Type':
-                editor.addItems(catphan_list)
+                editor.addItems(phantom3D_list)
             elif key == 'MLC Type':
                 editor.addItems(mlc_list)
             elif key == 'VMAT test':
