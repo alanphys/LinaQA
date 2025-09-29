@@ -11,25 +11,25 @@ from pylinac.nuclear import Nuclide
 
 supported_modalities = ['RTIMAGE', 'RTDOSE', 'CT', 'NM', 'PT', 'MR', 'OT', 'XA']
 # TODO pull these directly from class def
-catphan_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "QuartDVT", "ACR CT", "ACR MRI"]
-vmat_list = ["DRGS", "DRMLC"]
+catphan_list = ['CatPhan503', 'CatPhan504', 'CatPhan600', 'CatPhan604', 'CatPhan700', 'QuartDVT', 'ACR CT', 'ACR MRI']
+vmat_list = ['DRGS', 'DRMLC']
 
-phantom2D_list = ["Doselab MC2 MV",
-                  "Doselab MC2 kV",
-                  "Las Vegas",
-                  "Elekta Las Vegas",
-                  "Leeds TOR",
-                  "PTW EPID QC",
-                  "SNC MV-QA",
-                  "SNC kV-QA",
-                  "SI FC-2",
-                  "SI QC-3",
-                  "SI QC-kV",
-                  "IBA Primus A"]
+phantom2D_list = ['Doselab MC2 MV',
+                  'Doselab MC2 kV',
+                  'Las Vegas',
+                  'Elekta Las Vegas',
+                  'Leeds TOR',
+                  'PTW EPID QC',
+                  'SNC MV-QA',
+                  'SNC kV-QA',
+                  'SI FC-2',
+                  'SI QC-3',
+                  'SI QC-kV',
+                  'IBA Primus A']
 
 spatial_res_list = ['Four Bar', 'Quadrant']
 
-mlc_list = [mlc.value.get("name") for mlc in MLC]
+mlc_list = [mlc.value.get('name') for mlc in MLC]
 
 nuclide_list = [str(name) for name, value in vars(Nuclide).items() if not name.startswith('__')]
 
