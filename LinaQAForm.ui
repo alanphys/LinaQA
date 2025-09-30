@@ -220,6 +220,8 @@
      <property name="title">
       <string>Radiology</string>
      </property>
+     <addaction name="action_CatPhan"/>
+     <addaction name="action_2DPhantoms"/>
      <addaction name="action_Gamma"/>
     </widget>
     <widget class="QMenu" name="menuRadiotherapy">
@@ -376,11 +378,13 @@
    </attribute>
    <addaction name="action_Auto_Window"/>
    <addaction name="action_Invert"/>
-   <addaction name="action_Scale_Image"/>
-   <addaction name="action_Gamma"/>
    <addaction name="action_Sum_Image"/>
    <addaction name="action_Ave_Image"/>
    <addaction name="action_Pixel_Data"/>
+   <addaction name="action_Scale_Image"/>
+   <addaction name="action_Gamma"/>
+   <addaction name="action_CatPhan"/>
+   <addaction name="action_2DPhantoms"/>
   </widget>
   <widget class="QToolBar" name="toolBar_DCM">
    <property name="windowTitle">
@@ -530,7 +534,7 @@
      <normaloff>:/Icons/Icons/W-L.png</normaloff>:/Icons/Icons/W-L.png</iconset>
    </property>
    <property name="text">
-    <string>Winston Lutz</string>
+    <string>Winston-Lutz</string>
    </property>
    <property name="toolTip">
     <string>Analyse Winston-Lutz images</string>
