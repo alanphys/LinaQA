@@ -1170,18 +1170,21 @@ class LinaQA(QMainWindow):
         num_images = self.imager.size[2]
         self.imager.sum_images()
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.is_changed = True
         self.status_message(f'{num_images} images were summed. Image has been rescaled.')
 
     def avg_image(self):
         num_images = self.imager.size[2]
         self.imager.avg_images()
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.is_changed = True
         self.status_message(f'{num_images} images were averaged')
 
     def scale_image(self):
         num_images = self.imager.size[2]
         self.imager.scale_images(self.ui.dsbScaleFactor.value())
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.is_changed = True
         self.status_message(f'{num_images} images were scaled')
 
 # ---------------------------------------------------------------------------------------------------------------------
