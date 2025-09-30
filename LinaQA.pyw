@@ -15,6 +15,7 @@ import inspect
 import os.path as osp
 import os
 import io
+from collections.abc import Sequence
 from pylinac.core.io import TemporaryZipDirectory
 from platform import system
 from PyQt5.QtWidgets import (
@@ -1225,10 +1226,14 @@ class LinaQA(QMainWindow):
         # quadrant test
         elif self.ui.cbSpatialRes.currentText() == spatial_res_list[1]:
             sr = pylinac_subclasses.LinaQAQuadrantRes(self.imager.datasets)
+            widths_str = self.settings.value('Spatial Resolution/Bar widths mm', (4.23, 3.18, 2.54, 2.12), type=str)
+            widths = tuple(float(w.strip()) for w in widths_str.strip('()').split(','))
             sr.analyze(
-                bar_widths=list(self.settings.value('Spatial Resolution/Bar widths mm', (4.23, 3.18, 2.54, 2.12), type=tuple)),
+                bar_widths=widths,
                 roi_diameter_mm=self.settings.value('Spatial Resolution/ROI diameter mm', 70.0, type=float),
-                distance_from_center_mm=self.settings.value('Spatial Resolution/Distance from center mm', 130.0, type=float)
+                distance_from_center_mm=self.settings.value('Spatial Resolution/Distance from center mm',
+                                                            130.0,
+                                                            type=float)
             )
         self.show_results(sr)
 
