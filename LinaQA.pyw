@@ -15,7 +15,6 @@ import inspect
 import os.path as osp
 import os
 import io
-from collections.abc import Sequence
 from pylinac.core.io import TemporaryZipDirectory
 from platform import system
 from PyQt5.QtWidgets import (
@@ -1041,7 +1040,8 @@ class LinaQA(QMainWindow):
                                                           dpi=float(self.settings.value('Star shot/DPI')))
         star.analyze(radius=float(self.settings.value('Star shot/Normalised analysis radius')),
                      tolerance=float(self.settings.value('Star shot/Tolerance')),
-                     recursive=self.settings.value('Star shot/Recursive analysis', False, type=bool))
+                     recursive=self.settings.value('Star shot/Recursive analysis', False, type=bool),
+                     invert=self.imager.invflag if self.imager is not None else None)
         filename = filename + '.pdf'
         self.show_results(star, filename)
 
