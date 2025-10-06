@@ -121,12 +121,12 @@ class LinaQA(QMainWindow):
         self.ui.cbCatPhan.addItems(phantom3D_list)
         self.ui.toolBar_Rx.insertSeparator(self.ui.action_Picket_Fence)
         self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
-        catphan_type = self.settings.value('3D Phantom/3D Type')
+        catphan_type = self.settings.value('3D Phantoms/3D Type')
         index = self.ui.cbCatPhan.findText(catphan_type)
         if index >= 0:
             self.ui.cbCatPhan.setCurrentIndex(index)
         else:
-            raise Exception('Invalid setting in 3D Phantom/3D Type')
+            raise Exception('Invalid setting in 3D Phantoms/3D Type')
         self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
 
         # we have to insert a Combox for the MLC manually into the toolbar
@@ -161,12 +161,12 @@ class LinaQA(QMainWindow):
         self.ui.toolBar_Rx.insertWidget(self.ui.action_Machine_Logs, self.ui.cbPhan2D)
         self.ui.cbPhan2D.addItems(phantom2D_list)
         self.ui.toolBar_Rx.insertSeparator(self.ui.action_Machine_Logs)
-        phan2d_type = self.settings.value('2D Phantom/2D Type')
+        phan2d_type = self.settings.value('2D Phantoms/2D Type')
         index = self.ui.cbPhan2D.findText(phan2d_type)
         if index >= 0:
             self.ui.cbPhan2D.setCurrentIndex(index)
         else:
-            raise Exception('Invalid setting in 2D Phantom/2D Type')
+            raise Exception('Invalid setting in 2D Phantoms/2D Type')
 
         # we have to insert a double spinbox for the image scaling manually into the toolbar
         self.ui.toolBar_Dx.insertSeparator(self.ui.action_Scale_Image)
@@ -950,9 +950,9 @@ class LinaQA(QMainWindow):
             cat = ACRMRILarge(streams)
         else:
             cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
-            param_list = {"hu_tolerance": int(self.settings.value('3D Phantom/HU Tolerance')),
-                          "thickness_tolerance": float(self.settings.value('3D Phantom/Thickness Tolerance')),
-                          "scaling_tolerance": float(self.settings.value('3D Phantom/Scaling Tolerance'))}
+            param_list = {"hu_tolerance": int(self.settings.value('3D Phantoms/HU Tolerance')),
+                          "thickness_tolerance": float(self.settings.value('3D Phantoms/Thickness Tolerance')),
+                          "scaling_tolerance": float(self.settings.value('3D Phantoms/Scaling Tolerance'))}
         if self.imager.invflag:
             for im in cat.dicom_stack.images:
                 im.invert()
@@ -999,13 +999,13 @@ class LinaQA(QMainWindow):
         phantom_class = [name for name, obj in inspect.getmembers(planar_imaging)
                          if hasattr(obj, 'common_name') and obj.common_name == self.ui.cbPhan2D.currentText()]
         phan = getattr(planar_imaging, phantom_class[0])(stream)
-        phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantom/Low contrast threshold')),
-                     high_contrast_threshold=float(self.settings.value('2D Phantom/High contrast threshold')),
+        phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
+                     high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
                      invert=self.imager.invflag,
-                     angle_override=(None if self.settings.value('2D Phantom/Angle override') == '0'
-                          else float(self.settings.value('2D Phantom/Angle override'))),
-                     ssd=('auto' if self.settings.value('2D Phantom/SSD') == '1000'
-                          else float(self.settings.value('2D Phantom/SSD'))))
+                     angle_override=(None if self.settings.value('2D Phantoms/Angle override') == '0'
+                          else float(self.settings.value('2D Phantoms/Angle override'))),
+                     ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'
+                          else float(self.settings.value('2D Phantoms/SSD'))))
         self.show_results(phan)
 
     @show_wait_cursor

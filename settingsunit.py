@@ -37,7 +37,7 @@ def set_default_settings(settings):
         settings.setValue('Metadata', {'Physicist': '', 'Linac': ''})
     settings.endGroup()
 
-    settings.beginGroup('3D Phantom')
+    settings.beginGroup('3D Phantoms')
     if not settings.contains('3D Type'):
         settings.setValue('3D Type', 'CatPhan604')
     if not settings.contains('HU Tolerance'):
@@ -90,7 +90,7 @@ def set_default_settings(settings):
         settings.setValue('Low density BB', 'False')
     settings.endGroup()
 
-    settings.beginGroup('2D Phantom')
+    settings.beginGroup('2D Phantoms')
     if not settings.contains('2D Type'):
         settings.setValue('2D Type', 'Leeds')
     if not settings.contains('Low contrast threshold'):
