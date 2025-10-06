@@ -177,7 +177,7 @@ def set_default_settings(settings):
         settings.setValue('Distance from center mm', '130')
     settings.endGroup()
 
-    settings.beginGroup('Tomgraphic Contrast')
+    settings.beginGroup('Tomographic Contrast')
     if not settings.contains('Sphere diameters mm'):
         settings.setValue('Sphere diameters mm', '(38, 31.8, 25.4, 19.1, 15.9, 12.7)')
     if not settings.contains('Sphere angles'):

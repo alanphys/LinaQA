@@ -459,12 +459,12 @@ class LinaQA(QMainWindow):
             dirpath = self.working_dir
         ostype = system()
         if ostype == 'Windows':
-            file_filter = ('DICOM files (*.dcm *.2 *.img);;'
+            file_filter = ('DICOM files (*.dcm *.2 *.img *.ima);;'
                            'ZIP files (*.zip);;'
                            'Machine log files (*.bin *.txt);;'
                            'All files (*.*)')
         else:
-            file_filter = ('DICOM files (*.dcm *.2 *.img);;'
+            file_filter = ('DICOM files (*.dcm *.2 *.img *.ima);;'
                            'ZIP files (*.zip);;'
                            'Machine log files (*.bin *.txt);;'
                            'All files (*)')
@@ -1226,7 +1226,7 @@ class LinaQA(QMainWindow):
         # quadrant test
         elif self.ui.cbSpatialRes.currentText() == spatial_res_list[1]:
             sr = pylinac_subclasses.LinaQAQuadrantRes(self.imager.datasets)
-            widths_str = self.settings.value('Spatial Resolution/Bar widths mm', (4.23, 3.18, 2.54, 2.12), type=str)
+            widths_str = self.settings.value('Spatial Resolution/Bar widths mm', '(4.23, 3.18, 2.54, 2.12)', type=str)
             widths = tuple(float(w.strip()) for w in widths_str.strip('()').split(','))
             sr.analyze(
                 bar_widths=widths,
@@ -1258,15 +1258,17 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def tomographic_contrast(self):
         tc = pylinac_subclasses.LinaQATomoContrast(self.imager.datasets)
+        sphere_diam_str = self.settings.value('Tomographic Contrast/Sphere diameters mm',
+                                              '(38, 31.8, 25.4, 19.1, 15.9, 12.7)',
+                                              type=str)
+        sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
+        sphere_ang_str = self.settings.value('Tomographic Contrast/Sphere angles',
+                                             '(-10, -70, -130, -190, 110, 50)',
+                                             type=str)
+        sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
         tc.analyze(
-            sphere_diameters_mm=list(
-                self.settings.value('Tomographic Contrast/Sphere diameters mm',
-                                    (38, 31.8, 25.4, 19.1, 15.9, 12.7),
-                                    type=tuple)),
-            sphere_angles=list(
-                self.settings.value('Tomographic Contrast/Sphere diameters mm',
-                                    (-10, -70, -130, -190, 110, 50),
-                                    type=tuple)),
+            sphere_diameters_mm=sphere_diam,
+            sphere_angles=sphere_ang,
             ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float)
         )
         self.show_results(tc)
