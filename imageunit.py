@@ -1,3 +1,7 @@
+# author : AC Chamberlain <alanphys@yahoo.co.uk>
+# copyright: AC Chamberlain (c) 2023-2025
+# SPDX-License-Identifier: Licence.txt:
+
 import math
 
 import numpy as np

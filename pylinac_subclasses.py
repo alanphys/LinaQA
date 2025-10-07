@@ -4,7 +4,9 @@ Extra functionality for pylinac classes. Merge into pylinac at some stage
 =========================================================================
 """
 import enum
-# Author: AC Chamberlain
+# author : AC Chamberlain <alanphys@yahoo.co.uk>
+# copyright: AC Chamberlain (c) 2023-2025
+# SPDX-License-Identifier: Licence.txt:
 
 import io
 import os

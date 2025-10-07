@@ -7,6 +7,7 @@ Show a tabbed help window displaying the readme, licence and credits
 """
 # author : AC Chamberlain <alanphys@yahoo.co.uk>
 # copyright: AC Chamberlain (c) 2019-2025
+# SPDX-License-Identifier: Licence.txt:
 
 from .aboutformui import Ui_AboutForm
 from PyQt5.QtWidgets import QDialog

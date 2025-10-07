@@ -3,7 +3,9 @@
 Type definitions for LinaQA
 ===========================
 """
-# Author: AC Chamberlain
+# author : AC Chamberlain <alanphys@yahoo.co.uk>
+# copyright: AC Chamberlain (c) 2023-2025
+# SPDX-License-Identifier: Licence.txt:
 
 import inspect
 from PyQt5.QtWidgets import QDoubleSpinBox
