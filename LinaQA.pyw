@@ -218,6 +218,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Dx_Toolbar.triggered.connect(self.show_dx_toolbar)
         self.ui.action_NM_Toolbar.triggered.connect(self.show_nm_toolbar)
         self.ui.action_DICOM_tags.triggered.connect(self.show_dicom_toolbar)
+        self.ui.action_LinaQAH.triggered.connect(self.linaqa_help)
         self.ui.action_PyDicomH.triggered.connect(self.pydicom_help)
         self.ui.action_PylinacH.triggered.connect(self.pylinac_help)
         action_close.triggered.connect(self.close)
@@ -531,6 +532,11 @@ class LinaQA(QMainWindow):
     def show_about(self):
         about = About()
         about.exec()
+
+    def linaqa_help(self):
+        rel_path = 'html/index.html'
+        abs_path = osp.abspath(rel_path)
+        webbrowser.open(f'file://{abs_path}')
 
     def pydicom_help(self):
         webbrowser.open('https://pydicom.github.io/pydicom/stable/')

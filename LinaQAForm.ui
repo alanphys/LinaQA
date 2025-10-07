@@ -258,6 +258,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="action_About"/>
+    <addaction name="action_LinaQAH"/>
     <addaction name="action_PylinacH"/>
     <addaction name="action_PyDicomH"/>
    </widget>
@@ -997,6 +998,14 @@
    </property>
    <property name="toolTip">
     <string>Calculate tomographic contrast</string>
+   </property>
+  </action>
+  <action name="action_LinaQAH">
+   <property name="text">
+    <string>LinaQA documentation</string>
+   </property>
+   <property name="toolTip">
+    <string>LinaQA Help</string>
    </property>
   </action>
  </widget>

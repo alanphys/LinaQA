@@ -384,6 +384,8 @@ class Ui_LinaQAForm(object):
         icon37.addPixmap(QtGui.QPixmap(":/Icons/Icons/TomoContrast.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_Tomo_Contrast.setIcon(icon37)
         self.action_Tomo_Contrast.setObjectName("action_Tomo_Contrast")
+        self.action_LinaQAH = QtWidgets.QAction(LinaQAForm)
+        self.action_LinaQAH.setObjectName("action_LinaQAH")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addAction(self.action_Open_Ref)
         self.menu_File.addAction(self.action_Save)
@@ -416,6 +418,7 @@ class Ui_LinaQAForm(object):
         self.menu_Analyse.addAction(self.menuRadiology.menuAction())
         self.menu_Analyse.addAction(self.menuNuclear_Medicine.menuAction())
         self.menu_Help.addAction(self.action_About)
+        self.menu_Help.addAction(self.action_LinaQAH)
         self.menu_Help.addAction(self.action_PylinacH)
         self.menu_Help.addAction(self.action_PyDicomH)
         self.menuEdit.addAction(self.action_DICOM_tags)
@@ -598,4 +601,6 @@ class Ui_LinaQAForm(object):
         self.action_Spatial_Res.setToolTip(_translate("LinaQAForm", "Calculate spatial resolution"))
         self.action_Tomo_Contrast.setText(_translate("LinaQAForm", "Tomographic Contrast"))
         self.action_Tomo_Contrast.setToolTip(_translate("LinaQAForm", "Calculate tomographic contrast"))
+        self.action_LinaQAH.setText(_translate("LinaQAForm", "LinaQA documentation"))
+        self.action_LinaQAH.setToolTip(_translate("LinaQAForm", "LinaQA Help"))
 import LinaQA_rc
