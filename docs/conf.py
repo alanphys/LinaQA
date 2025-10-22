@@ -27,3 +27,13 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = 'nature'
 html_static_path = ['_static']
 html_logo = "LinacToolkit.png"
+
+# -- Options for LaTeX output ---------------------------------------------
+
+# Grouping the document tree into LaTeX files. List of tuples
+# (source start file, target name, title,
+#  author, documentclass [howto, manual, or own class]).
+latex_documents = [
+    ('index', 'LinaQAUserManual.tex', u'LinaQA Documentation',
+     u'AC Chamberlain', 'manual'),
+]

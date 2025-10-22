@@ -29,6 +29,8 @@ Welcome to LinaQA's documentation
 Other documentation
 ===================
 
+Further information may be found in the documentation of the individual libraries.
+
 * `Pylinac documentation <https://pylinac.readthedocs.io/en/latest/>`_
 * `Pydicom documentation <https://pydicom.github.io/pydicom/stable/>`_
 
