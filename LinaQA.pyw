@@ -1016,28 +1016,36 @@ class LinaQA(QMainWindow):
         phantom_class = [name for name, obj in inspect.getmembers(planar_imaging)
                          if hasattr(obj, 'common_name') and obj.common_name == self.ui.cbPhan2D.currentText()]
         phan = getattr(planar_imaging, phantom_class[0])(stream)
-        phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
-                     high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
-                     invert=self.imager.invflag,
-                     angle_override=(None if self.settings.value('2D Phantoms/Angle override') == '0'
-                          else float(self.settings.value('2D Phantoms/Angle override'))),
-                     ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'
-                          else float(self.settings.value('2D Phantoms/SSD'))))
-        self.show_results(phan)
+        try:
+            phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
+                         high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
+                         invert=self.imager.invflag,
+                         angle_override=(None if self.settings.value('2D Phantoms/Angle override') == '0'
+                              else float(self.settings.value('2D Phantoms/Angle override'))),
+                         ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'
+                              else float(self.settings.value('2D Phantoms/SSD'))))
+            self.show_results(phan)
+        except Exception as e:
+            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_vmat(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
-        ref_stream = dataset_to_stream(self.ref_imager.datasets[self.imager.index])
-        images = (stream, ref_stream)
-        if self.ui.cbVMAT.currentText() == 'DRGS':
-            v = vmat.DRGS(image_paths=images)
-        else:
-            v = vmat.DRMLC(image_paths=images)
-        v.analyze(tolerance=float(self.settings.value('VMAT/Tolerance')))
-        v.open_image.base_path = self.filenames[0]
-        v.dmlc_image.base_path = self.ref_filename
-        self.show_results(v)
+        try:
+            ref_stream = dataset_to_stream(self.ref_imager.datasets[self.imager.index])
+            images = (stream, ref_stream)
+            if self.ui.cbVMAT.currentText() == 'DRGS':
+                v = vmat.DRGS(image_paths=images)
+            else:
+                v = vmat.DRMLC(image_paths=images)
+            v.analyze(tolerance=float(self.settings.value('VMAT/Tolerance')))
+            v.open_image.base_path = self.filenames[0]
+            v.dmlc_image.base_path = self.ref_filename
+            self.show_results(v)
+        except AttributeError:
+            self.status_error('No reference image defined. Please open a reference image.')
+        except Exception as e:
+            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_star(self):
@@ -1055,59 +1063,68 @@ class LinaQA(QMainWindow):
             star = starshot.Starshot.from_multiple_images(self.filenames,
                                                           sid=float(self.settings.value('Star shot/SID')),
                                                           dpi=float(self.settings.value('Star shot/DPI')))
-        star.analyze(radius=float(self.settings.value('Star shot/Normalised analysis radius')),
-                     tolerance=float(self.settings.value('Star shot/Tolerance')),
-                     recursive=self.settings.value('Star shot/Recursive analysis', False, type=bool),
-                     invert=self.imager.invflag if self.imager is not None else None)
-        filename = filename + '.pdf'
-        self.show_results(star, filename)
+        try:
+            star.analyze(radius=float(self.settings.value('Star shot/Normalised analysis radius')),
+                         tolerance=float(self.settings.value('Star shot/Tolerance')),
+                         recursive=self.settings.value('Star shot/Recursive analysis', False, type=bool),
+                         invert=self.imager.invflag if self.imager is not None else None)
+            filename = filename + '.pdf'
+            self.show_results(star, filename)
+        except Exception as e:
+            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_log(self):
-        log = log_analyzer.load_log(self.filenames[0])
-        self.show_results(log)
+        try:
+            log = log_analyzer.load_log(self.filenames[0])
+            self.show_results(log)
+        except Exception as e:
+            self.status_error(f'Could not analyze log. Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_gamma(self):
         if len(self.ref_filename) >> 0:
             stream = dataset_to_stream(self.imager.datasets[self.imager.index])
-            ref_stream = dataset_to_stream(self.ref_imager.datasets[self.imager.index])
-            eval_img = image.load(stream)
-            if self.imager.invflag:
-                eval_img.invert()
-            ref_img = image.load(ref_stream)
-            eval_img.normalize()
-            ref_img.normalize()
-            gamma = eval_img.gamma(comparison_image=ref_img,
-                                   doseTA=self.settings.value('Gamma Analysis/Dose to agreement', 2.0, type=float),
-                                   distTA=self.settings.value('Gamma Analysis/Distance to agreement', 2.0, type=float),
-                                   threshold=self.settings.value('Gamma Analysis/Dose threshold', 0.05, type=float))
-            gamma_plot = plt.imshow(gamma)
-            gamma_plot.set_cmap('bwr')
-            plt.title(f'Gamma Analysis ({self.settings.value("Gamma Analysis/Dose to agreement")}'
-                      f'%/{self.settings.value("Gamma Analysis/Distance to agreement")}mm)')
-            plt.ylabel('Distance (pixels)')
-            plt.xlabel('Distance (pixels)')
-            plt.colorbar()
-            plt.clim(0, self.settings.value('Gamma Analysis/Gamma cap', 2.0, type=float))
-#            plt.show()
-            filename = osp.splitext(self.filenames[0])[0] + '.pdf'
-            canvas = pdf.PylinacCanvas(filename,
-                                       page_title='Gamma analysis',
-                                       metadata=self.settings.value('General/Metadata'),
-                                       logo=self.settings.value('General/Logo'))
-            notes = self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
-            if notes is not None:
-                canvas.add_text(text="Notes:", location=(1, 4.5), font_size=14)
-                canvas.add_text(text=notes, location=(1, 4))
-            img = io.BytesIO()
-            plt.savefig(img)
-            canvas.add_image(img, location=(1, 5), dimensions=(18, 18))
-            canvas.finish()
-            if open_path(filename):
-                self.status_message('Results displayed in PDF')
-            else:
-                self.status_error('No reader to open document')
+            try:
+                ref_stream = dataset_to_stream(self.ref_imager.datasets[self.imager.index])
+                eval_img = image.load(stream)
+                if self.imager.invflag:
+                    eval_img.invert()
+                ref_img = image.load(ref_stream)
+                eval_img.normalize()
+                ref_img.normalize()
+                gamma = eval_img.gamma(comparison_image=ref_img,
+                                       doseTA=self.settings.value('Gamma Analysis/Dose to agreement', 2.0, type=float),
+                                       distTA=self.settings.value('Gamma Analysis/Distance to agreement', 2.0, type=float),
+                                       threshold=self.settings.value('Gamma Analysis/Dose threshold', 0.05, type=float))
+                gamma_plot = plt.imshow(gamma)
+                gamma_plot.set_cmap('bwr')
+                plt.title(f'Gamma Analysis ({self.settings.value("Gamma Analysis/Dose to agreement")}'
+                          f'%/{self.settings.value("Gamma Analysis/Distance to agreement")}mm)')
+                plt.ylabel('Distance (pixels)')
+                plt.xlabel('Distance (pixels)')
+                plt.colorbar()
+                plt.clim(0, self.settings.value('Gamma Analysis/Gamma cap', 2.0, type=float))
+    #            plt.show()
+                filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+                canvas = pdf.PylinacCanvas(filename,
+                                           page_title='Gamma analysis',
+                                           metadata=self.settings.value('General/Metadata'),
+                                           logo=self.settings.value('General/Logo'))
+                notes = self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                if notes is not None:
+                    canvas.add_text(text="Notes:", location=(1, 4.5), font_size=14)
+                    canvas.add_text(text=notes, location=(1, 4))
+                img = io.BytesIO()
+                plt.savefig(img)
+                canvas.add_image(img, location=(1, 5), dimensions=(18, 18))
+                canvas.finish()
+                if open_path(filename):
+                    self.status_message('Results displayed in PDF')
+                else:
+                    self.status_error('No reader to open document')
+            except Exception as e:
+                self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
         else:
             self.ui.tabWidget.setTabVisible(3, False)
 
@@ -1316,10 +1333,8 @@ def main():
         app.setWindowIcon(QIcon(":/icons/icons/LinacToolKit.png"))
     window = LinaQA()
     window.show()
-    print(sys.argv)
     if len(sys.argv) > 1:
         window.filenames = sys.argv[1:]
-        print(window.filenames)
         if window.filenames:
             window.open_file()
     else:
