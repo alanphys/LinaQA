@@ -405,6 +405,10 @@ class LinaQA(QMainWindow):
             self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
 
     def open_file(self):
+        # remove any previous images
+        del self.imager
+        self.imager = None
+        self.ui.qlImage.clear()
         # is the filename a directory or archive
         if len(self.filenames) == 1:
             if os.path.isdir(self.filenames[0]):
@@ -445,14 +449,8 @@ class LinaQA(QMainWindow):
 
     def choose_file(self):
         # set up ui
-        self.ui.qlImage.clear()
-        self.ui.tabWidget.setTabVisible(0, True)
-        self.ui.tabWidget.setCurrentIndex(0)
-
         self.is_changed = False
         self.status_clear()
-        del self.imager
-        self.imager = None
 
         # get filename(s)
         if len(self.filenames) > 0:
