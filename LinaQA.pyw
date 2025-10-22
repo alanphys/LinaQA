@@ -949,22 +949,25 @@ class LinaQA(QMainWindow):
             # if not fall back to stream
             streams = datasets_to_stream(self.imager.datasets)
         param_list = {}
-        if self.ui.cbCatPhan.currentText() == 'QuartDVT':
-            cat = QuartDVT(streams)
-        elif self.ui.cbCatPhan.currentText() == 'ACR CT':
-            cat = ACRCT(streams)
-        elif self.ui.cbCatPhan.currentText() == 'ACR MRI':
-            cat = ACRMRILarge(streams)
-        else:
-            cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
-            param_list = {"hu_tolerance": int(self.settings.value('3D Phantoms/HU Tolerance')),
-                          "thickness_tolerance": float(self.settings.value('3D Phantoms/Thickness Tolerance')),
-                          "scaling_tolerance": float(self.settings.value('3D Phantoms/Scaling Tolerance'))}
-        if self.imager.invflag:
-            for im in cat.dicom_stack.images:
-                im.invert()
-        cat.analyze(**param_list)
-        self.show_results(cat)
+        try:
+            if self.ui.cbCatPhan.currentText() == 'QuartDVT':
+                cat = QuartDVT(streams)
+            elif self.ui.cbCatPhan.currentText() == 'ACR CT':
+                cat = ACRCT(streams)
+            elif self.ui.cbCatPhan.currentText() == 'ACR MRI':
+                cat = ACRMRILarge(streams)
+            else:
+                cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
+                param_list = {"hu_tolerance": int(self.settings.value('3D Phantoms/HU Tolerance')),
+                              "thickness_tolerance": float(self.settings.value('3D Phantoms/Thickness Tolerance')),
+                              "scaling_tolerance": float(self.settings.value('3D Phantoms/Scaling Tolerance'))}
+            if self.imager.invflag:
+                for im in cat.dicom_stack.images:
+                    im.invert()
+            cat.analyze(**param_list)
+            self.show_results(cat)
+        except Exception as e:
+            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_picket_fence(self):
@@ -978,15 +981,19 @@ class LinaQA(QMainWindow):
                        action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
                        num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
                        invert=self.imager.invflag)
+            self.show_results(pf)
         except ValueError:
             # if it throws an exception fall back to this as per issue #470
-            pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
-                       action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
-                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
-                       invert=self.imager.invflag,
-                       required_prominence=0.1)
-            self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
-        self.show_results(pf)
+            try:
+                self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
+                pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
+                           action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
+                           num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
+                           invert=self.imager.invflag,
+                           required_prominence=0.1)
+                self.show_results(pf)
+            except Exception as e:
+                self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_winston_lutz(self):
@@ -995,10 +1002,13 @@ class LinaQA(QMainWindow):
         if self.imager.invflag:
             for im in wl.images:
                 im.invert()
-        wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
-                   open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
-                   low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
-        self.show_results(wl)
+        try:
+            wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
+                       open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
+                       low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
+            self.show_results(wl)
+        except Exception as e:
+            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_2d_phantoms(self):
@@ -1306,8 +1316,10 @@ def main():
         app.setWindowIcon(QIcon(":/icons/icons/LinacToolKit.png"))
     window = LinaQA()
     window.show()
+    print(sys.argv)
     if len(sys.argv) > 1:
         window.filenames = sys.argv[1:]
+        print(window.filenames)
         if window.filenames:
             window.open_file()
     else:
