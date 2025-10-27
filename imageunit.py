@@ -11,6 +11,7 @@ from linaqa_types import supported_modalities
 class Imager:
     def __init__(self, datasets):
         self.datasets = datasets
+        self.values = None
         self._index = 0
 
         # check if dataset has an image
@@ -138,6 +139,12 @@ class Imager:
         win_min = np.min(self.values)
         self._window_width = win_max-win_min
         self._window_center = (win_max + win_min)//2
+
+    def flip_lr(self):
+        self.values = np.fliplr(self.values)
+
+    def flip_ud(self):
+        self.values = np.flipud(self.values)
 
     def sum_images(self):
         # collapse the images into one image.

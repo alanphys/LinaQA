@@ -379,6 +379,8 @@
    </attribute>
    <addaction name="action_Auto_Window"/>
    <addaction name="action_Invert"/>
+   <addaction name="action_Flip_LR"/>
+   <addaction name="action_Flip_UD"/>
    <addaction name="action_Sum_Image"/>
    <addaction name="action_Ave_Image"/>
    <addaction name="action_Pixel_Data"/>
@@ -1006,6 +1008,30 @@
    </property>
    <property name="toolTip">
     <string>LinaQA Help</string>
+   </property>
+  </action>
+  <action name="action_Flip_LR">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/FlipLR.png</normaloff>:/Icons/Icons/FlipLR.png</iconset>
+   </property>
+   <property name="text">
+    <string>Flip Left Right</string>
+   </property>
+   <property name="toolTip">
+    <string>Flip image left right</string>
+   </property>
+  </action>
+  <action name="action_Flip_UD">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/FlipUD.png</normaloff>:/Icons/Icons/FlipUD.png</iconset>
+   </property>
+   <property name="text">
+    <string>Flip Up Down</string>
+   </property>
+   <property name="toolTip">
+    <string>Flip image up down</string>
    </property>
   </action>
  </widget>

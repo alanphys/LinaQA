@@ -239,6 +239,8 @@ class LinaQA(QMainWindow):
         self.ui.action_Gamma.triggered.connect(self.analyse_gamma)
         self.ui.action_Sum_Image.triggered.connect(self.sum_image)
         self.ui.action_Ave_Image.triggered.connect(self.avg_image)
+        self.ui.action_Flip_UD.triggered.connect(self.flip_up_down)
+        self.ui.action_Flip_LR.triggered.connect(self.flip_left_right)
         # NM toolbar
         self.ui.action_MCR.triggered.connect(self.max_count_rate)
         self.ui.action_Simple_Sens.triggered.connect(self.simple_sensitivity)
@@ -1182,6 +1184,18 @@ class LinaQA(QMainWindow):
         else:
             self.imager.invflag = True
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+
+    def flip_left_right(self):
+        if self.imager is not None and hasattr(self.imager, "values"):
+            self.imager.flip_lr()
+            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+            self.status_message(f"Image has been flipped left-right")
+
+    def flip_up_down(self):
+        if self.imager is not None and hasattr(self.imager, "values"):
+            self.imager.flip_ud()
+            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+            self.status_message(f"Image has been flipped up-down")
 
     def auto_window(self):
         if self.imager is not None and hasattr(self.imager, "values"):
