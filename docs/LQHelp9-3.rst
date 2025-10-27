@@ -11,6 +11,8 @@ The Radiology tool bar provides methods to analyse DICOM images from diagnostic 
 
 *  |aw| :ref:`autowindow`
 *  |iv| :ref:`invert`
+*  |flr| :ref:`flipleftright`
+*  |fup| :ref:`flipupdown`
 *  |sum| :ref:`sumimage`
 *  |ave| :ref:`aveimage`
 *  |ep| :ref:`editpixeldata`
@@ -25,6 +27,8 @@ The Radiology tool bar provides methods to analyse DICOM images from diagnostic 
 
    LQHelp8-3-1.rst
    LQHelp8-3-2.rst
+   LQHelp8-3-6.rst
+   LQHelp8-3-7.rst
    LQHelp8-3-4.rst
    LQHelp8-3-5.rst
    LQHelp8-2-2.rst
@@ -35,6 +39,10 @@ The Radiology tool bar provides methods to analyse DICOM images from diagnostic 
 .. |aw| image:: _static/AutoWindow.png
 
 .. |iv| image:: _static/Invert.png
+
+.. |flr| image:: _static/FlipLR.png
+
+.. |fup| image:: _static/FlipUD.png
 
 .. |sum| image:: _static/ImageSum.png
 

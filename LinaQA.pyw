@@ -1189,13 +1189,13 @@ class LinaQA(QMainWindow):
         if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.flip_lr()
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Image has been flipped left-right")
+            self.status_message(f"Image(s) have been flipped left-right")
 
     def flip_up_down(self):
         if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.flip_ud()
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Image has been flipped up-down")
+            self.status_message(f"Image(s) have been flipped up-down")
 
     def auto_window(self):
         if self.imager is not None and hasattr(self.imager, "values"):

@@ -403,6 +403,8 @@ class Ui_LinaQAForm(object):
         self.menu_File.addAction(self.action_Save_all)
         self.menu_Image.addAction(self.action_Auto_Window)
         self.menu_Image.addAction(self.action_Invert)
+        self.menu_Image.addAction(self.action_Flip_LR)
+        self.menu_Image.addAction(self.action_Flip_UD)
         self.menu_Image.addAction(self.action_Scale_Image)
         self.menu_Image.addAction(self.action_Sum_Image)
         self.menu_Image.addAction(self.action_Ave_Image)

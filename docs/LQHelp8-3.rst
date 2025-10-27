@@ -11,6 +11,8 @@ The Image Menu contains various operations that can be performed on the image or
 
 *  :ref:`autowindow`
 *  :ref:`invert`
+*  :ref:`flipleftright`
+*  :ref:`flipupdown`
 *  :ref:`scaleimage`
 *  :ref:`sumimage`
 *  :ref:`aveimage`
