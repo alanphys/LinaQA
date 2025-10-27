@@ -5,7 +5,6 @@
 """PySide6 port of the widgets/tools/settingseditor example from Qt v5.x
    Back ported to PyQt5 and adapted by AC Chamberlain"""
 
-import sys
 import os.path as path
 import inspect
 from PyQt5.QtCore import (
@@ -99,6 +98,10 @@ def set_default_settings(settings):
         settings.setValue('High contrast threshold', '0.5')
     if not settings.contains('Angle override'):
         settings.setValue('Angle override', '0')
+    if not settings.contains('Center override'):
+        settings.setValue('Center override', '0')
+    if not settings.contains('Size override'):
+        settings.setValue('Size override', '0')
     if not settings.contains('SSD'):
         settings.setValue('SSD', '1000')
     settings.endGroup()

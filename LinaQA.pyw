@@ -1020,6 +1020,10 @@ class LinaQA(QMainWindow):
                          invert=self.imager.invflag,
                          angle_override=(None if self.settings.value('2D Phantoms/Angle override') == '0'
                               else float(self.settings.value('2D Phantoms/Angle override'))),
+                         center_override=(None if self.settings.value('2D Phantoms/Center override') == '0'
+                              else float(self.settings.value('2D Phantoms/Center override'))),
+                         size_override=(None if self.settings.value('2D Phantoms/Size override') == '0'
+                              else float(self.settings.value('2D Phantoms/Size override'))),
                          ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'
                               else float(self.settings.value('2D Phantoms/SSD'))))
             self.show_results(phan)
