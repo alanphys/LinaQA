@@ -1013,9 +1013,9 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_2d_phantoms(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
-        phantom_class = [name for name, obj in inspect.getmembers(planar_imaging)
+        phantom_class = [obj for name, obj in inspect.getmembers(planar_imaging)
                          if hasattr(obj, 'common_name') and obj.common_name == self.ui.cbPhan2D.currentText()]
-        phan = getattr(planar_imaging, phantom_class[0])(stream)
+        phan = phantom_class[0](stream)
         try:
             phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
                          high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
