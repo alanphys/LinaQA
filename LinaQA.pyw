@@ -557,30 +557,58 @@ class LinaQA(QMainWindow):
     def show_nm_toolbar(self):
         self.ui.toolBar_NM.setVisible(self.ui.action_NM_Toolbar.isChecked())
 
-    def wheelEvent(self, e):
-        if self.imager is not None and hasattr(self.imager, "values"):
-            self.imager.index += int(e.angleDelta().y()/120)
+    def wheelEvent(self, event):
+        tab_index = self.ui.tabWidget.currentIndex()
+        mouse_pos = event.globalPosition().toPoint()
+        if ((tab_index == 0) and self.ui.qlImage.rect().contains(mouse_pos) and
+           self.imager is not None and hasattr(self.imager, "values")):
+            self.imager.index += int(event.angleDelta().y()/120)
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
             self.status_message(f"Current slice {self.imager.index}")
+            event.accept()
+        elif tab_index == 2:
+            super().wheelEvent(event)
+        elif ((tab_index == 2) and self.ui.qlRef.rect().contains(mouse_pos) and
+              self.ref_imager is not None and hasattr(self.ref_imager, "values")):
+            self.ref_imager.index += int(event.angleDelta().y()/120)
+            self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
+            self.status_message(f"Current slice {self.ref_imager.index}")
+            event.accept()
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.mouse_last_pos = event.globalPos()
             self.mouse_button_down = True
+            event.accept()
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.mouse_last_pos = None
             self.mouse_button_down = False
+            event.accept()
 
     def mouseMoveEvent(self, event: QMouseEvent):
-        if self.mouse_button_down and self.imager is not None and hasattr(self.imager, "values"):
-            delta = (event.globalPos() - self.mouse_last_pos) * (self.imager.window_width/1000)
-            self.mouse_last_pos = event.globalPos()
-            self.imager.window_width += delta.x()
-            self.imager.window_center += delta.y()
-            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
+        if self.mouse_button_down:
+            tab_index = self.ui.tabWidget.currentIndex()
+            mouse_pos = event.globalPos()
+            if ((tab_index == 0) and self.ui.qlImage.rect().contains(mouse_pos) and
+               self.imager is not None and hasattr(self.imager, "values")):
+                delta = (mouse_pos - self.mouse_last_pos) * (self.imager.window_width/1000)
+                self.mouse_last_pos = mouse_pos
+                self.imager.window_width += delta.x()
+                self.imager.window_center += delta.y()
+                self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+                self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
+                event.accept()
+            if ((tab_index == 2) and self.ui.qlRef.rect().contains(mouse_pos) and
+               self.ref_imager is not None and hasattr(self.ref_imager, "values")):
+                delta = (mouse_pos - self.mouse_last_pos) * (self.ref_imager.window_width/1000)
+                self.mouse_last_pos = mouse_pos
+                self.ref_imager.window_width += delta.x()
+                self.ref_imager.window_center += delta.y()
+                self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
+                self.status_message(f"Window center {self.ref_imager.window_center}, Window width {self.ref_imager.window_width}")
+                event.accept()
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasText():
