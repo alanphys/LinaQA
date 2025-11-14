@@ -520,7 +520,8 @@ class LinaQA(QMainWindow):
             self.is_changed = False
             self.status_message(f'{i} images saved in ' + dirpath)
 
-    def show_image(self, numpy_array, label: QLabel):
+    @staticmethod
+    def show_image(numpy_array, label: QLabel):
         if numpy_array is not None:
             # create a QImage from Numpy array and display it in a label
             qpimage = QImage(numpy_array, numpy_array.shape[1], numpy_array.shape[0], QImage.Format_ARGB32)
@@ -529,22 +530,27 @@ class LinaQA(QMainWindow):
                             label.height(),
                             Qt.KeepAspectRatio))
 
-    def show_about(self):
+    @staticmethod
+    def show_about():
         about = About()
         about.exec()
 
-    def linaqa_help(self):
+    @staticmethod
+    def linaqa_help():
         rel_path = 'html/index.html'
         abs_path = osp.abspath(rel_path)
         webbrowser.open(f'file://{abs_path}')
 
-    def pydicom_help(self):
+    @staticmethod
+    def pydicom_help():
         webbrowser.open('https://pydicom.github.io/pydicom/stable/')
 
-    def pylinac_help(self):
+    @staticmethod
+    def pylinac_help():
         webbrowser.open('https://pylinac.readthedocs.io/en/latest/')
 
-    def show_settings(self):
+    @staticmethod
+    def show_settings():
         settings = Settings()
         settings.exec()
 
