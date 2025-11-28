@@ -5,14 +5,16 @@
 import math
 
 import numpy as np
+from pydicom import Dataset
 from linaqa_types import supported_modalities
 
 
 class Imager:
-    def __init__(self, datasets):
+    def __init__(self, datasets: list[Dataset], use_rescale: bool = False):
         self.datasets = datasets
         self.values = None
         self._index = 0
+        self.rescale = use_rescale
 
         # check if dataset has an image
         if (datasets[0].Modality in supported_modalities) and hasattr(datasets[0], 'PixelData'):
@@ -110,6 +112,11 @@ class Imager:
         if hasattr(self, "values") and self.values is not None:
             # int32 true values (HU or brightness units)
             img = self.values[:, :, index]
+            if (self.rescale and hasattr(self.datasets[index], 'RescaleIntercept')
+               and hasattr(self.datasets[index], 'RescaleSlope')):
+                intercept = float(self.datasets[index].RescaleIntercept)
+                slope = float(self.datasets[index].RescaleSlope)
+                img = img*slope + intercept
 
             # Vectorized windowing using boolean masks
             w_left = (self._window_center - self._window_width / 2)

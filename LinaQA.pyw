@@ -398,7 +398,7 @@ class LinaQA(QMainWindow):
                     sorted_method = "SOP instance UID"
                 except (TypeError, AttributeError):
                     pass
-        self.imager = Imager(datasets)
+        self.imager = Imager(datasets, self.settings.value('PyDicom/Use rescale', False, type=bool))
         self.filenames = filenames
         num_bad = num_total - num_ok
         if num_bad == 0:
@@ -1198,6 +1198,7 @@ class LinaQA(QMainWindow):
                 self.status_error('Not a DICOM image file.')
 
     def open_ref_image(self, filename):
+        # Assumes only one file to be loaded
         # Clear non-dicom files
         datasets = []
         try:
@@ -1205,7 +1206,7 @@ class LinaQA(QMainWindow):
             if 'TransferSyntaxUID' not in ds.file_meta:
                 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
             datasets.append(ds)
-            self.ref_imager = Imager(datasets)
+            self.ref_imager = Imager(datasets, self.settings.value('PyDicom/Use rescale', False, type=bool))
         except pydicom.errors.InvalidDicomError:
             self.status_error('Error reading DICOM image file.')
 
