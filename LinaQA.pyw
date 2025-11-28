@@ -233,6 +233,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Machine_Logs.triggered.connect(self.analyse_log)
         # DX toolbar
         self.ui.action_Invert.triggered.connect(self.invert)
+        self.ui.action_Scale_LUT.triggered.connect(self.scale_lut)
         self.ui.action_Auto_Window.triggered.connect(self.auto_window)
         self.ui.action_Pixel_Data.triggered.connect(self.edit_pixel_data)
         self.ui.action_Scale_Image.triggered.connect(self.scale_image)
@@ -1218,6 +1219,13 @@ class LinaQA(QMainWindow):
             self.imager.invflag = False
         else:
             self.imager.invflag = True
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+
+    def scale_lut(self):
+        if self.imager.rescale:
+            self.imager.rescale = False
+        else:
+            self.imager.rescale = True
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
     def flip_left_right(self):

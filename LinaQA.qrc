@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="Icons">
+    <file>Icons/LUTScale.png</file>
     <file>Icons/FlipLR.png</file>
     <file>Icons/FlipUD.png</file>
     <file>Icons/TomoContrast.png</file>

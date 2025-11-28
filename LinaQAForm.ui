@@ -208,6 +208,7 @@
     </property>
     <addaction name="action_Auto_Window"/>
     <addaction name="action_Invert"/>
+    <addaction name="action_Scale_LUT"/>
     <addaction name="action_Flip_LR"/>
     <addaction name="action_Flip_UD"/>
     <addaction name="action_Scale_Image"/>
@@ -381,6 +382,7 @@
    </attribute>
    <addaction name="action_Auto_Window"/>
    <addaction name="action_Invert"/>
+   <addaction name="action_Scale_LUT"/>
    <addaction name="action_Flip_LR"/>
    <addaction name="action_Flip_UD"/>
    <addaction name="action_Sum_Image"/>
@@ -1034,6 +1036,21 @@
    </property>
    <property name="toolTip">
     <string>Flip image up down</string>
+   </property>
+  </action>
+  <action name="action_Scale_LUT">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/LUTScale.png</normaloff>:/Icons/Icons/LUTScale.png</iconset>
+   </property>
+   <property name="text">
+    <string>Raw/LUT</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle between displaying raw pixel values or LUT values</string>
    </property>
   </action>
  </widget>
