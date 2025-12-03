@@ -1226,7 +1226,7 @@ class LinaQA(QMainWindow):
             self.imager.rescale = False
         else:
             self.imager.rescale = True
-        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.auto_window()
 
     def flip_left_right(self):
         if self.imager is not None and hasattr(self.imager, "values"):
@@ -1244,7 +1244,7 @@ class LinaQA(QMainWindow):
         if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.auto_window()
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
+            self.status_message(f"Window center {self.imager.window_center:.1f}, Window width {self.imager.window_width:.1f}")
 
     def edit_pixel_data(self):
         if self.imager:

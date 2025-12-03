@@ -144,6 +144,12 @@ class Imager:
     def auto_window(self):
         win_max = np.max(self.values)
         win_min = np.min(self.values)
+        if (self.rescale and hasattr(self.datasets[self.index], 'RescaleIntercept')
+                and hasattr(self.datasets[self.index], 'RescaleSlope')):
+            intercept = float(self.datasets[self.index].RescaleIntercept)
+            slope = float(self.datasets[self.index].RescaleSlope)
+            win_max = win_max * slope + intercept
+            win_min = win_min * slope + intercept
         self._window_width = win_max-win_min
         self._window_center = (win_max + win_min)//2
 
