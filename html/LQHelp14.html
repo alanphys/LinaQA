@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Images and DICOM files &#8212; LinaQA 1.00 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=279e0f84" />
+    <script src="_static/documentation_options.js?v=da1d7f10"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Main Menu" href="LQHelp8.html" />
+    <link rel="prev" title="Status Bar" href="LQHelp7-3.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="LQHelp8.html" title="Main Menu"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="LQHelp7-3.html" title="Status Bar"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">LinaQA 1.00 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Images and DICOM files</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="images-and-dicom-files">
+<span id="index-0"></span><h1>Images and DICOM files<a class="headerlink" href="#images-and-dicom-files" title="Link to this heading">¶</a></h1>
+<p>LinaQA is primarily intended to operate on DICOM images. Support for non-image DICOM files such as Radiation Dose Structured Reports (RDSR) is included. If the DICOM file is not in the list of supported modalities LinaQA will automatically open it in the <a class="reference internal" href="LQHelp7-2-3.html#dicomtab"><span class="std std-ref">DICOM tags Tab</span></a>. Non-DICOM image files such as jpeg or tiff can be opened and displayed, but not all operations will work on them. certain non-image non-DICOM files such as trajectory log files can be opened, but these will not be displayed. See <a class="reference internal" href="LQHelp8-1-1.html#fileopen"><span class="std std-ref">Open</span></a></p>
+<p>DICOM files are stored internally as a <a class="reference external" href="https://pydicom.github.io/pydicom/stable/">Pydicom</a> Dataset. For multiple open 2D images such as a CT dataset a 3D array is created consisting of the stacked 2D images for display purposes. For a single multi-frame image the image is converted to a series of single frame 2D images and the 3D array is constructed of the stacked frames. Image processing operations generally work on the 3D array leaving the underlying pixel data unaffected. The exception is the pixel editor which operates on the 2D image and transfers changes back to the pixel data. Saving a single image will transfer the slice in the 3D array to the pixel data. Therefore, if any operations are carried out on an image, save the image to carry these changes through to any analysis.</p>
+<p>DICOM images usually store the image data as raw pixel values in the pixel data array. These are the original pixel values from the imaging device and usually should not be interpreted in terms of some calibrated value such as Hounsfield Units (HU) or Dose, etc. Most image operations work on the raw pixel values except for the <a class="reference internal" href="LQHelp8-3-4.html#sumimage"><span class="std std-ref">Sum Image</span></a> which will use the calibrated values if available.</p>
+<p>In some instances it is desirable to view the image in terms of calibrated units such as Dose for an EPID image or SUV for a Nuclear Medicine image. These images contain a ‘Rescale’ DICOM tag including a ‘RescaleSlope’ and ‘RescaleIntercept’. They create a linear relationship between the raw pixel values and the calibrated values. It is also possible to have Look Up Tables (LUTs) for more complex relationships but this is not implemented in LinaQA. LinaQA can toggle between displaying the raw pixel values and the calibrated pixel values using the <a class="reference internal" href="LQHelp8-3-8.html#scalelut"><span class="std std-ref">Raw/LUT</span></a>.</p>
+<p>Due to the limitations of Pylinac LinaQA does not transfer data for analysis very consistently. In some cases the data is transferred as a Pydicom dataset, in others as a filename and reopened, and in still others simply as a numpy array. This will hopefully be resolved in future versions.</p>
+<p>Non-DICOM images are not stored at all, but simply displayed. This means that no operations can be carried out on them. Analysis can be carried out as the filename is passed to the analysis operation.</p>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/LinacToolkit.png" alt="Logo of LinaQA"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="LQHelp7-3.html"
+                          title="previous chapter">Status Bar</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="LQHelp8.html"
+                          title="next chapter">Main Menu</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/LQHelp14.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="LQHelp8.html" title="Main Menu"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="LQHelp7-3.html" title="Status Bar"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">LinaQA 1.00 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Images and DICOM files</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, AC Chamberlain.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

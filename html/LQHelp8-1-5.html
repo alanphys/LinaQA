@@ -42,10 +42,11 @@
             
   <section id="save-all">
 <span id="filesaveall"></span><span id="index-0"></span><h1>Save All<a class="headerlink" href="#save-all" title="Link to this heading">¶</a></h1>
-<p>Saves the entire DICOM series under a new name. Multiframe images are converted into a series of single images. This is very useful for decompressing image series for import into a planning system.</p>
+<p>Saves the entire DICOM series under a new name. Multiframe images are converted into a series of single images. This is very useful for decompressing image series for import into a planning system. The 3D pixel array is <strong>not</strong> written to the individual dataset pixel arrays so image operations and processing changes will not be saved. This behaviour may change in future releases.</p>
 <p><img alt="Hint" src="_images/Hint.png" /> Use this option to decompress a compressed image series.</p>
 <p><img alt="Hint" src="_images/Hint.png" /> Use this option to convert a multiframe image into a series of single images.</p>
 <p><img alt="Note" src="_images/Note.png" /> DICOM files are stored internally uncompressed and are saved uncompressed.</p>
+<p><img alt="Note" src="_images/Note.png" /> Image changes are not save under ‘Save All’</p>
 </section>
 
 

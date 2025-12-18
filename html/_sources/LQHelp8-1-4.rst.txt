@@ -7,7 +7,7 @@
 Save As
 =======
 
-Saves the current DICOM file under a new name.
+Saves the current DICOM file under a new name. Changed pixel values are written to the pixel data array before saving.
 
 |Note| DICOM files are stored internally uncompressed and are saved uncompressed.
 

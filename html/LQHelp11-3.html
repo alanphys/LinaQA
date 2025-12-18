@@ -41,10 +41,12 @@
             
   <section id="d-phantoms">
 <span id="dphantomsettings"></span><span id="index-0"></span><h1>2D Phantoms<a class="headerlink" href="#d-phantoms" title="Link to this heading">¶</a></h1>
-<p>These contain customisable options for the <a class="reference internal" href="LQHelp9-2-4.html#dphantoms"><span class="std std-ref">2D Phantom Analysis</span></a>. Available settings are:</p>
+<p>These contain customisable options for the <a class="reference internal" href="LQHelp9-2-4.html#dphantoms"><span class="std std-ref">2D Phantom Analysis</span></a>. Set values to 0 for automatic detection unless otherwise indicated. Available settings are:</p>
 <ul class="simple">
 <li><p><strong>2D Type</strong>: Sets the default 2D phantom. Select from the list provided.</p></li>
 <li><p><strong>Angle override</strong>: A manual override of the angle of the phantom. 0 is pointing from the center toward the right and positive values go counterclockwise.</p></li>
+<li><p><strong>Center override</strong>: A manual override of the center point of the phantom. Format is (x, y)/(col, row).</p></li>
+<li><p><strong>Size override</strong>: A manual override of the relative size of the phantom. This size value is used to scale the positions of the ROIs from the center.</p></li>
 <li><p><strong>High contrast threshold</strong>: This is the contrast threshold value which defines any high-contrast ROI as passing or failing.</p></li>
 <li><p><strong>Low contrast threshold</strong>: This is the contrast threshold value which defines any low-contrast ROI as passing or failing.</p></li>
 <li><p><strong>SSD</strong>: The SSD of the phantom itself in mm. If set to “auto”, will first search for the phantom at the SAD, then at 5cm above the SID.</p></li>

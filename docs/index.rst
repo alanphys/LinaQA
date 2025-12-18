@@ -18,6 +18,7 @@ Welcome to LinaQA's documentation
    LQHelp5.rst
    LQHelp6.rst
    LQHelp7.rst
+   LQHelp14.rst
    LQHelp8.rst
    LQHelp9.rst
    LQHelp10.rst

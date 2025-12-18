@@ -7,7 +7,7 @@
 Open
 ====
 
-Opens a dialogue box to select a DICOM file or series of DICOM files, a zipped series of DICOM files, image or machine log file to load. This function can be accessed using the Open images(s) button |open| on :ref:`maintoolbar` or by selecting Open from the :ref:`filemenu`. The number of images loaded is displayed in the :ref:`statusbar`.
+Opens a dialogue box to select a DICOM file or series of DICOM files, a zipped series of DICOM files, image or machine log file to load. This function can be accessed using the Open images(s) button |open| on the :ref:`maintoolbar` or by selecting Open from the :ref:`filemenu`. The number of images loaded is displayed in the :ref:`statusbar`.
 
 Currently LinaQA will attempt to open the following DICOM modalities as images:
 
