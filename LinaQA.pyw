@@ -284,7 +284,7 @@ class LinaQA(QMainWindow):
         self.show_dx_toolbar()
         self.ui.action_NM_Toolbar.setChecked(self.settings.value('Window/Show NM Toolbar', False, type=bool))
         self.show_nm_toolbar()
-        self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
+        self.ui.statusbar.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Define toolbar popups
@@ -311,43 +311,6 @@ class LinaQA(QMainWindow):
         toolbar.removeAction(action)
 
         return button
-
-# ---------------------------------------------------------------------------------------------------------------------
-# Status bar routines
-# ---------------------------------------------------------------------------------------------------------------------
-
-    def status_clear(self):
-        # Clear the status bar
-        qsb_color = self.ui.statusbar.palette().color(QPalette.Base).getRgb()
-        mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
-        self.ui.statusbar.setStyleSheet(mystylesheet)
-        self.ui.statusbar.showMessage('')
-
-    def status_message(self, status_message):
-        # Clear the status bar
-        qsb_color = self.ui.statusbar.palette().color(QPalette.Base).getRgb()
-        mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
-        self.ui.statusbar.setStyleSheet(mystylesheet)
-        # self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
-        self.ui.statusbar.showMessage(status_message)
-
-    def status_warn(self, status_message):
-        mystylesheet = f"background-color: {faint_yellow}; border-top: 1px outset grey;"
-        self.ui.statusbar.setStyleSheet(mystylesheet)
-        self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
-        self.ui.statusbar.showMessage(status_message)
-
-    def status_good(self, status_message):
-        mystylesheet = f"background-color: {faint_green}; border-top: 1px outset grey;"
-        self.ui.statusbar.setStyleSheet(mystylesheet)
-        self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
-        self.ui.statusbar.showMessage(status_message)
-
-    def status_error(self, status_message):
-        mystylesheet = f"background-color: {faint_red}; border-top: 1px outset grey;"
-        self.ui.statusbar.setStyleSheet(mystylesheet)
-        self.ui.statusbar.setToolTip(self.ui.statusbar.toolTip() + '\n' + status_message)
-        self.ui.statusbar.showMessage(status_message)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # User interface routines
@@ -431,9 +394,9 @@ class LinaQA(QMainWindow):
         self.filenames = filenames
         num_bad = num_total - num_ok
         if num_bad == 0:
-            self.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
+            self.ui.statusbar.status_message(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
         else:
-            self.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
+            self.ui.statusbar.status_warn(f"Opened {num_ok} DICOM file(s) sorted on {sorted_method}. Rejected {num_bad} bad files.")
 
     def open_file(self):
         # remove any previous images
@@ -473,7 +436,7 @@ class LinaQA(QMainWindow):
         else:
             the_image = QPixmap(self.filenames[0])
             if the_image.isNull():
-                self.status_error("File is not a valid image file!")
+                self.ui.statusbar.status_error("File is not a valid image file!")
             else:
                 self.ui.qlImage.setPixmap(the_image)
                 self.ui.qlImage.setScaledContents(True)
@@ -481,7 +444,7 @@ class LinaQA(QMainWindow):
     def choose_file(self):
         # set up ui
         self.is_changed = False
-        self.status_clear()
+        self.ui.statusbar.status_clear()
 
         # get filename(s)
         if len(self.filenames) > 0:
@@ -512,10 +475,10 @@ class LinaQA(QMainWindow):
                 ds.PixelData = arr.tobytes()
             ds.save_as(ds.filename, True)
             self.is_changed = False
-            self.status_message('File saved')
+            self.ui.statusbar.status_message('File saved')
 
     def save_file_as(self):
-        self.status_clear()
+        self.ui.statusbar.status_clear()
         dirpath = osp.dirname(osp.realpath(self.filenames[self.imager.index]))
         ostype = system()
         if ostype == 'Windows':
@@ -531,10 +494,10 @@ class LinaQA(QMainWindow):
                 ds.PixelData = arr.tobytes()
             ds.save_as(filename, True)
             self.is_changed = False
-            self.status_message('File save as ' + filename)
+            self.ui.statusbar.status_message('File save as ' + filename)
 
     def save_all(self):
-        self.status_clear()
+        self.ui.statusbar.status_clear()
         dirpath = osp.dirname(osp.realpath(self.filenames[self.imager.index]))
         ostype = system()
         dirpath = QFileDialog.getExistingDirectory(self, 'Choose directory to save files to', dirpath)
@@ -547,7 +510,7 @@ class LinaQA(QMainWindow):
                 filename = osp.splitext(filename)[0] + '_un.dcm'
                 ds.save_as(osp.join(dirpath, filename), True)
             self.is_changed = False
-            self.status_message(f'{i} images saved in ' + dirpath)
+            self.ui.statusbar.status_message(f'{i} images saved in ' + dirpath)
 
     @staticmethod
     def show_image(numpy_array, label: QLabel):
@@ -599,7 +562,7 @@ class LinaQA(QMainWindow):
            self.imager is not None and hasattr(self.imager, "values")):
             self.imager.index += int(event.angleDelta().y()/120)
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Current slice {self.imager.index}")
+            self.ui.statusbar.status_message(f"Current slice {self.imager.index}")
             event.accept()
         elif tab_index == 2:
             super().wheelEvent(event)
@@ -607,7 +570,7 @@ class LinaQA(QMainWindow):
               self.ref_imager is not None and hasattr(self.ref_imager, "values")):
             self.ref_imager.index += int(event.angleDelta().y()/120)
             self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
-            self.status_message(f"Current slice {self.ref_imager.index}")
+            self.ui.statusbar.status_message(f"Current slice {self.ref_imager.index}")
             event.accept()
 
     def mousePressEvent(self, event: QMouseEvent):
@@ -633,7 +596,7 @@ class LinaQA(QMainWindow):
                 self.imager.window_width += delta.x()
                 self.imager.window_center += delta.y()
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-                self.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
+                self.ui.statusbar.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
                 event.accept()
             if ((tab_index == 2) and self.ui.qlRef.rect().contains(mouse_pos) and
                self.ref_imager is not None and hasattr(self.ref_imager, "values")):
@@ -642,7 +605,7 @@ class LinaQA(QMainWindow):
                 self.ref_imager.window_width += delta.x()
                 self.ref_imager.window_center += delta.y()
                 self.show_image(self.ref_imager.get_current_image(), self.ui.qlRef)
-                self.status_message(f"Window center {self.ref_imager.window_center}, Window width {self.ref_imager.window_width}")
+                self.ui.statusbar.status_message(f"Window center {self.ref_imager.window_center}, Window width {self.ref_imager.window_width}")
                 event.accept()
 
     def dragEnterEvent(self, event):
@@ -717,11 +680,11 @@ class LinaQA(QMainWindow):
                              metadata=self.settings.value('General/Metadata'),
                              logo=self.settings.value('General/Logo'))
             if open_path(filename):
-                self.status_message('Results displayed in PDF')
+                self.ui.statusbar.status_message('Results displayed in PDF')
             else:
-                self.status_error('No reader to open document')
+                self.ui.statusbar.status_error('No reader to open document')
         else:
-            self.status_warn("Results not saved.")
+            self.ui.statusbar.status_warn("Results not saved.")
 
     def on_cbcatphan_changed(self, index_value: str):
         cb_text = self.ui.cbCatPhan.currentText()
@@ -862,7 +825,7 @@ class LinaQA(QMainWindow):
             self.proxy_model.setFilterRegularExpression('')
 
     def insert_tag(self):
-        self.status_warn('Inserting a DICOM tag may corrupt the file!')
+        self.ui.statusbar.status_warn('Inserting a DICOM tag may corrupt the file!')
 
         # get path for tag insertion
         proxy_index = self.ui.treeView.currentIndex()
@@ -905,17 +868,17 @@ class LinaQA(QMainWindow):
                 set_dot_attr(ds, tag_path, tag_value)
                 self.show_tree()
                 self.is_changed = True
-                self.status_message('Inserted ' + tag_path + ' (' + tag_group + ', ' + tag_element + ') '
+                self.ui.statusbar.status_message('Inserted ' + tag_path + ' (' + tag_group + ', ' + tag_element + ') '
                                     + tag_keyword + ' ' + tag_vr + ':' + tag_value)
             except AttributeError:
-                self.status_error('Could not insert ' + tag_path + '.')
+                self.ui.statusbar.status_error('Could not insert ' + tag_path + '.')
 
             except TypeError:
-                self.status_error('You may not insert a tag as a sequence.')
+                self.ui.statusbar.status_error('You may not insert a tag as a sequence.')
 
     def edit_tag(self):
         # get current tag
-        self.status_warn('Editing a DICOM tag may corrupt the file!')
+        self.ui.statusbar.status_warn('Editing a DICOM tag may corrupt the file!')
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_text = source_index.data(Qt.DisplayRole)
@@ -960,15 +923,15 @@ class LinaQA(QMainWindow):
                     set_dot_attr(ds, tag_path, tag_text)
                     self.show_tree()
                     self.is_changed = True
-                    self.status_message('Changed ' + tag_path + ' to ' + tag_text)
+                    self.ui.statusbar.status_message('Changed ' + tag_path + ' to ' + tag_text)
                 except AttributeError:
-                    self.status_error('Could not change ' + tag_path)
+                    self.ui.statusbar.status_error('Could not change ' + tag_path)
         else:
-            self.status_warn('No tag selected!')
+            self.ui.statusbar.status_warn('No tag selected!')
 
     @show_wait_cursor
     def del_tag(self):
-        self.status_warn('Editing a DICOM tag may corrupt the file!')
+        self.ui.statusbar.status_warn('Editing a DICOM tag may corrupt the file!')
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_text = source_index.data(Qt.DisplayRole)
@@ -995,11 +958,11 @@ class LinaQA(QMainWindow):
                 del_dot_attr(ds, tag_path)
                 self.show_tree()
                 self.is_changed = True
-                self.status_message('Deleted ' + tag_path)
+                self.ui.statusbar.status_message('Deleted ' + tag_path)
             except AttributeError:
-                self.status_error('Could not delete ' + tag_path)
+                self.ui.statusbar.status_error('Could not delete ' + tag_path)
         else:
-            self.status_warn('No tag selected!')
+            self.ui.statusbar.status_warn('No tag selected!')
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Radiotherapy analysis
@@ -1031,7 +994,7 @@ class LinaQA(QMainWindow):
             cat.analyze(**param_list)
             self.show_results(cat)
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_picket_fence(self):
@@ -1049,7 +1012,7 @@ class LinaQA(QMainWindow):
         except ValueError:
             # if it throws an exception fall back to this as per issue #470
             try:
-                self.status_warn('Could not analyze picket fence as is. Trying fallback method.')
+                self.ui.statusbar.status_warn('Could not analyze picket fence as is. Trying fallback method.')
                 pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
                            action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
                            num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
@@ -1057,7 +1020,7 @@ class LinaQA(QMainWindow):
                            required_prominence=0.1)
                 self.show_results(pf)
             except Exception as e:
-                self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+                self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_winston_lutz(self):
@@ -1072,7 +1035,7 @@ class LinaQA(QMainWindow):
                        low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
             self.show_results(wl)
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_2d_phantoms(self):
@@ -1094,7 +1057,7 @@ class LinaQA(QMainWindow):
                               else float(self.settings.value('2D Phantoms/SSD'))))
             self.show_results(phan)
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_vmat(self):
@@ -1111,9 +1074,9 @@ class LinaQA(QMainWindow):
             v.dmlc_image.base_path = self.ref_filename
             self.show_results(v)
         except AttributeError:
-            self.status_error('No reference image defined. Please open a reference image.')
+            self.ui.statusbar.status_error('No reference image defined. Please open a reference image.')
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_star(self):
@@ -1139,7 +1102,7 @@ class LinaQA(QMainWindow):
             filename = filename + '.pdf'
             self.show_results(star, filename)
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_log(self):
@@ -1147,7 +1110,7 @@ class LinaQA(QMainWindow):
             log = log_analyzer.load_log(self.filenames[0])
             self.show_results(log)
         except Exception as e:
-            self.status_error(f'Could not analyze log. Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze log. Reason: {repr(e)}')
 
     @show_wait_cursor
     def analyse_gamma(self):
@@ -1188,11 +1151,11 @@ class LinaQA(QMainWindow):
                 canvas.add_image(img, location=(1, 5), dimensions=(18, 18))
                 canvas.finish()
                 if open_path(filename):
-                    self.status_message('Results displayed in PDF')
+                    self.ui.statusbar.status_message('Results displayed in PDF')
                 else:
-                    self.status_error('No reader to open document')
+                    self.ui.statusbar.status_error('No reader to open document')
             except Exception as e:
-                self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+                self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
         else:
             self.ui.tabWidget.setTabVisible(3, False)
 
@@ -1200,7 +1163,7 @@ class LinaQA(QMainWindow):
 # Reference image section
 # ---------------------------------------------------------------------------------------------------------------------
     def open_ref(self):
-        self.status_clear()
+        self.ui.statusbar.status_clear()
         self.ui.qlRef.clear()
         self.ui.tabWidget.setTabVisible(2, True)
         self.ui.tabWidget.setCurrentIndex(2)
@@ -1225,7 +1188,7 @@ class LinaQA(QMainWindow):
                 # self.ui.qlRef.show()
                 self.tab_changed(2)
             else:
-                self.status_error('Not a DICOM image file.')
+                self.ui.statusbar.status_error('Not a DICOM image file.')
 
     def open_ref_image(self, filename):
         # Assumes only one file to be loaded
@@ -1238,7 +1201,7 @@ class LinaQA(QMainWindow):
             datasets.append(ds)
             self.ref_imager = Imager(datasets, self.settings.value('PyDicom/Use rescale', False, type=bool))
         except pydicom.errors.InvalidDicomError:
-            self.status_error('Error reading DICOM image file.')
+            self.ui.statusbar.status_error('Error reading DICOM image file.')
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Image processing and editing
@@ -1261,19 +1224,19 @@ class LinaQA(QMainWindow):
         if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.flip_lr()
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Image(s) have been flipped left-right")
+            self.ui.statusbar.status_message(f"Image(s) have been flipped left-right")
 
     def flip_up_down(self):
         if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.flip_ud()
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Image(s) have been flipped up-down")
+            self.ui.statusbar.status_message(f"Image(s) have been flipped up-down")
 
     def auto_window(self):
         if self.imager is not None and hasattr(self.imager, "values"):
             self.imager.auto_window()
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.status_message(f"Window center {self.imager.window_center:.1f}, Window width {self.imager.window_width:.1f}")
+            self.ui.statusbar.status_message(f"Window center {self.imager.window_center:.1f}, Window width {self.imager.window_width:.1f}")
 
     def edit_pixel_data(self):
         if self.imager:
@@ -1294,21 +1257,21 @@ class LinaQA(QMainWindow):
         self.imager.sum_images()
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
         self.is_changed = True
-        self.status_message(f'{num_images} images were summed. Image has been rescaled.')
+        self.ui.statusbar.status_message(f'{num_images} images were summed. Image has been rescaled.')
 
     def avg_image(self):
         num_images = self.imager.size[2]
         self.imager.avg_images()
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
         self.is_changed = True
-        self.status_message(f'{num_images} images were averaged')
+        self.ui.statusbar.status_message(f'{num_images} images were averaged')
 
     def scale_image(self):
         num_images = self.imager.size[2]
         self.imager.scale_images(self.ui.dsbScaleFactor.value())
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
         self.is_changed = True
-        self.status_message(f'{num_images} images were scaled')
+        self.ui.statusbar.status_message(f'{num_images} images were scaled')
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Nuclear medicine analysis
@@ -1321,9 +1284,9 @@ class LinaQA(QMainWindow):
             mcr.analyze()
             self.show_results(mcr)
         except TypeError:
-            self.status_error('The file is not a nuclear medicine or PET image.')
+            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def simple_sensitivity(self):
@@ -1336,7 +1299,7 @@ class LinaQA(QMainWindow):
                        self.settings.value('Simple Sensitivity/Nuclide', 'Tc99m', type=str)))
             self.show_results(ss)
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def planar_uniformity(self):
@@ -1345,9 +1308,9 @@ class LinaQA(QMainWindow):
             pu.analyze()
             self.show_results(pu)
         except TypeError:
-            self.status_error('The file is not a nuclear medicine or PET image.')
+            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def spatial_resolution(self):
@@ -1373,9 +1336,9 @@ class LinaQA(QMainWindow):
                 )
             self.show_results(sr)
         except TypeError:
-            self.status_error('The file is not a nuclear medicine or PET image.')
+            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def tomographic_uniformity(self):
@@ -1390,9 +1353,9 @@ class LinaQA(QMainWindow):
                        window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
             self.show_results(tu)
         except TypeError:
-            self.status_error('The file is not a nuclear medicine or PET image.')
+            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def tomographic_resolution(self):
@@ -1401,9 +1364,9 @@ class LinaQA(QMainWindow):
             tr.analyze()
             self.show_results(tr)
         except TypeError:
-            self.status_error('The file is not a nuclear medicine or PET image.')
+            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def tomographic_contrast(self):
@@ -1424,9 +1387,9 @@ class LinaQA(QMainWindow):
             )
             self.show_results(tc)
         except TypeError:
-            self.status_error('The file is not a nuclear medicine or PET image.')
+            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
     def centre_of_rotation(self):
@@ -1435,9 +1398,9 @@ class LinaQA(QMainWindow):
             cor.analyze()
             self.show_results(cor)
         except TypeError:
-            self.status_error('The file is not a nuclear medicine or PET image.')
+            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
         except Exception as e:
-            self.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
 
 # ---------------------------------------------------------------------------------------------------------------------

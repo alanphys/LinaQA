@@ -130,7 +130,7 @@ class Ui_LinaQAForm(object):
         self.menuEdit = QtWidgets.QMenu(self.menubar)
         self.menuEdit.setObjectName("menuEdit")
         LinaQAForm.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(LinaQAForm)
+        self.statusbar = ColorStatusBar(LinaQAForm)
         self.statusbar.setObjectName("statusbar")
         LinaQAForm.setStatusBar(self.statusbar)
         self.toolBar_Left = QtWidgets.QToolBar(LinaQAForm)
@@ -632,4 +632,5 @@ class Ui_LinaQAForm(object):
         self.action_Flip_UD.setToolTip(_translate("LinaQAForm", "Flip image up down"))
         self.action_Scale_LUT.setText(_translate("LinaQAForm", "Raw/LUT"))
         self.action_Scale_LUT.setToolTip(_translate("LinaQAForm", "Toggle between displaying raw pixel values or LUT values"))
+from qt_subclasses import ColorStatusBar
 import LinaQA_rc

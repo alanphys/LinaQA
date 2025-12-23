@@ -8,11 +8,46 @@ Extra functionality for PyQT classes.
 # copyright: AC Chamberlain (c) 2023-2025
 # SPDX-License-Identifier: Licence.txt:
 
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QToolBar, QAction,
-                             QToolButton, QWidget, QVBoxLayout, QHBoxLayout,
-                             QLineEdit, QLabel, QPushButton, QSpinBox,
-                             QComboBox, QFrame)
+from PyQt5.QtWidgets import (QToolButton, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QStatusBar)
 from PyQt5.QtCore import QTimer, Qt, pyqtSignal
+from PyQt5.QtGui import QPalette
+from linaqa_types import faint_red, faint_green, faint_yellow
+
+
+class ColorStatusBar(QStatusBar):
+    """Status bar to display and retain colour coded error, warn and good messages"""
+    def status_clear(self):
+        # Clear the status bar
+        qsb_color = self.palette().color(QPalette.Base).getRgb()
+        mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
+        self.setStyleSheet(mystylesheet)
+        self.showMessage('')
+
+    def status_message(self, status_message):
+        # Clear the status bar
+        qsb_color = self.palette().color(QPalette.Base).getRgb()
+        mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
+        self.setStyleSheet(mystylesheet)
+        # self.setToolTip(self.toolTip() + '\n' + status_message)
+        self.showMessage(status_message)
+
+    def status_warn(self, status_message):
+        mystylesheet = f"background-color: {faint_yellow}; border-top: 1px outset grey;"
+        self.setStyleSheet(mystylesheet)
+        self.setToolTip(self.toolTip() + '\n' + status_message)
+        self.showMessage(status_message)
+
+    def status_good(self, status_message):
+        mystylesheet = f"background-color: {faint_green}; border-top: 1px outset grey;"
+        self.setStyleSheet(mystylesheet)
+        self.setToolTip(self.toolTip() + '\n' + status_message)
+        self.showMessage(status_message)
+
+    def status_error(self, status_message):
+        mystylesheet = f"background-color: {faint_red}; border-top: 1px outset grey;"
+        self.setStyleSheet(mystylesheet)
+        self.setToolTip(self.toolTip() + '\n' + status_message)
+        self.showMessage(status_message)
 
 
 class PopupToolbar(QFrame):

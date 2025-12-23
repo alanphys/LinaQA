@@ -289,7 +289,7 @@
    <addaction name="menu_Analyse"/>
    <addaction name="menu_Help"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="ColorStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar_Left">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -1057,6 +1057,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>qt_subclasses</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="LinaQA.qrc"/>
  </resources>
