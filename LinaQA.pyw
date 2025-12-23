@@ -39,6 +39,7 @@ from PyQt5.QtGui import (
      QStandardItem,
      QPalette)
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
+from qt_subclasses import PopupToolbar, LongPressToolButton
 import matplotlib.pyplot as plt
 import numpy as np
 import webbrowser
@@ -115,12 +116,12 @@ class LinaQA(QMainWindow):
             self.move(self.settings.value('Window/Position'))
         set_default_settings(self.settings)
 
-        # we have to insert a Combox for the CatPhan manually into the toolbar
+        # we have to insert a popup to select the phantom manually into the toolbar
+        self.ui.phantom3d_popup = PopupToolbar()
         self.ui.cbCatPhan = QComboBox()
         self.ui.cbCatPhan.setFixedWidth(120)
-        self.ui.toolBar_Rx.insertWidget(self.ui.action_Picket_Fence, self.ui.cbCatPhan)
+        self.ui.phantom3d_popup.add_vcontrol('Select phantom:', self.ui.cbCatPhan)
         self.ui.cbCatPhan.addItems(phantom3D_list)
-        self.ui.toolBar_Rx.insertSeparator(self.ui.action_Picket_Fence)
         self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
         catphan_type = self.settings.value('3D Phantoms/3D Type')
         index = self.ui.cbCatPhan.findText(catphan_type)
@@ -128,7 +129,7 @@ class LinaQA(QMainWindow):
             self.ui.cbCatPhan.setCurrentIndex(index)
         else:
             raise Exception('Invalid setting in 3D Phantoms/3D Type')
-        self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
+        self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
 
         # we have to insert a Combox for the MLC manually into the toolbar
         self.ui.cbMLC = QComboBox()
@@ -286,8 +287,35 @@ class LinaQA(QMainWindow):
         self.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
 # ---------------------------------------------------------------------------------------------------------------------
+# Define toolbar popups
+# ---------------------------------------------------------------------------------------------------------------------
+    def replace_action_with_long_press(self, toolbar, action, popup_widget):
+        """
+        Replace a toolbar action with a LongPressToolButton
+
+        Args:
+            toolbar: The QToolBar containing the action
+            action: The QAction to replace
+            popup_widget: The PopupToolbar to show on long press
+        """
+        # Find the widget for this action
+        widget = toolbar.widgetForAction(action)
+
+        # Create new long-press button
+        button = LongPressToolButton()
+        button.setDefaultAction(action)
+        button.set_popup_widget(popup_widget)
+
+        # Replace the action with our custom button
+        toolbar.insertWidget(action, button)
+        toolbar.removeAction(action)
+
+        return button
+
+# ---------------------------------------------------------------------------------------------------------------------
 # Status bar routines
 # ---------------------------------------------------------------------------------------------------------------------
+
     def status_clear(self):
         # Clear the status bar
         qsb_color = self.ui.statusbar.palette().color(QPalette.Base).getRgb()
@@ -697,6 +725,7 @@ class LinaQA(QMainWindow):
 
     def on_cbcatphan_changed(self, index_value: str):
         cb_text = self.ui.cbCatPhan.currentText()
+        self.ui.action_CatPhan.setToolTip(f"Analyse {cb_text} Phantom. Long or right click to change phantom.")
         if cb_text.find("ACR") >= 0:
             self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/ACRPhantoms.png"))
         elif cb_text.find("Quart") >= 0:

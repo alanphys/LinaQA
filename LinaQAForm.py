@@ -15,6 +15,7 @@ class Ui_LinaQAForm(object):
     def setupUi(self, LinaQAForm):
         LinaQAForm.setObjectName("LinaQAForm")
         LinaQAForm.resize(678, 682)
+        LinaQAForm.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         LinaQAForm.setAcceptDrops(True)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/Icons/Icons/LinacToolkit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -538,7 +539,7 @@ class Ui_LinaQAForm(object):
         self.action_Auto_Window.setText(_translate("LinaQAForm", "Auto &Window"))
         self.action_Invert.setText(_translate("LinaQAForm", "&Invert"))
         self.action_CatPhan.setText(_translate("LinaQAForm", "3D Phantoms"))
-        self.action_CatPhan.setToolTip(_translate("LinaQAForm", "Analyse 3D Phantoms"))
+        self.action_CatPhan.setToolTip(_translate("LinaQAForm", "Analyse 3D Phantoms. Long click to select phantom."))
         self.action_2DPhantoms.setText(_translate("LinaQAForm", "2D Phantoms"))
         self.action_2DPhantoms.setToolTip(_translate("LinaQAForm", "Analyse 2D Phantoms"))
         self.action_VMAT.setText(_translate("LinaQAForm", "VMAT"))

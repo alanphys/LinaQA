@@ -3,7 +3,7 @@
 Extra functionality for pylinac classes. Merge into pylinac at some stage
 =========================================================================
 """
-import enum
+
 # author : AC Chamberlain <alanphys@yahoo.co.uk>
 # copyright: AC Chamberlain (c) 2023-2025
 # SPDX-License-Identifier: Licence.txt:

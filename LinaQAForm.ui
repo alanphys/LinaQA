@@ -10,6 +10,9 @@
     <height>682</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
   <property name="acceptDrops">
    <bool>true</bool>
   </property>
@@ -481,7 +484,7 @@
     <string>3D Phantoms</string>
    </property>
    <property name="toolTip">
-    <string>Analyse 3D Phantoms</string>
+    <string>Analyse 3D Phantoms. Long click to select phantom.</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::WindowShortcut</enum>
