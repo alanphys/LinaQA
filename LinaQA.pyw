@@ -146,31 +146,35 @@ class LinaQA(QMainWindow):
             raise Exception('Invalid setting in Picket Fence/MLC Type')
         self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_Picket_Fence, self.ui.mlc_popup)
 
-        # we have to insert a Combox for the VMAT test manually into the toolbar
+        # we have to insert a popup for the VMAT test manually into the toolbar
+        self.ui.vmat_popup = PopupToolbar()
         self.ui.cbVMAT = QComboBox()
         self.ui.cbVMAT.setFixedWidth(120)
-        self.ui.toolBar_Rx.insertWidget(self.ui.action_2DPhantoms, self.ui.cbVMAT)
+        self.ui.vmat_popup.add_vcontrol('Select VMAT test:', self.ui.cbVMAT)
         self.ui.cbVMAT.addItems(vmat_list)
-        self.ui.toolBar_Rx.insertSeparator(self.ui.action_2DPhantoms)
+        self.ui.cbVMAT.currentIndexChanged.connect(self.on_cbvmat_changed)
         vmat_type = self.settings.value('VMAT/VMAT test')
         index = self.ui.cbVMAT.findText(vmat_type)
         if index >= 0:
             self.ui.cbVMAT.setCurrentIndex(index)
         else:
             raise Exception('Invalid setting in VMAT/VMAT test')
+        self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_VMAT, self.ui.vmat_popup)
 
         # we have to insert a Combox for the 2D phantoms test manually into the toolbar
+        self.ui.phantom2d_popup = PopupToolbar()
         self.ui.cbPhan2D = QComboBox()
         self.ui.cbPhan2D.setFixedWidth(120)
-        self.ui.toolBar_Rx.insertWidget(self.ui.action_Machine_Logs, self.ui.cbPhan2D)
+        self.ui.phantom2d_popup.add_vcontrol('Select phantom:', self.ui.cbPhan2D)
         self.ui.cbPhan2D.addItems(phantom2D_list)
-        self.ui.toolBar_Rx.insertSeparator(self.ui.action_Machine_Logs)
+        self.ui.cbPhan2D.currentIndexChanged.connect(self.on_2dphantom_changed)
         phan2d_type = self.settings.value('2D Phantoms/2D Type')
         index = self.ui.cbPhan2D.findText(phan2d_type)
         if index >= 0:
             self.ui.cbPhan2D.setCurrentIndex(index)
         else:
             raise Exception('Invalid setting in 2D Phantoms/2D Type')
+        self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
 
         # we have to insert a double spinbox for the image scaling manually into the toolbar
         self.ui.toolBar_Dx.insertSeparator(self.ui.action_Scale_Image)
@@ -701,6 +705,14 @@ class LinaQA(QMainWindow):
     def on_cbmlc_changed(self, index_value: str):
         cb_text = self.ui.cbMLC.currentText()
         self.ui.action_Picket_Fence.setToolTip(f"Analyse {cb_text} MLC. Long or right click to change MLC.")
+
+    def on_cbvmat_changed(self, index_value: str):
+        cb_text = self.ui.cbVMAT.currentText()
+        self.ui.action_VMAT.setToolTip(f"Analyse {cb_text} test. Long or right click to change test.")
+
+    def on_2dphantom_changed(self, index_value: str):
+        cb_text = self.ui.cbPhan2D.currentText()
+        self.ui.action_2DPhantoms.setToolTip(f"Analyse {cb_text} Phantom. Long or right click to change phantom.")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section

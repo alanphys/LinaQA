@@ -511,7 +511,7 @@
     <string>VMAT</string>
    </property>
    <property name="toolTip">
-    <string>Analyse VMAT parameters</string>
+    <string>Analyse VMAT parameters. Long or right click to select test.</string>
    </property>
   </action>
   <action name="action_Machine_Logs">
