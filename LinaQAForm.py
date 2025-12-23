@@ -215,7 +215,7 @@ class Ui_LinaQAForm(object):
         self.action_Winston_Lutz.setObjectName("action_Winston_Lutz")
         self.action_Picket_Fence = QtWidgets.QAction(LinaQAForm)
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(":/Icons/Icons/PicketFence.xpm"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon11.addPixmap(QtGui.QPixmap(":/Icons/Icons/PicketFence.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_Picket_Fence.setIcon(icon11)
         self.action_Picket_Fence.setObjectName("action_Picket_Fence")
         self.action_Settings = QtWidgets.QAction(LinaQAForm)

@@ -505,7 +505,7 @@
   <action name="action_VMAT">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/Vmat.xpm</normaloff>:/Icons/Icons/Vmat.xpm</iconset>
+     <normaloff>:/Icons/Icons/Vmat.png</normaloff>:/Icons/Icons/Vmat.png</iconset>
    </property>
    <property name="text">
     <string>VMAT</string>
@@ -553,7 +553,7 @@
   <action name="action_Picket_Fence">
    <property name="icon">
     <iconset resource="LinaQA.qrc">
-     <normaloff>:/Icons/Icons/PicketFence.xpm</normaloff>:/Icons/Icons/PicketFence.xpm</iconset>
+     <normaloff>:/Icons/Icons/PicketFence.png</normaloff>:/Icons/Icons/PicketFence.png</iconset>
    </property>
    <property name="text">
     <string>Picket Fence</string>

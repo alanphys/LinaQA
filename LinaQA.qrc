@@ -29,8 +29,8 @@
     <file>Icons/W-L.png</file>
     <file>Icons/LinacToolkit.png</file>
     <file>Icons/LasVegas.png</file>
-    <file>Icons/Vmat.xpm</file>
     <file>Icons/MachineLog.png</file>
+    <file>Icons/Vmat.png</file>
     <file>Icons/Catphan.png</file>
     <file>Icons/Starshot.png</file>
     <file>Icons/ACRPhantoms.png</file>
@@ -40,8 +40,8 @@
     <file>Icons/AutoWindow.xpm</file>
     <file>Icons/Invert.xpm</file>
     <file>Icons/Exit.xpm</file>
-    <file>Icons/PicketFence.xpm</file>
     <file>Icons/Help.png</file>
+    <file>Icons/PicketFence.png</file>
     <file>Icons/DCMtags.png</file>
   </qresource>
 </RCC>

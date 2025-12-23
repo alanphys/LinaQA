@@ -131,18 +131,20 @@ class LinaQA(QMainWindow):
             raise Exception('Invalid setting in 3D Phantoms/3D Type')
         self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
 
-        # we have to insert a Combox for the MLC manually into the toolbar
+        # we have to insert a popup for the MLC manually into the toolbar
+        self.ui.mlc_popup = PopupToolbar()
         self.ui.cbMLC = QComboBox()
         self.ui.cbMLC.setFixedWidth(120)
-        self.ui.toolBar_Rx.insertWidget(self.ui.action_VMAT, self.ui.cbMLC)
+        self.ui.mlc_popup.add_vcontrol('Select MLC:', self.ui.cbMLC)
         self.ui.cbMLC.addItems(mlc_list)
-        self.ui.toolBar_Rx.insertSeparator(self.ui.action_VMAT)
+        self.ui.cbMLC.currentIndexChanged.connect(self.on_cbmlc_changed)
         mlc_type = self.settings.value('Picket Fence/MLC Type')
         index = self.ui.cbMLC.findText(mlc_type)
         if index >= 0:
             self.ui.cbMLC.setCurrentIndex(index)
         else:
             raise Exception('Invalid setting in Picket Fence/MLC Type')
+        self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_Picket_Fence, self.ui.mlc_popup)
 
         # we have to insert a Combox for the VMAT test manually into the toolbar
         self.ui.cbVMAT = QComboBox()
@@ -695,6 +697,10 @@ class LinaQA(QMainWindow):
             self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/Quart.png"))
         else:
             self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/Catphan.png"))
+
+    def on_cbmlc_changed(self, index_value: str):
+        cb_text = self.ui.cbMLC.currentText()
+        self.ui.action_Picket_Fence.setToolTip(f"Analyse {cb_text} MLC. Long or right click to change MLC.")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section
