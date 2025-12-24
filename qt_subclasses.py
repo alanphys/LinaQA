@@ -8,8 +8,8 @@ Extra functionality for PyQT classes.
 # copyright: AC Chamberlain (c) 2023-2025
 # SPDX-License-Identifier: Licence.txt:
 
-from PyQt5.QtWidgets import (QToolButton, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QStatusBar)
-from PyQt5.QtCore import QTimer, Qt, pyqtSignal
+from PyQt5.QtWidgets import (QApplication, QToolButton, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QStatusBar)
+from PyQt5.QtCore import QTimer, Qt, pyqtSignal, QEvent
 from PyQt5.QtGui import QPalette
 from linaqa_types import faint_red, faint_green, faint_yellow
 
@@ -65,6 +65,9 @@ class PopupToolbar(QFrame):
         self.main_layout.setContentsMargins(8, 8, 8, 8)
         self.main_layout.setSpacing(6)
 
+        # Install event filter on application to detect clicks outside
+        QApplication.instance().installEventFilter(self)
+        
     def add_hcontrol(self, label, widget):
         """Add a labeled control to the popup toolbar"""
         row = QHBoxLayout()
@@ -101,10 +104,31 @@ class PopupToolbar(QFrame):
         self.show()
         self.setFocus()
 
+    def eventFilter(self, obj, event):
+        """Filter events to detect clicks outside the popup"""
+        if event.type() == QEvent.MouseButtonPress:
+            # Check if click is outside this widget
+            if self.isVisible():
+                click_pos = event.globalPos()
+                if not self.geometry().contains(self.mapFromGlobal(click_pos)):
+                    self.close()
+                    self.closed.emit()
+                    return True
+        return super().eventFilter(obj, event)
+
+    def closeEvent(self, event):
+        """Clean up event filter when closing"""
+        QApplication.instance().removeEventFilter(self)
+        super().closeEvent(event)
+
     def focusOutEvent(self, event):
-        """Close popup when focus is lost"""
-        self.close()
-        self.closed.emit()
+        """Close popup when focus is lost, but not when focusing child widgets"""
+        # Check if the new focus widget is a child of this popup
+        focus_widget = QApplication.focusWidget()
+        if focus_widget is None or not self.isAncestorOf(focus_widget):
+            # Focus moved outside the popup, close it
+            self.close()
+            self.closed.emit()
         super().focusOutEvent(event)
 
 
