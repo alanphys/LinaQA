@@ -56,18 +56,19 @@ class PopupToolbar(QFrame):
     closed = pyqtSignal()
 
     def __init__(self, parent=None):
-        super().__init__(parent, Qt.Popup | Qt.FramelessWindowHint)
+        super().__init__(parent, Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Raised)
         self.setLineWidth(2)
+        self.setAttribute(Qt.WA_DeleteOnClose, False)
 
         # Main layout
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(8, 8, 8, 8)
         self.main_layout.setSpacing(6)
 
-        # Install event filter on application to detect clicks outside
-        QApplication.instance().installEventFilter(self)
-        
+        # Track if we're currently showing
+        self._is_showing = False
+
     def add_hcontrol(self, label, widget):
         """Add a labeled control to the popup toolbar"""
         row = QHBoxLayout()
@@ -106,30 +107,33 @@ class PopupToolbar(QFrame):
 
     def eventFilter(self, obj, event):
         """Filter events to detect clicks outside the popup"""
-        if event.type() == QEvent.MouseButtonPress:
-            # Check if click is outside this widget
+        if event.type() == QEvent.MouseButtonPress and self._is_showing:
+            # Check if click is outside this widget and its children
             if self.isVisible():
                 click_pos = event.globalPos()
-                if not self.geometry().contains(self.mapFromGlobal(click_pos)):
+                popup_rect = self.rect()
+                popup_rect.moveTopLeft(self.mapToGlobal(self.rect().topLeft()))
+
+                if not popup_rect.contains(click_pos):
+                    # Click was outside the popup
                     self.close()
-                    self.closed.emit()
-                    return True
-        return super().eventFilter(obj, event)
+                    return False  # Allow the click to propagate
+        return False
 
     def closeEvent(self, event):
         """Clean up event filter when closing"""
-        QApplication.instance().removeEventFilter(self)
+        if self._is_showing:
+            QApplication.instance().removeEventFilter(self)
+            self._is_showing = False
+        self.closed.emit()
         super().closeEvent(event)
 
-    def focusOutEvent(self, event):
-        """Close popup when focus is lost, but not when focusing child widgets"""
-        # Check if the new focus widget is a child of this popup
-        focus_widget = QApplication.focusWidget()
-        if focus_widget is None or not self.isAncestorOf(focus_widget):
-            # Focus moved outside the popup, close it
-            self.close()
-            self.closed.emit()
-        super().focusOutEvent(event)
+    def hideEvent(self, event):
+        """Clean up when hidden"""
+        if self._is_showing:
+            QApplication.instance().removeEventFilter(self)
+            self._is_showing = False
+        super().hideEvent(event)
 
 
 class LongPressToolButton(QToolButton):
