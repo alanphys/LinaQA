@@ -161,7 +161,7 @@ class LinaQA(QMainWindow):
             raise Exception('Invalid setting in VMAT/VMAT test')
         self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_VMAT, self.ui.vmat_popup)
 
-        # we have to insert a Combox for the 2D phantoms test manually into the toolbar
+        # we have to insert a popup for the 2D phantoms test manually into the toolbar
         self.ui.phantom2d_popup = PopupToolbar()
         self.ui.cbPhan2D = QComboBox()
         self.ui.cbPhan2D.setFixedWidth(120)
@@ -176,16 +176,14 @@ class LinaQA(QMainWindow):
             raise Exception('Invalid setting in 2D Phantoms/2D Type')
         self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
 
-        # we have to insert a double spinbox for the image scaling manually into the toolbar
-        self.ui.toolBar_Dx.insertSeparator(self.ui.action_Scale_Image)
-        self.ui.lScaleFactor = QLabel('Scale Factor:')
-        self.ui.toolBar_Dx.insertWidget(self.ui.action_Gamma, self.ui.lScaleFactor)
+        # we have to insert a double spinbox popup for the image scaling manually into the toolbar
+        self.ui.scale_popup = PopupToolbar()
         self.ui.dsbScaleFactor = MyDoubleSpinBox()
         self.ui.dsbScaleFactor.setFixedWidth(120)
         self.ui.dsbScaleFactor.setSingleStep(0.01)
-        self.ui.toolBar_Dx.insertWidget(self.ui.action_Gamma, self.ui.dsbScaleFactor)
-        self.ui.toolBar_Dx.insertSeparator(self.ui.action_Gamma)
+        self.ui.scale_popup.add_vcontrol('Scale Factor:', self.ui.dsbScaleFactor)
         self.ui.dsbScaleFactor.setValue(self.settings.value('PyDicom/Scale factor', 1.0, type=float))
+        self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_Scale_Image, self.ui.scale_popup)
 
         # we have to insert a Combox for the spatial resolution test manually into the toolbar
         self.ui.toolBar_NM.insertSeparator(self.ui.action_Spatial_Res)
