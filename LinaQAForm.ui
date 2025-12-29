@@ -355,9 +355,12 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>110</width>
+     <width>32</width>
      <height>32</height>
     </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>RightToolBarArea</enum>

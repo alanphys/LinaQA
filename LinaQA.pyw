@@ -130,6 +130,7 @@ class LinaQA(QMainWindow):
         else:
             raise Exception('Invalid setting in 3D Phantoms/3D Type')
         self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
+        self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
 
         # we have to insert a popup for the MLC manually into the toolbar
         self.ui.mlc_popup = PopupToolbar()
@@ -160,6 +161,7 @@ class LinaQA(QMainWindow):
         else:
             raise Exception('Invalid setting in VMAT/VMAT test')
         self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_VMAT, self.ui.vmat_popup)
+        self.on_cbvmat_changed(self.ui.cbVMAT.currentIndex())
 
         # we have to insert a popup for the 2D phantoms test manually into the toolbar
         self.ui.phantom2d_popup = PopupToolbar()
@@ -175,6 +177,7 @@ class LinaQA(QMainWindow):
         else:
             raise Exception('Invalid setting in 2D Phantoms/2D Type')
         self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
+        self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
 
         # we have to insert a double spinbox popup for the image scaling manually into the toolbar
         self.ui.scale_popup = PopupToolbar()
@@ -186,18 +189,19 @@ class LinaQA(QMainWindow):
         self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_Scale_Image, self.ui.scale_popup)
 
         # we have to insert a Combox for the spatial resolution test manually into the toolbar
-        self.ui.toolBar_NM.insertSeparator(self.ui.action_Spatial_Res)
+        self.ui.spatialres_popup = PopupToolbar()
         self.ui.cbSpatialRes = QComboBox()
         self.ui.cbSpatialRes.setFixedWidth(120)
-        self.ui.toolBar_NM.insertWidget(self.ui.action_Tomo_Uni, self.ui.cbSpatialRes)
+        self.ui.spatialres_popup.add_vcontrol('Select spatial resolution test:', self.ui.cbSpatialRes)
         self.ui.cbSpatialRes.addItems(spatial_res_list)
-        self.ui.toolBar_NM.insertSeparator(self.ui.action_Tomo_Uni)
+        self.ui.cbSpatialRes.currentIndexChanged.connect(self.on_spatialres_changed)
         spatial_res_type = self.settings.value('Spatial Resolution/Resolution test', 'Four Bar', type=str)
         index = self.ui.cbSpatialRes.findText(spatial_res_type)
         if index >= 0:
             self.ui.cbSpatialRes.setCurrentIndex(index)
         else:
             raise Exception('Invalid setting in Spatial Resolution/Resolution test')
+        self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Spatial_Res, self.ui.spatialres_popup)
 
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
@@ -711,6 +715,10 @@ class LinaQA(QMainWindow):
     def on_2dphantom_changed(self, index_value: str):
         cb_text = self.ui.cbPhan2D.currentText()
         self.ui.action_2DPhantoms.setToolTip(f"Analyse {cb_text} Phantom. Long or right click to change phantom.")
+
+    def on_spatialres_changed(self, index_value: str):
+        cb_text = self.ui.cbSpatialRes.currentText()
+        self.ui.action_Spatial_Res.setToolTip(f"Analyse {cb_text} test. Long or right click to change test.")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Show DICOM tag section

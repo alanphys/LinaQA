@@ -8,7 +8,7 @@ Extra functionality for PyQT classes.
 # copyright: AC Chamberlain (c) 2023-2025
 # SPDX-License-Identifier: Licence.txt:
 
-from PyQt5.QtWidgets import (QApplication, QToolButton, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QStatusBar)
+from PyQt5.QtWidgets import (QApplication, QToolButton, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QStatusBar)
 from PyQt5.QtCore import QTimer, Qt, pyqtSignal, QEvent
 from PyQt5.QtGui import QPalette
 from linaqa_types import faint_red, faint_green, faint_yellow
@@ -96,14 +96,26 @@ class PopupToolbar(QFrame):
         pos = reference_widget.mapToGlobal(reference_widget.rect().bottomLeft())
         self.move(pos)
         self.show()
-        self.setFocus()
+        self.activateWindow()
+        self.raise_()
+
+        # Install event filter when showing
+        if not self._is_showing:
+            QApplication.instance().installEventFilter(self)
+            self._is_showing = True
 
     def show_next_to(self, reference_widget):
         """Show the popup below the reference widget"""
         pos = reference_widget.mapToGlobal(reference_widget.rect().topRight())
         self.move(pos)
         self.show()
-        self.setFocus()
+        self.activateWindow()
+        self.raise_()
+
+        # Install event filter when showing
+        if not self._is_showing:
+            QApplication.instance().installEventFilter(self)
+            self._is_showing = True
 
     def eventFilter(self, obj, event):
         """Filter events to detect clicks outside the popup"""
@@ -115,7 +127,28 @@ class PopupToolbar(QFrame):
                 popup_rect.moveTopLeft(self.mapToGlobal(self.rect().topLeft()))
 
                 if not popup_rect.contains(click_pos):
-                    # Click was outside the popup
+                    # Check if the click is on a child widget (like a combobox dropdown)
+                    clicked_widget = QApplication.widgetAt(click_pos)
+
+                    # Check if clicked widget is related to our popup
+                    if clicked_widget is not None:
+                        # Check if it's a child of this popup
+                        if self.isAncestorOf(clicked_widget):
+                            return False
+
+                        # Check if it's a popup window related to our widgets (like combobox dropdown)
+                        for child in self.findChildren(QWidget):
+                            # Check for combobox dropdowns and other popups
+                            if hasattr(child, 'view') and callable(child.view):
+                                # This is likely a combobox
+                                try:
+                                    view = child.view()
+                                    if view and (clicked_widget == view or view.isAncestorOf(clicked_widget)):
+                                        return False
+                                except:
+                                    pass
+
+                    # Click was outside the popup and not on a related widget
                     self.close()
                     return False  # Allow the click to propagate
         return False
