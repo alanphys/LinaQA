@@ -60,7 +60,7 @@ from aboutpackage import About
 from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
 from imageunit import Imager
-from decorators import show_wait_cursor
+from decorators import show_wait_cursor, check_valid_image
 from misc_utils import (
     open_path,
     get_dot_attr,
@@ -432,15 +432,11 @@ class LinaQA(QMainWindow):
             if ((self.imager.datasets[0].Modality in supported_modalities)
                     and hasattr(self.imager.datasets[0], 'PixelData')):
                 self.tab_changed(0)
-                # self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-                # self.ui.qlImage.show()
+                self.edit_pixel_data()
             else:
                 self.ui.tabWidget.setTabVisible(0, False)
                 self.ui.action_DICOM_tags.setChecked(True)
                 self.tab_changed(1)
-                # self.ui.tabWidget.setTabVisible(0, False)
-            # self.show_dicom_toolbar()
-            self.edit_pixel_data()
         else:
             the_image = QPixmap(self.filenames[0])
             if the_image.isNull():
@@ -991,6 +987,7 @@ class LinaQA(QMainWindow):
 # ---------------------------------------------------------------------------------------------------------------------
 # Radiotherapy analysis
 # ---------------------------------------------------------------------------------------------------------------------
+    @check_valid_image
     @show_wait_cursor
     def analyse_catphan(self):
         try:
@@ -1020,6 +1017,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def analyse_picket_fence(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
@@ -1046,6 +1044,7 @@ class LinaQA(QMainWindow):
             except Exception as e:
                 self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def analyse_winston_lutz(self):
         streams = datasets_to_stream(self.imager.datasets)
@@ -1061,6 +1060,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def analyse_2d_phantoms(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
@@ -1083,6 +1083,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def analyse_vmat(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
@@ -1136,6 +1137,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze log. Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def analyse_gamma(self):
         if len(self.ref_filename) >> 0:
@@ -1182,6 +1184,7 @@ class LinaQA(QMainWindow):
                 self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
         else:
             self.ui.tabWidget.setTabVisible(3, False)
+            self.ui.statusbar.status_error('No reference image defined. Please open a reference image.')
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Reference image section
@@ -1230,6 +1233,7 @@ class LinaQA(QMainWindow):
 # ---------------------------------------------------------------------------------------------------------------------
 # Image processing and editing
 # ---------------------------------------------------------------------------------------------------------------------
+    @check_valid_image
     def invert(self):
         if self.imager.invflag:
             self.imager.invflag = False
@@ -1237,6 +1241,7 @@ class LinaQA(QMainWindow):
             self.imager.invflag = True
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
 
+    @check_valid_image
     def scale_lut(self):
         if self.imager.rescale:
             self.imager.rescale = False
@@ -1244,24 +1249,25 @@ class LinaQA(QMainWindow):
             self.imager.rescale = True
         self.auto_window()
 
+    @check_valid_image
     def flip_left_right(self):
-        if self.imager is not None and hasattr(self.imager, "values"):
-            self.imager.flip_lr()
-            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.ui.statusbar.status_message(f"Image(s) have been flipped left-right")
+        self.imager.flip_lr()
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.ui.statusbar.status_message(f"Image(s) have been flipped left-right")
 
+    @check_valid_image
     def flip_up_down(self):
-        if self.imager is not None and hasattr(self.imager, "values"):
-            self.imager.flip_ud()
-            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.ui.statusbar.status_message(f"Image(s) have been flipped up-down")
+        self.imager.flip_ud()
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.ui.statusbar.status_message(f"Image(s) have been flipped up-down")
 
+    @check_valid_image
     def auto_window(self):
-        if self.imager is not None and hasattr(self.imager, "values"):
-            self.imager.auto_window()
-            self.show_image(self.imager.get_current_image(), self.ui.qlImage)
-            self.ui.statusbar.status_message(f"Window center {self.imager.window_center:.1f}, Window width {self.imager.window_width:.1f}")
+        self.imager.auto_window()
+        self.show_image(self.imager.get_current_image(), self.ui.qlImage)
+        self.ui.statusbar.status_message(f"Window center {self.imager.window_center:.1f}, Window width {self.imager.window_width:.1f}")
 
+    @check_valid_image
     def edit_pixel_data(self):
         if self.imager:
             if self.ui.action_Pixel_Data.isChecked():
@@ -1274,6 +1280,7 @@ class LinaQA(QMainWindow):
             else:
                 self.ui.tabWidget.setTabVisible(3, False)
 
+    @check_valid_image
     def sum_image(self):
         # We can't simply sum the images as it can give an integer overflow.
         # We must sum and rescale.
@@ -1283,6 +1290,7 @@ class LinaQA(QMainWindow):
         self.is_changed = True
         self.ui.statusbar.status_message(f'{num_images} images were summed. Image has been rescaled.')
 
+    @check_valid_image
     def avg_image(self):
         num_images = self.imager.size[2]
         self.imager.avg_images()
@@ -1290,6 +1298,7 @@ class LinaQA(QMainWindow):
         self.is_changed = True
         self.ui.statusbar.status_message(f'{num_images} images were averaged')
 
+    @check_valid_image
     def scale_image(self):
         num_images = self.imager.size[2]
         self.imager.scale_images(self.ui.dsbScaleFactor.value())
@@ -1301,6 +1310,7 @@ class LinaQA(QMainWindow):
 # Nuclear medicine analysis
 # ---------------------------------------------------------------------------------------------------------------------
 
+    @check_valid_image
     @show_wait_cursor
     def max_count_rate(self):
         try:
@@ -1312,6 +1322,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def simple_sensitivity(self):
         phantom_image = self.imager.datasets[self.imager.index]
@@ -1325,6 +1336,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def planar_uniformity(self):
         try:
@@ -1336,6 +1348,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def spatial_resolution(self):
         try:
@@ -1364,6 +1377,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def tomographic_uniformity(self):
         try:
@@ -1381,6 +1395,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def tomographic_resolution(self):
         try:
@@ -1392,6 +1407,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def tomographic_contrast(self):
         try:
@@ -1415,6 +1431,7 @@ class LinaQA(QMainWindow):
         except Exception as e:
             self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
+    @check_valid_image
     @show_wait_cursor
     def centre_of_rotation(self):
         try:

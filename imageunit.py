@@ -6,6 +6,7 @@ import math
 
 import numpy as np
 from pydicom import Dataset
+from decorators import check_values_exist
 from linaqa_types import supported_modalities
 
 
@@ -15,12 +16,12 @@ class Imager:
         self.values = None
         self._index = 0
         self.rescale = use_rescale
+        self._window_width = 1000
+        self._window_center = 0
+        self._invflag = False
 
         # check if dataset has an image
         if (datasets[0].Modality in supported_modalities) and hasattr(datasets[0], 'PixelData'):
-            self._window_width = 1000
-            self._window_center = 0
-            self._invflag = False
 
             # Dataset has 3D volume
             if hasattr(datasets[0], "NumberOfFrames") and (int(datasets[0].NumberOfFrames) > 1):
@@ -108,39 +109,40 @@ class Imager:
     def invflag(self, value: bool):
         self._invflag = value
 
+    @check_values_exist
     def get_image(self, index):
-        if hasattr(self, "values") and self.values is not None:
-            # int32 true values (HU or brightness units)
-            img = self.values[:, :, index]
-            if (self.rescale and hasattr(self.datasets[index], 'RescaleIntercept')
-               and hasattr(self.datasets[index], 'RescaleSlope')):
-                intercept = float(self.datasets[index].RescaleIntercept)
-                slope = float(self.datasets[index].RescaleSlope)
-                img = img*slope + intercept
+        # int32 true values (HU or brightness units)
+        img = self.values[:, :, index]
+        if (self.rescale and hasattr(self.datasets[index], 'RescaleIntercept')
+           and hasattr(self.datasets[index], 'RescaleSlope')):
+            intercept = float(self.datasets[index].RescaleIntercept)
+            slope = float(self.datasets[index].RescaleSlope)
+            img = img*slope + intercept
 
-            # Vectorized windowing using boolean masks
-            w_left = (self._window_center - self._window_width / 2)
-            w_right = (self._window_center + self._window_width / 2)
-            mask_0 = img < w_left
-            mask_1 = img > w_right
-            mask_2 = np.invert(mask_0 + mask_1)
+        # Vectorized windowing using boolean masks
+        w_left = (self._window_center - self._window_width / 2)
+        w_right = (self._window_center + self._window_width / 2)
+        mask_0 = img < w_left
+        mask_1 = img > w_right
+        mask_2 = np.invert(mask_0 + mask_1)
 
-            # Cast to RGB image so that QImage can handle it
-            rgb_array = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint32)
-            if self._invflag:
-                rgb_array[:, :, 0] = rgb_array[:, :, 1] = rgb_array[:, :, 2] = \
-                    mask_1 * 0 + mask_0 * 255 + mask_2 * (255 * (w_right - img) / (w_right - w_left))
-            else:
-                rgb_array[:, :, 0] = rgb_array[:, :, 1] = rgb_array[:, :, 2] = \
-                    mask_0 * 0 + mask_1 * 255 + mask_2 * (255 * (img - w_left) / (w_right - w_left))
+        # Cast to RGB image so that QImage can handle it
+        rgb_array = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint32)
+        if self._invflag:
+            rgb_array[:, :, 0] = rgb_array[:, :, 1] = rgb_array[:, :, 2] = \
+                mask_1 * 0 + mask_0 * 255 + mask_2 * (255 * (w_right - img) / (w_right - w_left))
+        else:
+            rgb_array[:, :, 0] = rgb_array[:, :, 1] = rgb_array[:, :, 2] = \
+                mask_0 * 0 + mask_1 * 255 + mask_2 * (255 * (img - w_left) / (w_right - w_left))
 
-            # flatten RGB array to RGB32
-            res = (255 << 24 | rgb_array[:, :, 0] << 16 | rgb_array[:, :, 1] << 8 | rgb_array[:, :, 2])
-            return res
+        # flatten RGB array to RGB32
+        res = (255 << 24 | rgb_array[:, :, 0] << 16 | rgb_array[:, :, 1] << 8 | rgb_array[:, :, 2])
+        return res
 
     def get_current_image(self):
         return self.get_image(self.index)
 
+    @check_values_exist
     def auto_window(self):
         win_max = np.max(self.values)
         win_min = np.min(self.values)
@@ -153,15 +155,18 @@ class Imager:
         self._window_width = win_max-win_min
         self._window_center = (win_max + win_min)//2
 
+    @check_values_exist
     def flip_lr(self):
         self.values = np.fliplr(self.values)
 
+    @check_values_exist
     def flip_ud(self):
         self.values = np.flipud(self.values)
 
+    @check_values_exist
     def sum_images(self):
         # collapse the images into one image.
-        if (self.values is not None) and (self.values.ndim == 3):
+        if self.values.ndim == 3:
             # create floating point matrix same size as values
             fpvalues = np.array(self.values, dtype=float)
             # for each image rescale pixel values to calibrated units.
@@ -196,9 +201,10 @@ class Imager:
             self.index = 0
             self.auto_window()
 
+    @check_values_exist
     def avg_images(self):
         # collapse the images into one image.
-        if (self.values is not None) and (self.values.ndim == 3):
+        if self.values.ndim == 3:
             image_sum = np.sum(self.values, axis=2)
             image_sum = image_sum/self.size[2]
             self.datasets[0].PixelData = image_sum.astype(np.uint16, casting='unsafe').tobytes()
@@ -209,13 +215,13 @@ class Imager:
             self.index = 0
             self.auto_window()
 
+    @check_values_exist
     def scale_images(self, factor: float):
-        if self.values is not None:
-            self.values = self.values*factor
-            if self.datasets[0].pixel_array.ndim == 3:
-                self.datasets[0].PixelData = self.values.astype(np.uint16, casting='unsafe').tobytes()
-            else:
-                for i, image in enumerate(self.datasets):
-                    image.PixelData = self.values[:, :, i].astype(np.uint16, casting='unsafe').tobytes()
-            self.auto_window()
+        self.values = self.values*factor
+        if self.datasets[0].pixel_array.ndim == 3:
+            self.datasets[0].PixelData = self.values.astype(np.uint16, casting='unsafe').tobytes()
+        else:
+            for i, image in enumerate(self.datasets):
+                image.PixelData = self.values[:, :, i].astype(np.uint16, casting='unsafe').tobytes()
+        self.auto_window()
 

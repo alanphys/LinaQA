@@ -6,11 +6,32 @@ from PyQt5.QtWidgets import QApplication
 def show_wait_cursor(function):
     def new_function(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.processEvents()
         try:
             return function(self)
         except Exception as e:
-            raise e
             print("Error {}".format(e.args[0]))
+            raise e
         finally:
             QApplication.restoreOverrideCursor()
+            QApplication.processEvents()
     return new_function
+
+
+def check_valid_image(function):
+    # check if the imager has been created
+    def _valid_image(self):
+        if (self.imager is not None) and hasattr(self.imager, 'values') and (self.imager.values is not None):
+            return function(self)
+        else:
+            self.ui.statusbar.status_error('No image open. Please open an image!')
+    return _valid_image
+
+
+def check_values_exist(function):
+    # check if image pixel values exist
+    def _values_exist(*args, **kwargs):
+        self = args[0]
+        if hasattr(self, 'values') and self.values is not None:
+            return function(*args, **kwargs)
+    return _values_exist
