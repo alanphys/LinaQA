@@ -39,7 +39,6 @@ from PyQt5.QtGui import (
      QStandardItem,
      QPalette)
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
-from qt_subclasses import PopupToolbar, LongPressToolButton
 import matplotlib.pyplot as plt
 import numpy as np
 import webbrowser
@@ -52,9 +51,6 @@ from linaqa_types import (
     phantom2D_list,
     spatial_res_list,
     mlc_list,
-    faint_red,
-    faint_green,
-    faint_yellow,
     MyDoubleSpinBox)
 from aboutpackage import About
 from aboutpackage.aboutform import version
@@ -69,9 +65,17 @@ from misc_utils import (
     text_to_tag,
     dataset_to_stream,
     datasets_to_stream)
+from qt_subclasses import PopupToolbar, LongPressToolButton
+from popups import (
+    create_3dphantom_popup,
+    create_mlc_popup,
+    create_vmat_popup,
+    create_2dphantom_popup,
+    create_scale_popup,
+    create_spatialres_popup)
 import pylinac_subclasses
-
 from tablemodel import TableModel
+
 import pydicom
 from pylinac.core import pdf
 from pylinac.core.image import DicomImageStack
@@ -116,92 +120,13 @@ class LinaQA(QMainWindow):
             self.move(self.settings.value('Window/Position'))
         set_default_settings(self.settings)
 
-        # we have to insert a popup to select the phantom manually into the toolbar
-        self.ui.phantom3d_popup = PopupToolbar()
-        self.ui.cbCatPhan = QComboBox()
-        self.ui.cbCatPhan.setFixedWidth(120)
-        self.ui.phantom3d_popup.add_vcontrol('Select phantom:', self.ui.cbCatPhan)
-        self.ui.cbCatPhan.addItems(phantom3D_list)
-        self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
-        catphan_type = self.settings.value('3D Phantoms/3D Type')
-        index = self.ui.cbCatPhan.findText(catphan_type)
-        if index >= 0:
-            self.ui.cbCatPhan.setCurrentIndex(index)
-        else:
-            raise Exception('Invalid setting in 3D Phantoms/3D Type')
-        self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
-        self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
-
-        # we have to insert a popup for the MLC manually into the toolbar
-        self.ui.mlc_popup = PopupToolbar()
-        self.ui.cbMLC = QComboBox()
-        self.ui.cbMLC.setFixedWidth(120)
-        self.ui.mlc_popup.add_vcontrol('Select MLC:', self.ui.cbMLC)
-        self.ui.cbMLC.addItems(mlc_list)
-        self.ui.cbMLC.currentIndexChanged.connect(self.on_cbmlc_changed)
-        mlc_type = self.settings.value('Picket Fence/MLC Type')
-        index = self.ui.cbMLC.findText(mlc_type)
-        if index >= 0:
-            self.ui.cbMLC.setCurrentIndex(index)
-        else:
-            raise Exception('Invalid setting in Picket Fence/MLC Type')
-        self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_Picket_Fence, self.ui.mlc_popup)
-
-        # we have to insert a popup for the VMAT test manually into the toolbar
-        self.ui.vmat_popup = PopupToolbar()
-        self.ui.cbVMAT = QComboBox()
-        self.ui.cbVMAT.setFixedWidth(120)
-        self.ui.vmat_popup.add_vcontrol('Select VMAT test:', self.ui.cbVMAT)
-        self.ui.cbVMAT.addItems(vmat_list)
-        self.ui.cbVMAT.currentIndexChanged.connect(self.on_cbvmat_changed)
-        vmat_type = self.settings.value('VMAT/VMAT test')
-        index = self.ui.cbVMAT.findText(vmat_type)
-        if index >= 0:
-            self.ui.cbVMAT.setCurrentIndex(index)
-        else:
-            raise Exception('Invalid setting in VMAT/VMAT test')
-        self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_VMAT, self.ui.vmat_popup)
-        self.on_cbvmat_changed(self.ui.cbVMAT.currentIndex())
-
-        # we have to insert a popup for the 2D phantoms test manually into the toolbar
-        self.ui.phantom2d_popup = PopupToolbar()
-        self.ui.cbPhan2D = QComboBox()
-        self.ui.cbPhan2D.setFixedWidth(120)
-        self.ui.phantom2d_popup.add_vcontrol('Select phantom:', self.ui.cbPhan2D)
-        self.ui.cbPhan2D.addItems(phantom2D_list)
-        self.ui.cbPhan2D.currentIndexChanged.connect(self.on_2dphantom_changed)
-        phan2d_type = self.settings.value('2D Phantoms/2D Type')
-        index = self.ui.cbPhan2D.findText(phan2d_type)
-        if index >= 0:
-            self.ui.cbPhan2D.setCurrentIndex(index)
-        else:
-            raise Exception('Invalid setting in 2D Phantoms/2D Type')
-        self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
-        self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
-
-        # we have to insert a double spinbox popup for the image scaling manually into the toolbar
-        self.ui.scale_popup = PopupToolbar()
-        self.ui.dsbScaleFactor = MyDoubleSpinBox()
-        self.ui.dsbScaleFactor.setFixedWidth(120)
-        self.ui.dsbScaleFactor.setSingleStep(0.01)
-        self.ui.scale_popup.add_vcontrol('Scale Factor:', self.ui.dsbScaleFactor)
-        self.ui.dsbScaleFactor.setValue(self.settings.value('PyDicom/Scale factor', 1.0, type=float))
-        self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_Scale_Image, self.ui.scale_popup)
-
-        # we have to insert a Combox for the spatial resolution test manually into the toolbar
-        self.ui.spatialres_popup = PopupToolbar()
-        self.ui.cbSpatialRes = QComboBox()
-        self.ui.cbSpatialRes.setFixedWidth(120)
-        self.ui.spatialres_popup.add_vcontrol('Select spatial resolution test:', self.ui.cbSpatialRes)
-        self.ui.cbSpatialRes.addItems(spatial_res_list)
-        self.ui.cbSpatialRes.currentIndexChanged.connect(self.on_spatialres_changed)
-        spatial_res_type = self.settings.value('Spatial Resolution/Resolution test', 'Four Bar', type=str)
-        index = self.ui.cbSpatialRes.findText(spatial_res_type)
-        if index >= 0:
-            self.ui.cbSpatialRes.setCurrentIndex(index)
-        else:
-            raise Exception('Invalid setting in Spatial Resolution/Resolution test')
-        self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Spatial_Res, self.ui.spatialres_popup)
+        # create popups for tool buttons
+        create_3dphantom_popup(self)
+        create_mlc_popup(self)
+        create_vmat_popup(self)
+        create_2dphantom_popup(self)
+        create_scale_popup(self)
+        create_spatialres_popup(self)
 
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
