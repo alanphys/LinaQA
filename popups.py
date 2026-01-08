@@ -15,9 +15,33 @@ from linaqa_types import (
     spatial_res_list,
     mlc_list,
     MyDoubleSpinBox)
-from qt_subclasses import PopupToolbar
+from qt_subclasses import PopupToolbar, LongPressToolButton
 
 from PyQt5.QtWidgets import QComboBox, QSpinBox
+
+
+def replace_action_with_long_press(toolbar, action, popup_widget):
+    """
+    Replace a toolbar action with a LongPressToolButton
+
+    Args:
+        toolbar: The QToolBar containing the action
+        action: The QAction to replace
+        popup_widget: The PopupToolbar to show on long press
+    """
+    # Find the widget for this action
+    widget = toolbar.widgetForAction(action)
+
+    # Create new long-press button
+    button = LongPressToolButton()
+    button.setDefaultAction(action)
+    button.set_popup_widget(popup_widget)
+
+    # Replace the action with our custom button
+    toolbar.insertWidget(action, button)
+    toolbar.removeAction(action)
+
+    return button
 
 
 def create_3dphantom_popup(self):
@@ -34,8 +58,8 @@ def create_3dphantom_popup(self):
         self.ui.cbCatPhan.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in 3D Phantoms/3D Type')
-    self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
-    self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
+    replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
+    replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
 
 
 def create_mlc_popup(self):
@@ -52,7 +76,7 @@ def create_mlc_popup(self):
         self.ui.cbMLC.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in Picket Fence/MLC Type')
-    self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_Picket_Fence, self.ui.mlc_popup)
+    replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_Picket_Fence, self.ui.mlc_popup)
 
 
 def create_vmat_popup(self):
@@ -69,7 +93,7 @@ def create_vmat_popup(self):
         self.ui.cbVMAT.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in VMAT/VMAT test')
-    self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_VMAT, self.ui.vmat_popup)
+    replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_VMAT, self.ui.vmat_popup)
     self.on_cbvmat_changed(self.ui.cbVMAT.currentIndex())
 
 
@@ -87,8 +111,8 @@ def create_2dphantom_popup(self):
         self.ui.cbPhan2D.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in 2D Phantoms/2D Type')
-    self.replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
-    self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
+    replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
+    replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
 
 
 def create_scale_popup(self):
@@ -98,7 +122,7 @@ def create_scale_popup(self):
     self.ui.dsbScaleFactor.setSingleStep(0.01)
     self.ui.scale_popup.add_hcontrol('Scale Factor:', self.ui.dsbScaleFactor)
     self.ui.dsbScaleFactor.setValue(self.settings.value('PyDicom/Scale factor', 1.0, type=float))
-    self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_Scale_Image, self.ui.scale_popup)
+    replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_Scale_Image, self.ui.scale_popup)
 
 
 def create_spatialres_popup(self):
@@ -114,7 +138,7 @@ def create_spatialres_popup(self):
         self.ui.cbSpatialRes.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in Spatial Resolution/Resolution test')
-    self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Spatial_Res, self.ui.spatialres_popup)
+    replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Spatial_Res, self.ui.spatialres_popup)
 
 
 def create_tomouniformity_popup(self):
@@ -126,7 +150,7 @@ def create_tomouniformity_popup(self):
     self.ui.sbLastFrame = QSpinBox()
     self.ui.tomouniformity_popup.add_hcontrol('Last frame', self.ui.sbLastFrame)
     self.ui.sbLastFrame.setValue(self.settings.value('Tomographic Uniformity/Last frame', -1, type=int))
-    self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Tomo_Uni, self.ui.tomouniformity_popup)
+    replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Tomo_Uni, self.ui.tomouniformity_popup)
 
 
 def create_simplesens_popup(self):
@@ -136,5 +160,5 @@ def create_simplesens_popup(self):
     self.ui.dsbSimpleSensActivity.setSingleStep(0.01)
     self.ui.simplesens_popup.add_hcontrol('Activity (MBq):', self.ui.dsbSimpleSensActivity)
     self.ui.dsbSimpleSensActivity.setValue(self.settings.value('Simple Sensitivity/Activity MBq', 40.0, type=float))
-    self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Simple_Sens, self.ui.simplesens_popup)
+    replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Simple_Sens, self.ui.simplesens_popup)
 

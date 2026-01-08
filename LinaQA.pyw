@@ -224,32 +224,6 @@ class LinaQA(QMainWindow):
         self.ui.statusbar.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
 # ---------------------------------------------------------------------------------------------------------------------
-# Define toolbar popups
-# ---------------------------------------------------------------------------------------------------------------------
-    def replace_action_with_long_press(self, toolbar, action, popup_widget):
-        """
-        Replace a toolbar action with a LongPressToolButton
-
-        Args:
-            toolbar: The QToolBar containing the action
-            action: The QAction to replace
-            popup_widget: The PopupToolbar to show on long press
-        """
-        # Find the widget for this action
-        widget = toolbar.widgetForAction(action)
-
-        # Create new long-press button
-        button = LongPressToolButton()
-        button.setDefaultAction(action)
-        button.set_popup_widget(popup_widget)
-
-        # Replace the action with our custom button
-        toolbar.insertWidget(action, button)
-        toolbar.removeAction(action)
-
-        return button
-
-# ---------------------------------------------------------------------------------------------------------------------
 # User interface routines
 # ---------------------------------------------------------------------------------------------------------------------
     def closeEvent(self, event):
