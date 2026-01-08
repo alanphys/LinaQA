@@ -6,14 +6,14 @@ Show a tabbed help window
 Show a tabbed help window displaying the readme, licence and credits
 """
 # author : AC Chamberlain <alanphys@yahoo.co.uk>
-# copyright: AC Chamberlain (c) 2019-2025
+# copyright: AC Chamberlain (c) 2019-2026
 # SPDX-License-Identifier: Licence.txt:
 
 from .aboutformui import Ui_AboutForm
 from PyQt5.QtWidgets import QDialog
 import os
 
-version = '0.08.453'  # previous git commit 647b0d78
+version = '0.08.453'  # previous git commit 2c24cf56
 
 
 class About(QDialog):

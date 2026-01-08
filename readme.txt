@@ -1,4 +1,4 @@
-LinaQA Readme file (c) Yenzakahle MPI 2024-2025
+LinaQA Readme file (c) Yenzakahle MPI 2024-2026
 
 
 1) Introduction

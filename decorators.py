@@ -1,3 +1,13 @@
+"""
+=========================================================================
+Decorators for various functions
+=========================================================================
+"""
+
+# author : AC Chamberlain <alanphys@yahoo.co.uk>
+# copyright: AC Chamberlain (c) 2023-2026
+# SPDX-License-Identifier: Licence.txt:
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QApplication

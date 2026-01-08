@@ -5,7 +5,7 @@ Extra functionality for PyQT classes.
 """
 
 # author : AC Chamberlain <alanphys@yahoo.co.uk>
-# copyright: AC Chamberlain (c) 2023-2025
+# copyright: AC Chamberlain (c) 2023-2026
 # SPDX-License-Identifier: Licence.txt:
 
 from PyQt5.QtWidgets import (QApplication, QToolButton, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QStatusBar)

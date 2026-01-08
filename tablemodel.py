@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt
 # Adapted from https://www.pythonguis.com/tutorials/qtableview-modelviews-numpy-pandas/
 # Author: Martin Fitzpatrick
+# Adapted by AC Chamberlain
 
 
 class TableModel(QAbstractTableModel):
