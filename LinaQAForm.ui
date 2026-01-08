@@ -562,7 +562,7 @@
     <string>Picket Fence</string>
    </property>
    <property name="toolTip">
-    <string>Analyse picket fence image</string>
+    <string>Analyse picket fence image. Long or right click to select MLC.</string>
    </property>
   </action>
   <action name="action_Settings">
@@ -886,7 +886,7 @@
     <string>Scale Image</string>
    </property>
    <property name="toolTip">
-    <string>Scale image maximum</string>
+    <string>Scale image maximum. Lon or right click to set scale factor.</string>
    </property>
   </action>
   <action name="action_NM_Toolbar">
@@ -949,7 +949,7 @@
     <string>Tomographic Uniformity</string>
    </property>
    <property name="toolTip">
-    <string>Calculate tomographic uniformity</string>
+    <string>Calculate tomographic uniformity. Long or right click to select frames.</string>
    </property>
   </action>
   <action name="action_Tomo_Res">
@@ -985,7 +985,7 @@
     <string>Simple Sensitivity</string>
    </property>
    <property name="toolTip">
-    <string>Calculate simple sensitivity</string>
+    <string>Calculate simple sensitivity. Long or right click to set activity.</string>
    </property>
   </action>
   <action name="action_Spatial_Res">

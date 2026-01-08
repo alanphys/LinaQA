@@ -9,14 +9,13 @@ Define popup dialogs for toolbar buttons
 # SPDX-License-Identifier: Licence.txt:
 
 from linaqa_types import (
-    supported_modalities,
     phantom3D_list,
     vmat_list,
     phantom2D_list,
     spatial_res_list,
     mlc_list,
     MyDoubleSpinBox)
-from qt_subclasses import PopupToolbar, LongPressToolButton
+from qt_subclasses import PopupToolbar
 
 from PyQt5.QtWidgets import QComboBox, QSpinBox
 
@@ -129,4 +128,13 @@ def create_tomouniformity_popup(self):
     self.ui.sbLastFrame.setValue(self.settings.value('Tomographic Uniformity/Last frame', -1, type=int))
     self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Tomo_Uni, self.ui.tomouniformity_popup)
 
+
+def create_simplesens_popup(self):
+    # create a popup for the simple sensitivity analysis
+    self.ui.simplesens_popup = PopupToolbar()
+    self.ui.dsbSimpleSensActivity = MyDoubleSpinBox()
+    self.ui.dsbSimpleSensActivity.setSingleStep(0.01)
+    self.ui.simplesens_popup.add_hcontrol('Activity (MBq):', self.ui.dsbSimpleSensActivity)
+    self.ui.dsbSimpleSensActivity.setValue(self.settings.value('Simple Sensitivity/Activity MBq', 40.0, type=float))
+    self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Simple_Sens, self.ui.simplesens_popup)
 

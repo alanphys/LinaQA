@@ -73,7 +73,8 @@ from popups import (
     create_2dphantom_popup,
     create_scale_popup,
     create_spatialres_popup,
-    create_tomouniformity_popup)
+    create_tomouniformity_popup,
+    create_simplesens_popup)
 import pylinac_subclasses
 from tablemodel import TableModel
 
@@ -129,6 +130,7 @@ class LinaQA(QMainWindow):
         create_scale_popup(self)
         create_spatialres_popup(self)
         create_tomouniformity_popup(self)
+        create_simplesens_popup(self)
 
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
@@ -1256,7 +1258,7 @@ class LinaQA(QMainWindow):
         background_image = self.ref_imager.datasets[0] if self.ref_imager is not None else None
         ss = pylinac_subclasses.LinaQASimpleSensitivity(phantom_image, background_image)
         try:
-            ss.analyze(activity_mbq=self.settings.value('Simple Sensitivity/Activity MBq', 40.0, type=float),
+            ss.analyze(activity_mbq=float(self.ui.dsbSimpleSensActivity.value()),
                        nuclide=getattr(pylinac_subclasses.Nuclide,
                        self.settings.value('Simple Sensitivity/Nuclide', 'Tc99m', type=str)))
             self.show_results(ss)
