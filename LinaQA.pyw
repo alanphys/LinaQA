@@ -900,25 +900,22 @@ class LinaQA(QMainWindow):
             # if not fall back to stream
             streams = datasets_to_stream(self.imager.datasets)
         param_list = {}
-        try:
-            if self.ui.cbCatPhan.currentText() == 'QuartDVT':
-                cat = QuartDVT(streams)
-            elif self.ui.cbCatPhan.currentText() == 'ACR CT':
-                cat = ACRCT(streams)
-            elif self.ui.cbCatPhan.currentText() == 'ACR MRI':
-                cat = ACRMRILarge(streams)
-            else:
-                cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
-                param_list = {"hu_tolerance": int(self.settings.value('3D Phantoms/HU Tolerance')),
-                              "thickness_tolerance": float(self.settings.value('3D Phantoms/Thickness Tolerance')),
-                              "scaling_tolerance": float(self.settings.value('3D Phantoms/Scaling Tolerance'))}
-            if self.imager.invflag:
-                for im in cat.dicom_stack.images:
-                    im.invert()
-            cat.analyze(**param_list)
-            self.show_results(cat)
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        if self.ui.cbCatPhan.currentText() == 'QuartDVT':
+            cat = QuartDVT(streams)
+        elif self.ui.cbCatPhan.currentText() == 'ACR CT':
+            cat = ACRCT(streams)
+        elif self.ui.cbCatPhan.currentText() == 'ACR MRI':
+            cat = ACRMRILarge(streams)
+        else:
+            cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
+            param_list = {"hu_tolerance": int(self.settings.value('3D Phantoms/HU Tolerance')),
+                          "thickness_tolerance": float(self.settings.value('3D Phantoms/Thickness Tolerance')),
+                          "scaling_tolerance": float(self.settings.value('3D Phantoms/Scaling Tolerance'))}
+        if self.imager.invflag:
+            for im in cat.dicom_stack.images:
+                im.invert()
+        cat.analyze(**param_list)
+        self.show_results(cat)
 
     @check_valid_image
     @show_wait_cursor
@@ -936,16 +933,13 @@ class LinaQA(QMainWindow):
             self.show_results(pf)
         except ValueError:
             # if it throws an exception fall back to this as per issue #470
-            try:
-                self.ui.statusbar.status_warn('Could not analyze picket fence as is. Trying fallback method.')
-                pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
-                           action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
-                           num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
-                           invert=self.imager.invflag,
-                           required_prominence=0.1)
-                self.show_results(pf)
-            except Exception as e:
-                self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_warn('Could not analyze picket fence as is. Trying fallback method.')
+            pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
+                       action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
+                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
+                       invert=self.imager.invflag,
+                       required_prominence=0.1)
+            self.show_results(pf)
 
     @check_valid_image
     @show_wait_cursor
@@ -955,13 +949,10 @@ class LinaQA(QMainWindow):
         if self.imager.invflag:
             for im in wl.images:
                 im.invert()
-        try:
-            wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
-                       open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
-                       low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
-            self.show_results(wl)
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
+                   open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
+                   low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
+        self.show_results(wl)
 
     @check_valid_image
     @show_wait_cursor
@@ -970,21 +961,19 @@ class LinaQA(QMainWindow):
         phantom_class = [obj for name, obj in inspect.getmembers(planar_imaging)
                          if hasattr(obj, 'common_name') and obj.common_name == self.ui.cbPhan2D.currentText()]
         phan = phantom_class[0](stream)
-        try:
-            phan.analyze(low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
-                         high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
-                         invert=self.imager.invflag,
-                         angle_override=(None if self.settings.value('2D Phantoms/Angle override') == '0'
-                              else float(self.settings.value('2D Phantoms/Angle override'))),
-                         center_override=(None if self.settings.value('2D Phantoms/Center override') == '0'
-                              else float(self.settings.value('2D Phantoms/Center override'))),
-                         size_override=(None if self.settings.value('2D Phantoms/Size override') == '0'
-                              else float(self.settings.value('2D Phantoms/Size override'))),
-                         ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'
-                              else float(self.settings.value('2D Phantoms/SSD'))))
-            self.show_results(phan)
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        phan.analyze(
+            low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
+            high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
+            invert=self.imager.invflag,
+            angle_override=(None if self.settings.value('2D Phantoms/Angle override') == '0'
+                            else float(self.settings.value('2D Phantoms/Angle override'))),
+            center_override=(None if self.settings.value('2D Phantoms/Center override') == '0'
+                             else float(self.settings.value('2D Phantoms/Center override'))),
+            size_override=(None if self.settings.value('2D Phantoms/Size override') == '0'
+                           else float(self.settings.value('2D Phantoms/Size override'))),
+            ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'
+                 else float(self.settings.value('2D Phantoms/SSD'))))
+        self.show_results(phan)
 
     @check_valid_image
     @show_wait_cursor
@@ -1003,10 +992,9 @@ class LinaQA(QMainWindow):
             self.show_results(v)
         except AttributeError:
             self.ui.statusbar.status_error('No reference image defined. Please open a reference image.')
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
 
     @show_wait_cursor
+    # we can't check if image is valid yet as we can have a jpeg image
     def analyse_star(self):
         filename, ext = osp.splitext(self.filenames[0])
         if len(self.filenames) == 1:
