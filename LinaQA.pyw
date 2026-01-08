@@ -56,7 +56,7 @@ from aboutpackage import About
 from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
 from imageunit import Imager
-from decorators import show_wait_cursor, check_valid_image
+from decorators import show_wait_cursor, check_valid_image, catch_nm_type_error
 from misc_utils import (
     open_path,
     get_dot_attr,
@@ -1214,137 +1214,106 @@ class LinaQA(QMainWindow):
 # ---------------------------------------------------------------------------------------------------------------------
 
     @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def max_count_rate(self):
-        try:
-            mcr = pylinac_subclasses.LinaQAMaxCountRate(self.imager.datasets)
-            mcr.analyze()
-            self.show_results(mcr)
-        except TypeError:
-            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        mcr = pylinac_subclasses.LinaQAMaxCountRate(self.imager.datasets)
+        mcr.analyze()
+        self.show_results(mcr)
 
     @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def simple_sensitivity(self):
         phantom_image = self.imager.datasets[self.imager.index]
         background_image = self.ref_imager.datasets[0] if self.ref_imager is not None else None
         ss = pylinac_subclasses.LinaQASimpleSensitivity(phantom_image, background_image)
-        try:
-            ss.analyze(activity_mbq=float(self.ui.dsbSimpleSensActivity.value()),
-                       nuclide=getattr(pylinac_subclasses.Nuclide,
-                       self.settings.value('Simple Sensitivity/Nuclide', 'Tc99m', type=str)))
-            self.show_results(ss)
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        ss.analyze(
+            activity_mbq=float(self.ui.dsbSimpleSensActivity.value()),
+            nuclide=getattr(pylinac_subclasses.Nuclide,
+                            self.settings.value('Simple Sensitivity/Nuclide', 'Tc99m', type=str)))
+        self.show_results(ss)
 
     @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def planar_uniformity(self):
-        try:
-            pu = pylinac_subclasses.LinaQAPlanarUniformity(self.imager.datasets)
-            pu.analyze()
-            self.show_results(pu)
-        except TypeError:
-            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        pu = pylinac_subclasses.LinaQAPlanarUniformity(self.imager.datasets)
+        pu.analyze()
+        self.show_results(pu)
 
     @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def spatial_resolution(self):
-        try:
-            # four bar test
-            if self.ui.cbSpatialRes.currentText() == spatial_res_list[0]:
-                sr = pylinac_subclasses.LinaQAFourBarRes(self.imager.datasets)
-                sr.analyze(
-                    separation_mm=self.settings.value('Spatial Resolution/Separation mm', 100, type=float),
-                    roi_width_mm=self.settings.value('Spatial Resolution/ROI width mm', 10, type=float)
-                )
-            # quadrant test
-            elif self.ui.cbSpatialRes.currentText() == spatial_res_list[1]:
-                sr = pylinac_subclasses.LinaQAQuadrantRes(self.imager.datasets)
-                widths_str = self.settings.value('Spatial Resolution/Bar widths mm', '(4.23, 3.18, 2.54, 2.12)', type=str)
-                widths = tuple(float(w.strip()) for w in widths_str.strip('()').split(','))
-                sr.analyze(
-                    bar_widths=widths,
-                    roi_diameter_mm=self.settings.value('Spatial Resolution/ROI diameter mm', 70.0, type=float),
-                    distance_from_center_mm=self.settings.value('Spatial Resolution/Distance from center mm',
-                                                                130.0,
-                                                                type=float)
-                )
-            self.show_results(sr)
-        except TypeError:
-            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        # four bar test
+        if self.ui.cbSpatialRes.currentText() == spatial_res_list[0]:
+            sr = pylinac_subclasses.LinaQAFourBarRes(self.imager.datasets)
+            sr.analyze(
+                separation_mm=self.settings.value('Spatial Resolution/Separation mm', 100, type=float),
+                roi_width_mm=self.settings.value('Spatial Resolution/ROI width mm', 10, type=float))
+        # quadrant test
+        elif self.ui.cbSpatialRes.currentText() == spatial_res_list[1]:
+            sr = pylinac_subclasses.LinaQAQuadrantRes(self.imager.datasets)
+            widths_str = self.settings.value('Spatial Resolution/Bar widths mm', '(4.23, 3.18, 2.54, 2.12)', type=str)
+            widths = tuple(float(w.strip()) for w in widths_str.strip('()').split(','))
+            sr.analyze(
+                bar_widths=widths,
+                roi_diameter_mm=self.settings.value('Spatial Resolution/ROI diameter mm', 70.0, type=float),
+                distance_from_center_mm=self.settings.value('Spatial Resolution/Distance from center mm',
+                                                            130.0,
+                                                            type=float))
+        self.show_results(sr)
 
     @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def tomographic_uniformity(self):
-        try:
-            tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets)
-            tu.analyze(first_frame=int(self.ui.sbFirstFrame.value()),
-                       last_frame=int(self.ui.sbLastFrame.value()),
-                       ufov_ratio=self.settings.value('Tomographic Uniformity/UFOV ratio', 0.80, type=float),
-                       cfov_ratio=self.settings.value('Tomographic Uniformity/CFOV ratio', 0.75, type=float),
-                       center_ratio=self.settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
-                       threshold=self.settings.value('Tomographic Uniformity/Threshold', 0.75, type=float),
-                       window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
-            self.show_results(tu)
-        except TypeError:
-            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets)
+        tu.analyze(
+            first_frame=int(self.ui.sbFirstFrame.value()),
+            last_frame=int(self.ui.sbLastFrame.value()),
+            ufov_ratio=self.settings.value('Tomographic Uniformity/UFOV ratio', 0.80, type=float),
+            cfov_ratio=self.settings.value('Tomographic Uniformity/CFOV ratio', 0.75, type=float),
+            center_ratio=self.settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
+            threshold=self.settings.value('Tomographic Uniformity/Threshold', 0.75, type=float),
+            window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
+        self.show_results(tu)
 
     @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def tomographic_resolution(self):
-        try:
-            tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets)
-            tr.analyze()
-            self.show_results(tr)
-        except TypeError:
-            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets)
+        tr.analyze()
+        self.show_results(tr)
 
     @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def tomographic_contrast(self):
-        try:
-            tc = pylinac_subclasses.LinaQATomoContrast(self.imager.datasets)
-            sphere_diam_str = self.settings.value('Tomographic Contrast/Sphere diameters mm',
-                                                  '(38, 31.8, 25.4, 19.1, 15.9, 12.7)',
-                                                  type=str)
-            sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
-            sphere_ang_str = self.settings.value('Tomographic Contrast/Sphere angles',
-                                                 '(-10, -70, -130, -190, 110, 50)',
-                                                 type=str)
-            sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
-            tc.analyze(
-                sphere_diameters_mm=sphere_diam,
-                sphere_angles=sphere_ang,
-                ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float)
-            )
-            self.show_results(tc)
-        except TypeError:
-            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        tc = pylinac_subclasses.LinaQATomoContrast(self.imager.datasets)
+        sphere_diam_str = self.settings.value('Tomographic Contrast/Sphere diameters mm',
+                                              '(38, 31.8, 25.4, 19.1, 15.9, 12.7)',
+                                              type=str)
+        sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
+        sphere_ang_str = self.settings.value('Tomographic Contrast/Sphere angles',
+                                             '(-10, -70, -130, -190, 110, 50)',
+                                             type=str)
+        sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
+        tc.analyze(
+            sphere_diameters_mm=sphere_diam,
+            sphere_angles=sphere_ang,
+            ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float))
+        self.show_results(tc)
 
     @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def centre_of_rotation(self):
-        try:
-            cor = pylinac_subclasses.LinaQACenterOfRotation(self.imager.datasets)
-            cor.analyze()
-            self.show_results(cor)
-        except TypeError:
-            self.ui.statusbar.status_error('The file is not a nuclear medicine or PET image.')
-        except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+        cor = pylinac_subclasses.LinaQACenterOfRotation(self.imager.datasets)
+        cor.analyze()
+        self.show_results(cor)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
