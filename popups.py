@@ -18,7 +18,7 @@ from linaqa_types import (
     MyDoubleSpinBox)
 from qt_subclasses import PopupToolbar, LongPressToolButton
 
-from PyQt5.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QComboBox, QSpinBox
 
 
 def create_3dphantom_popup(self):
@@ -96,9 +96,8 @@ def create_scale_popup(self):
     # create a popup for the scale factor
     self.ui.scale_popup = PopupToolbar()
     self.ui.dsbScaleFactor = MyDoubleSpinBox()
-    self.ui.dsbScaleFactor.setFixedWidth(120)
     self.ui.dsbScaleFactor.setSingleStep(0.01)
-    self.ui.scale_popup.add_vcontrol('Scale Factor:', self.ui.dsbScaleFactor)
+    self.ui.scale_popup.add_hcontrol('Scale Factor:', self.ui.dsbScaleFactor)
     self.ui.dsbScaleFactor.setValue(self.settings.value('PyDicom/Scale factor', 1.0, type=float))
     self.replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_Scale_Image, self.ui.scale_popup)
 
@@ -107,7 +106,6 @@ def create_spatialres_popup(self):
     # we have to insert a Combox for the spatial resolution test manually into the toolbar
     self.ui.spatialres_popup = PopupToolbar()
     self.ui.cbSpatialRes = QComboBox()
-    self.ui.cbSpatialRes.setFixedWidth(120)
     self.ui.spatialres_popup.add_vcontrol('Select spatial resolution test:', self.ui.cbSpatialRes)
     self.ui.cbSpatialRes.addItems(spatial_res_list)
     self.ui.cbSpatialRes.currentIndexChanged.connect(self.on_spatialres_changed)
@@ -118,3 +116,17 @@ def create_spatialres_popup(self):
     else:
         raise Exception('Invalid setting in Spatial Resolution/Resolution test')
     self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Spatial_Res, self.ui.spatialres_popup)
+
+
+def create_tomouniformity_popup(self):
+    # create a popup for the scale factor
+    self.ui.tomouniformity_popup = PopupToolbar()
+    self.ui.sbFirstFrame = QSpinBox()
+    self.ui.tomouniformity_popup.add_hcontrol('First frame', self.ui.sbFirstFrame)
+    self.ui.sbFirstFrame.setValue(self.settings.value('Tomographic Uniformity/First frame', 0, type=int))
+    self.ui.sbLastFrame = QSpinBox()
+    self.ui.tomouniformity_popup.add_hcontrol('Last frame', self.ui.sbLastFrame)
+    self.ui.sbLastFrame.setValue(self.settings.value('Tomographic Uniformity/Last frame', -1, type=int))
+    self.replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Tomo_Uni, self.ui.tomouniformity_popup)
+
+

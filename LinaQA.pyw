@@ -72,7 +72,8 @@ from popups import (
     create_vmat_popup,
     create_2dphantom_popup,
     create_scale_popup,
-    create_spatialres_popup)
+    create_spatialres_popup,
+    create_tomouniformity_popup)
 import pylinac_subclasses
 from tablemodel import TableModel
 
@@ -127,6 +128,7 @@ class LinaQA(QMainWindow):
         create_2dphantom_popup(self)
         create_scale_popup(self)
         create_spatialres_popup(self)
+        create_tomouniformity_popup(self)
 
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
@@ -1307,8 +1309,8 @@ class LinaQA(QMainWindow):
     def tomographic_uniformity(self):
         try:
             tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets)
-            tu.analyze(first_frame=self.settings.value('Tomographic Uniformity/First frame', 0, type=int),
-                       last_frame=self.settings.value('Tomographic Uniformity/Last frame', -1, type=int),
+            tu.analyze(first_frame=int(self.ui.sbFirstFrame.value()),
+                       last_frame=int(self.ui.sbLastFrame.value()),
                        ufov_ratio=self.settings.value('Tomographic Uniformity/UFOV ratio', 0.80, type=float),
                        cfov_ratio=self.settings.value('Tomographic Uniformity/CFOV ratio', 0.75, type=float),
                        center_ratio=self.settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
