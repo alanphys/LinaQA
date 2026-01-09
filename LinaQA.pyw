@@ -464,15 +464,14 @@ class LinaQA(QMainWindow):
 
     def wheelEvent(self, event):
         tab_index = self.ui.tabWidget.currentIndex()
-        mouse_pos = event.globalPosition().toPoint()
-        if ((tab_index == 0) and self.ui.qlImage.rect().contains(mouse_pos) and
+        mouse_pos = self.ui.qlImage.mapFromGlobal(event.globalPosition().toPoint())
+        image_rect = self.ui.qlImage.rect()
+        if ((tab_index == 0) and image_rect.contains(mouse_pos) and
            self.imager is not None and hasattr(self.imager, "values")):
             self.imager.index += int(event.angleDelta().y()/120)
             self.show_image(self.imager.get_current_image(), self.ui.qlImage)
             self.ui.statusbar.status_message(f"Current slice {self.imager.index}")
             event.accept()
-        elif tab_index == 2:
-            super().wheelEvent(event)
         elif ((tab_index == 2) and self.ui.qlRef.rect().contains(mouse_pos) and
               self.ref_imager is not None and hasattr(self.ref_imager, "values")):
             self.ref_imager.index += int(event.angleDelta().y()/120)
@@ -482,7 +481,7 @@ class LinaQA(QMainWindow):
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
-            self.mouse_last_pos = event.globalPos()
+            self.mouse_last_pos = self.ui.qlImage.mapFromGlobal(event.globalPos())
             self.mouse_button_down = True
             event.accept()
 
@@ -495,8 +494,9 @@ class LinaQA(QMainWindow):
     def mouseMoveEvent(self, event: QMouseEvent):
         if self.mouse_button_down:
             tab_index = self.ui.tabWidget.currentIndex()
-            mouse_pos = event.globalPos()
-            if ((tab_index == 0) and self.ui.qlImage.rect().contains(mouse_pos) and
+            mouse_pos = self.ui.qlImage.mapFromGlobal(event.globalPos())
+            image_rect = self.ui.qlImage.rect()
+            if ((tab_index == 0) and image_rect.contains(mouse_pos) and
                self.imager is not None and hasattr(self.imager, "values")):
                 delta = (mouse_pos - self.mouse_last_pos) * (self.imager.window_width/1000)
                 self.mouse_last_pos = mouse_pos
@@ -505,7 +505,7 @@ class LinaQA(QMainWindow):
                 self.show_image(self.imager.get_current_image(), self.ui.qlImage)
                 self.ui.statusbar.status_message(f"Window center {self.imager.window_center}, Window width {self.imager.window_width}")
                 event.accept()
-            if ((tab_index == 2) and self.ui.qlRef.rect().contains(mouse_pos) and
+            if ((tab_index == 2) and image_rect.contains(mouse_pos) and
                self.ref_imager is not None and hasattr(self.ref_imager, "values")):
                 delta = (mouse_pos - self.mouse_last_pos) * (self.ref_imager.window_width/1000)
                 self.mouse_last_pos = mouse_pos
