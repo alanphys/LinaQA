@@ -166,6 +166,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Tomo_Uni.triggered.connect(self.tomographic_uniformity)
         self.ui.action_Tomo_Res.triggered.connect(self.tomographic_resolution)
         self.ui.action_Tomo_Contrast.triggered.connect(self.tomographic_contrast)
+        self.ui.action_SUV_Uptake.triggered.connect(self.suv_uptake)
         self.ui.action_COR.triggered.connect(self.centre_of_rotation)
         # DICOM toolbar
         self.ui.action_Find_tag.triggered.connect(self.find_tag)
@@ -1275,6 +1276,21 @@ class LinaQA(QMainWindow):
             sphere_angles=sphere_ang,
             ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float))
         self.show_results(tc)
+
+#    @check_valid_image
+#    @catch_nm_type_error
+    @show_wait_cursor
+    def suv_uptake(self):
+        su = pylinac_subclasses.EARL(self.imager.datasets)
+        sphere_diam_str = '(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)'
+        sphere_ang_str = '(120, 60, 0, -60, -120, -180)'
+        sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
+        sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
+        su.analyze(
+            sphere_diameters_mm=sphere_diam,
+            sphere_angles=sphere_ang,
+            ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float))
+        self.show_results(su)
 
     @check_valid_image
     @catch_nm_type_error

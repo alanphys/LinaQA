@@ -706,6 +706,11 @@ class EARL:
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
         self.stack = NMImageStack(path)
+        scaled_arrays = []
+        for frame in self.stack.frames:
+            scaled = frame.array * frame.metadata.RescaleSlope + frame.metadata.RescaleIntercept
+            scaled_arrays.append(scaled)
+        self.scaled_3d_array = np.stack(scaled_arrays, axis=0)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
         else:
@@ -713,14 +718,13 @@ class EARL:
 
     @cached_property
     def sphere_slice_index(self):
-        array3d = self.stack.as_3d_array()
-        images_max = array3d.max(axis=(0, 1))
+        images_max = self.scaled_3d_array.max(axis=(1, 2))
         return images_max.argmax()  # assume peak is brightest sphere
 
     @cached_property
     def sphere_slice(self):
         # get slice with spheres
-        return self.stack.as_3d_array()[self.sphere_slice_index, :, :]
+        return self.scaled_3d_array[self.sphere_slice_index, :, :]
 
     @cached_property
     def binary_slice(self):
@@ -749,7 +753,7 @@ class EARL:
         # for slices +/- 2 cm around sphere slice
         start_index = int(self.sphere_slice_index - 20/self.stack.metadata.SpacingBetweenSlices)
         stop_index = int(self.sphere_slice_index + 20/self.stack.metadata.SpacingBetweenSlices)
-        backgnd_slices = self.stack.as_3d_array()[start_index: stop_index, :, :]
+        backgnd_slices = self.scaled_3d_array[start_index: stop_index, :, :]
         return {'mean': backgnd_slices[:, self.backgnd_roi].mean(),
                 'stddev': backgnd_slices[:, self.backgnd_roi].std()}
 
@@ -794,7 +798,7 @@ class EARL:
             res = minimize(
                 contrast_f,
                 x0=(col_x, row_y, self.sphere_slice_index),
-                args=(self.stack.as_3d_array(), radius, self.backgnd['mean']),
+                args=(self.scaled_3d_array, radius, self.backgnd['mean']),
                 method="Nelder-Mead",
                 bounds=[
                     (col_x - search_window_px, col_x + search_window_px),
@@ -807,7 +811,7 @@ class EARL:
             # res = differential_evolution(contrast_f, bounds=[(col_x - search_window_px, col_x + search_window_px), (row_y - search_window_px, row_y + search_window_px), (unif_z - search_slices, unif_z + search_slices)], args=(array3d, radius, self.uniformity_value), polish=False, x0=(col_x, row_y, unif_z), seed=1234)
             col, row, zed = res.x
             roi = TomographicROI(
-                array3d=self.stack.as_3d_array(),
+                array3d=self.scaled_3d_array,
                 x=col,
                 y=row,
                 z=zed,

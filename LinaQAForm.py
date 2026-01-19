@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_LinaQAForm(object):
     def setupUi(self, LinaQAForm):
         LinaQAForm.setObjectName("LinaQAForm")
-        LinaQAForm.resize(678, 682)
+        LinaQAForm.resize(678, 760)
         LinaQAForm.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         LinaQAForm.setAcceptDrops(True)
         icon = QtGui.QIcon()
@@ -404,6 +404,11 @@ class Ui_LinaQAForm(object):
         icon40.addPixmap(QtGui.QPixmap(":/Icons/Icons/LUTScale.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_Scale_LUT.setIcon(icon40)
         self.action_Scale_LUT.setObjectName("action_Scale_LUT")
+        self.action_SUV_Uptake = QtWidgets.QAction(LinaQAForm)
+        icon41 = QtGui.QIcon()
+        icon41.addPixmap(QtGui.QPixmap(":/Icons/Icons/EARLContrast.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_SUV_Uptake.setIcon(icon41)
+        self.action_SUV_Uptake.setObjectName("action_SUV_Uptake")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addAction(self.action_Open_Ref)
         self.menu_File.addAction(self.action_Save)
@@ -501,6 +506,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_NM.addAction(self.action_Tomo_Res)
         self.toolBar_NM.addAction(self.action_COR)
         self.toolBar_NM.addAction(self.action_Tomo_Contrast)
+        self.toolBar_NM.addAction(self.action_SUV_Uptake)
 
         self.retranslateUi(LinaQAForm)
         self.tabWidget.setCurrentIndex(0)
@@ -633,5 +639,7 @@ class Ui_LinaQAForm(object):
         self.action_Flip_UD.setToolTip(_translate("LinaQAForm", "Flip image up down"))
         self.action_Scale_LUT.setText(_translate("LinaQAForm", "Raw/LUT"))
         self.action_Scale_LUT.setToolTip(_translate("LinaQAForm", "Toggle between displaying raw pixel values or LUT values"))
+        self.action_SUV_Uptake.setText(_translate("LinaQAForm", "SUV Uptake"))
+        self.action_SUV_Uptake.setToolTip(_translate("LinaQAForm", "Calculate SUV uptake. Long or right click to set parameters"))
 from qt_subclasses import ColorStatusBar
 import LinaQA_rc

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>678</width>
-    <height>682</height>
+    <height>760</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -432,6 +432,7 @@
    <addaction name="action_Tomo_Res"/>
    <addaction name="action_COR"/>
    <addaction name="action_Tomo_Contrast"/>
+   <addaction name="action_SUV_Uptake"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -1057,6 +1058,18 @@
    </property>
    <property name="toolTip">
     <string>Toggle between displaying raw pixel values or LUT values</string>
+   </property>
+  </action>
+  <action name="action_SUV_Uptake">
+   <property name="icon">
+    <iconset resource="LinaQA.qrc">
+     <normaloff>:/Icons/Icons/EARLContrast.png</normaloff>:/Icons/Icons/EARLContrast.png</iconset>
+   </property>
+   <property name="text">
+    <string>SUV Uptake</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate SUV uptake. Long or right click to set parameters</string>
    </property>
   </action>
  </widget>
