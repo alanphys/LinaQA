@@ -575,7 +575,7 @@ class LinaQA(QMainWindow):
             if len(self.filenames) == 1:
                 filename = osp.splitext(self.filenames[0])[0] + '.pdf'
             elif len(self.filenames) > 1:
-                filename = test._model + ' Analysis.pdf' if hasattr(test, '_model') else '3D Analysis.pdf'
+                filename = test._model + ' Analysis.pdf' if hasattr(test, '_model') else 'Analysis.pdf'
                 filename = osp.join(self.working_dir, filename)
         if osp.exists(filename):
             QApplication.restoreOverrideCursor()
@@ -965,10 +965,10 @@ class LinaQA(QMainWindow):
             low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
             high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
             invert=self.imager.invflag,
-            angle_override=(None if self.settings.value('2D Phantoms/Angle override') == '0'
-                            else float(self.settings.value('2D Phantoms/Angle override'))),
-            center_override=(None if self.settings.value('2D Phantoms/Center override') == '0'
-                             else float(self.settings.value('2D Phantoms/Center override'))),
+            angle_override=(None if self.ui.sbAngle.value() == 0
+                            else self.ui.sbAngle.value()),
+            center_override=(None if self.ui.sbCentreX.value() == 0 and self.ui.sbCentreY.value() == 0
+                             else (self.ui.sbCentreX.value(), self.ui.sbCentreY.value())),
             size_override=(None if self.settings.value('2D Phantoms/Size override') == '0'
                            else float(self.settings.value('2D Phantoms/Size override'))),
             ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'

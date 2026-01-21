@@ -17,7 +17,8 @@ from linaqa_types import (
     MyDoubleSpinBox)
 from qt_subclasses import PopupToolbar, LongPressToolButton
 
-from PyQt5.QtWidgets import QComboBox, QSpinBox
+from PyQt5.QtWidgets import QComboBox, QSpinBox, QLabel
+from PyQt5.QtCore import QPoint
 
 
 def replace_action_with_long_press(toolbar, action, popup_widget):
@@ -98,10 +99,11 @@ def create_vmat_popup(self):
 
 
 def create_2dphantom_popup(self):
-    # create popup for the 3D phantom analysis
+    # create popup for the 2D phantom analysis
     self.ui.phantom2d_popup = PopupToolbar()
+
+    # add select phantom listbox
     self.ui.cbPhan2D = QComboBox()
-    self.ui.cbPhan2D.setFixedWidth(120)
     self.ui.phantom2d_popup.add_vcontrol('Select phantom:', self.ui.cbPhan2D)
     self.ui.cbPhan2D.addItems(phantom2D_list)
     self.ui.cbPhan2D.currentIndexChanged.connect(self.on_2dphantom_changed)
@@ -111,6 +113,25 @@ def create_2dphantom_popup(self):
         self.ui.cbPhan2D.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in 2D Phantoms/2D Type')
+
+    # add angle override spinbox
+    self.ui.sbAngle = QSpinBox()
+    self.ui.sbAngle.setRange(-180, 360)
+    self.ui.phantom2d_popup.add_vcontrol('Angle Override:', self.ui.sbAngle)
+    self.ui.sbAngle.setValue(self.settings.value('2D Phantoms/Angle override', 0.0, type=int))
+
+    # add centre override spinboxes
+    self.ui.sbCentreX = QSpinBox()
+    self.ui.sbCentreY = QSpinBox()
+    self.ui.sbCentreX.setRange(0, 2048)
+    self.ui.sbCentreY.setRange(0, 2048)
+    self.ui.phantom2d_popup.add_vcontrol('Center Override:')
+    self.ui.phantom2d_popup.add_hcontrol('X', self.ui.sbCentreX)
+    self.ui.phantom2d_popup.add_hcontrol('Y', self.ui.sbCentreY)
+    point = self.settings.value('2D Phantoms/Center override', QPoint(0, 0), type=QPoint)
+    self.ui.sbCentreX.setValue(point.x())
+    self.ui.sbCentreY.setValue(point.y())
+
     replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
     replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
 

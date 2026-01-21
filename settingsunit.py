@@ -99,7 +99,7 @@ def set_default_settings(settings):
     if not settings.contains('Angle override'):
         settings.setValue('Angle override', '0')
     if not settings.contains('Center override'):
-        settings.setValue('Center override', '0')
+        settings.setValue('Center override', QPoint(0, 0))
     if not settings.contains('Size override'):
         settings.setValue('Size override', '0')
     if not settings.contains('SSD'):

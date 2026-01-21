@@ -69,18 +69,22 @@ class PopupToolbar(QFrame):
         # Track if we're currently showing
         self._is_showing = False
 
-    def add_hcontrol(self, label, widget):
+    def add_hcontrol(self, label, widget: QWidget=None):
         """Add a labeled control to the popup toolbar"""
         row = QHBoxLayout()
-        row.addWidget(QLabel(label))
-        row.addWidget(widget)
+        if label != '':
+            row.addWidget(QLabel(label))
+        if widget is not None:
+            row.addWidget(widget)
         self.main_layout.addLayout(row)
 
-    def add_vcontrol(self, label, widget):
+    def add_vcontrol(self, label, widget: QWidget=None):
         """Add a labeled control to the popup toolbar"""
         col = QVBoxLayout()
-        col.addWidget(QLabel(label))
-        col.addWidget(widget)
+        if label != '':
+            col.addWidget(QLabel(label))
+        if widget is not None:
+            col.addWidget(widget)
         self.main_layout.addLayout(col)
 
     def add_widget(self, widget):
