@@ -16,7 +16,7 @@ from linaqa_types import (
     mlc_list)
 from qt_subclasses import MyDoubleSpinBox, PopupToolbar, LongPressToolButton
 
-from PyQt5.QtWidgets import QComboBox, QSpinBox, QLabel
+from PyQt5.QtWidgets import QComboBox, QSpinBox, QTimeEdit
 from PyQt5.QtCore import QPoint
 
 
@@ -224,6 +224,17 @@ def create_simplesens_popup(form):
     form.ui.simplesens_popup.add_hcontrol('Activity (MBq):', form.ui.dsbSimpleSensActivity)
     replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Simple_Sens, form.ui.simplesens_popup)
 
+
+def create_earl_popup(self):
+    # create a popup for the EARL contrast analysis
+    self.ui.earl_popup = PopupToolbar()
+    self.ui.earl_popup.add_hcontrol('Background compartment')
+    self.ui.sbBgndDose = QSpinBox()
+    self.ui.earl_popup.add_hcontrol('Dose (MBq):', self.ui.sbBgndDose)
+    self.ui.sbBgndDoseTime = QTimeEdit()
+    self.ui.earl_popup.add_hcontrol('at:', self.ui.sbBgndDoseTime)
+
+    replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_SUV_Uptake, self.ui.earl_popup)
 
 def initialize_simplesens_popup(form):
     form.ui.dsbSimpleSensActivity.setValue(form.settings.value('Simple Sensitivity/Activity MBq', 40.0, type=float))
