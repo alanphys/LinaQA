@@ -319,8 +319,10 @@ class LinaQA(QMainWindow):
             if os.path.isdir(self.filenames[0]):
                 # get list of files in directory
                 dir_path = osp.realpath(self.filenames[0])
+                # self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
+                #                   if os.path.isfile(os.path.join(dir_path, file_name))]
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
-                                  if os.path.isfile(os.path.join(dir_path, file_name))]
+                                  if osp.splitext(file_name)[1] in ['.dcm', '.DCM', '.ima', '.IMA', '.2']]
             # check if file is archive
             elif osp.splitext(self.filenames[0])[1] == '.zip':
                 self.zip_dir = TemporaryZipDirectory(self.filenames[0], delete=False)
