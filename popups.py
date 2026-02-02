@@ -228,11 +228,42 @@ def create_simplesens_popup(form):
 def create_earl_popup(self):
     # create a popup for the EARL contrast analysis
     self.ui.earl_popup = PopupToolbar()
+
     self.ui.earl_popup.add_hcontrol('Background compartment')
+    self.ui.sbBgndVol = QSpinBox()
+    self.ui.earl_popup.add_hcontrol('Volume (ml):', self.ui.sbBgndVol)
+
     self.ui.sbBgndDose = QSpinBox()
     self.ui.earl_popup.add_hcontrol('Dose (MBq):', self.ui.sbBgndDose)
+
     self.ui.sbBgndDoseTime = QTimeEdit()
-    self.ui.earl_popup.add_hcontrol('at:', self.ui.sbBgndDoseTime)
+    self.ui.sbBgndDoseTime.setDisplayFormat('hh:mm:ss')
+    self.ui.earl_popup.add_hcontrol('Measured at:', self.ui.sbBgndDoseTime)
+
+    self.ui.sbBgndRes = QSpinBox()
+    self.ui.earl_popup.add_hcontrol('Residual Dose (MBq)', self.ui.sbBgndRes)
+
+    self.ui.sbBgndResTime = QTimeEdit()
+    self.ui.sbBgndResTime.setDisplayFormat('hh:mm:ss')
+    self.ui.earl_popup.add_hcontrol('Measured at:', self.ui.sbBgndResTime)
+
+    self.ui.earl_popup.add_hcontrol('Stock solution (spheres)')
+    self.ui.sbStockVol = QSpinBox()
+    self.ui.earl_popup.add_hcontrol('Volume (ml):', self.ui.sbStockVol)
+
+    self.ui.sbStockDose = QSpinBox()
+    self.ui.earl_popup.add_hcontrol('Dose (spheres) (MBq):', self.ui.sbStockDose)
+
+    self.ui.sbStockDoseTime = QTimeEdit()
+    self.ui.sbStockDoseTime.setDisplayFormat('hh:mm:ss')
+    self.ui.earl_popup.add_hcontrol('Measured at:', self.ui.sbStockDoseTime)
+
+    self.ui.sbStockRes = QSpinBox()
+    self.ui.earl_popup.add_hcontrol('Residual Dose (MBq)', self.ui.sbStockRes)
+
+    self.ui.sbStockResTime = QTimeEdit()
+    self.ui.sbStockResTime.setDisplayFormat('hh:mm:ss')
+    self.ui.earl_popup.add_hcontrol('Measured at:', self.ui.sbStockResTime)
 
     replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_SUV_Uptake, self.ui.earl_popup)
 
