@@ -986,8 +986,10 @@ class LinaQA(QMainWindow):
             images = (stream, ref_stream)
             if self.ui.cbVMAT.currentText() == 'DRGS':
                 v = vmat.DRGS(image_paths=images)
-            else:
+            elif self.ui.cbVMAT.currentText() == 'DRMLC':
                 v = vmat.DRMLC(image_paths=images)
+            elif self.ui.cbVMAT.currentText() == 'DRCS':
+                v = vmat.DRCS(image_paths=images)
             v.analyze(tolerance=float(self.settings.value('VMAT/Tolerance')))
             v.open_image.base_path = self.filenames[0]
             v.dmlc_image.base_path = self.ref_filename

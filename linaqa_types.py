@@ -17,7 +17,7 @@ supported_modalities = ['RTIMAGE', 'RTDOSE', 'CT', 'NM', 'PT', 'MR', 'OT', 'XA']
 # TODO pull these directly from class def
 phantom3D_list = ['CatPhan503', 'CatPhan504', 'CatPhan600', 'CatPhan604', 'CatPhan700', 'QuartDVT', 'ACR CT', 'ACR MRI']
 
-vmat_list = ['DRGS', 'DRMLC']
+vmat_list = ['DRGS', 'DRMLC', 'DRCS']
 
 phantom2D_list = [obj.common_name for name, obj in inspect.getmembers(planar_imaging) if hasattr(obj, 'common_name')]
 
