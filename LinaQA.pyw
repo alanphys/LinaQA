@@ -1138,10 +1138,7 @@ class LinaQA(QMainWindow):
 
     @check_valid_image
     def scale_lut(self):
-        if self.imager.rescale:
-            self.imager.rescale = False
-        else:
-            self.imager.rescale = True
+        self.imager.rescale = self.ui.action_Scale_LUT.isChecked()
         self.auto_window()
 
     @check_valid_image
