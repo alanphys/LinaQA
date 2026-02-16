@@ -213,6 +213,7 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
         self.ui.tabWidget.setTabVisible(4, False)
+        self.ui.action_Scale_LUT.setChecked(self.settings.value('PyDicom/Use rescale', False, type=bool))
         self.ui.action_Rx_Toolbar.setChecked(self.settings.value('Window/Show Rx Toolbar', True, type=bool))
         self.show_rx_toolbar()
         self.ui.action_DICOM_tags.setChecked(self.settings.value('Window/Show DCM Toolbar', False, type=bool))
@@ -301,7 +302,7 @@ class LinaQA(QMainWindow):
                     sorted_method = "SOP instance UID"
                 except (TypeError, AttributeError):
                     pass
-        self.imager = Imager(datasets, self.settings.value('PyDicom/Use rescale', False, type=bool))
+        self.imager = Imager(datasets, self.ui.action_Scale_LUT.isChecked())
         self.filenames = filenames
         num_bad = num_total - num_ok
         if num_bad == 0:
