@@ -442,6 +442,37 @@ class LinaQATomoUniformity(TomographicUniformity):
         else:
             self.path = Path(path)
 
+    def analyze(
+        self,
+        first_frame: int = 0,
+        last_frame: int = -1,
+        ufov_ratio: float = 0.8,
+        cfov_ratio: float = 0.75,
+        center_ratio: float = 0.4,
+        threshold: float = 0.75,
+        window_size: int = 5,
+        ) -> None:
+        """Analyze the image to determine the uniformity.
+        This will take a mean of pixel values for frames between the first and last stated frame.
+
+        Parameters
+        ----------
+        first_frame : int
+            The index of the first frame to analyze.
+        last_frame : int
+            The index of the last frame to analyze.
+        ufov_ratio : float
+            The ratio of the UFOV to the phantom.
+        cfov_ratio : float
+            The ratio of the central FOV to the UFOV.
+        center_ratio : float
+            The ratio of the center ROI to the phantom.
+        threshold : float
+            The threshold to use for the image.
+        """
+        super().analyze(first_frame, last_frame, ufov_ratio, cfov_ratio, center_ratio, threshold, window_size)
+
+
     def publish_pdf(
         self,
         filename: str | Path,
