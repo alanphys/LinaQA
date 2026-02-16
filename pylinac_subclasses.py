@@ -23,11 +23,11 @@ from scipy.optimize import minimize
 from scipy.ndimage import center_of_mass
 from skimage.morphology import isotropic_erosion
 
-from pydicom import Dataset
+from pydicom import Dataset, dcmread
 
 # We need to monkey patch NMImageStack to accept a dataset. This is bad practice, very bad, but the only
 # workaround I have at the moment.
-from pylinac.core.image import DicomImage, NMImageStack
+from pylinac.core.image import DicomImage, NMImageStack, _rescale_dicom_values
 from pylinac.core.geometry import Circle, direction_to_coords
 import functools
 
@@ -36,29 +36,29 @@ def patch_nm_image_stack():
     original_init = NMImageStack.__init__
 
     @functools.wraps(original_init)
-    def enhanced_init(self, path: str | Path | list[Dataset]):
-        if isinstance(path[0], Dataset):
-            self.path = path
-            self.metadata = path[0]
-            self.frames = []
-            for ds in path:
-                if ds.Modality not in ['NM', 'PT']:
-                    raise TypeError('The file is not a NM or PET image')
-                full_array = ds.pixel_array
-                # we may have a single dataset with multiple frames
-                if hasattr(ds, 'NumberOfFrames') and (ds.NumberOfFrames > 1):
-                    for i in range(ds.NumberOfFrames):
-                        array = full_array[i]
-                        img = DicomImage.from_dataset(ds)
-                        img.array = array
-                        self.frames.append(img)
-                # or we may have multiple images with one frame
-                else:
+    def enhanced_init(self, paths: str | Path | list[Dataset], raw_pixels: bool = False):
+        """The enhanced init has been contracted to a single function to deal with the RAW/Lut case and does
+        not call the original init any more. This means backward compatibility is broken."""
+        self.path = paths
+        self.frames = []
+        for path in paths:
+            ds = path if isinstance(path, Dataset) else dcmread(path, force=True)
+            if ds.Modality not in ["NM", "PT"]:
+                raise TypeError("The file is not a NM image")
+            full_array = ds.pixel_array
+            # we may have a single dataset with multiple frames
+            if hasattr(ds, 'NumberOfFrames') and (ds.NumberOfFrames > 1):
+                for i in range(ds.NumberOfFrames):
+                    array = full_array[i]
                     img = DicomImage.from_dataset(ds)
-                    img.array = full_array
+                    img.array = _rescale_dicom_values(array, ds, raw_pixels, False)
                     self.frames.append(img)
-        else:
-            original_init(self, path)
+            # or we may have multiple images with one frame each
+            else:
+                img = DicomImage.from_dataset(ds)
+                img.array = _rescale_dicom_values(full_array, ds, raw_pixels, False)
+                self.frames.append(img)
+        self.metadata = ds
 
     NMImageStack.__init__ = enhanced_init
 
