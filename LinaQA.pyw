@@ -1254,7 +1254,7 @@ class LinaQA(QMainWindow):
     @catch_nm_type_error
     @show_wait_cursor
     def tomographic_resolution(self):
-        tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets, self.ui.action_Scale_LUT.isChecked())
+        tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets, not self.imager.rescale)
         tr.analyze()
         self.show_results(tr)
 
