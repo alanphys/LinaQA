@@ -19,7 +19,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from scipy.optimize import minimize
+from scipy.optimize import curve_fit, minimize
 from scipy.ndimage import center_of_mass
 from skimage.morphology import isotropic_erosion
 
@@ -65,6 +65,26 @@ def patch_nm_image_stack():
 
 # apply the patch
 patch_nm_image_stack()
+
+from pylinac.nuclear import gaussian_fit, TomographicResolutionAxisData
+
+
+def patch_tomo_res_axis_data():
+    original_post_init = TomographicResolutionAxisData.__post_init__
+
+    @functools.wraps(original_post_init)
+    def new_post_init(self):
+        xs = np.arange(len(self.profile_array)) * self.pixel_size
+        self.popt, _ = curve_fit(
+            gaussian_fit,
+            xs,
+            self.profile_array,
+            p0=[np.max(self.profile_array), np.argmax(self.profile_array) * self.pixel_size, self.pixel_size])
+
+    TomographicResolutionAxisData.__post_init__ = new_post_init
+
+
+patch_tomo_res_axis_data()
 
 from pylinac.nuclear import (
     Nuclide,
@@ -472,7 +492,6 @@ class LinaQATomoUniformity(TomographicUniformity):
         """
         super().analyze(first_frame, last_frame, ufov_ratio, cfov_ratio, center_ratio, threshold, window_size)
 
-
     def publish_pdf(
         self,
         filename: str | Path,
@@ -523,8 +542,8 @@ class LinaQATomoUniformity(TomographicUniformity):
 class LinaQATomoResolution(TomographicResolution):
     _model = "Tomographic Resolution"
 
-    def __init__(self, path: str | Path | list[Dataset]) -> None:
-        self.stack = NMImageStack(path)
+    def __init__(self, path: str | Path | list[Dataset], raw_pixels: bool = False) -> None:
+        self.stack = NMImageStack(path, raw_pixels)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
         else:
