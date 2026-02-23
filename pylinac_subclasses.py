@@ -102,6 +102,8 @@ from pylinac.nuclear import (
     TomographicROI,
     get_fov)
 from pylinac.core import pdf
+from pylinac.core.contrast import michelson
+
 
 
 class LinaQAMaxCountRate(MaxCountRate):
@@ -786,16 +788,24 @@ class LinaQATomoContrast(TomographicContrast):
         canvas.finish()
 
 
+class EARLTomoROI(TomographicROI):
+    # Original TomographicROI was defined for "cold" spheres with no activity.
+    # We must add functionality for "hot" spheres with activity
+    @property
+    def max_value(self) -> float:
+        return float(np.nanmax(self.sphere_array))
+
+    @property
+    def max_hot_contrast(self) -> float:
+        return michelson(np.asarray([self.max_value, self.uniformity_baseline])) * 100
+
+
 class EARL:
     _model = "EARL Contrast"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
         self.stack = NMImageStack(path)
-        scaled_arrays = []
-        for frame in self.stack.frames:
-            scaled = frame.array * frame.metadata.RescaleSlope + frame.metadata.RescaleIntercept
-            scaled_arrays.append(scaled)
-        self.scaled_3d_array = np.stack(scaled_arrays, axis=0)
+        self.scaled_3d_array = self.stack.as_3d_array()
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
         else:
@@ -895,7 +905,7 @@ class EARL:
             # res = brute(contrast_f, ranges=[(col_x - search_window_px, col_x + search_window_px), (row_y - search_window_px, row_y + search_window_px), (unif_z - search_slices, unif_z + search_slices)], args=(array3d, radius, self.uniformity_value), Ns=search_window_px*2, full_output=False, finish=None)
             # res = differential_evolution(contrast_f, bounds=[(col_x - search_window_px, col_x + search_window_px), (row_y - search_window_px, row_y + search_window_px), (unif_z - search_slices, unif_z + search_slices)], args=(array3d, radius, self.uniformity_value), polish=False, x0=(col_x, row_y, unif_z), seed=1234)
             col, row, zed = res.x
-            roi = TomographicROI(
+            roi = EARLTomoROI(
                 array3d=self.scaled_3d_array,
                 x=col,
                 y=row,
@@ -912,7 +922,8 @@ class EARL:
         s = f"Tomographic Contrast results for {self.path.name}\n"
         s += f"Background baseline: {self.backgnd['mean']:.1f}\n"
         for idx, roi in self.rois.items():
-            s += f"Sphere {idx}: X={roi.x:.2f}, Y={roi.y:.2f}, Z={roi.z:.2f} Mean: {roi.mean_value:.2f}; Mean Contrast: {roi.mean_contrast:.2f}; Max Contrast: {roi.max_contrast:.2f}\n"
+            s += (f"Sphere {idx}: X={roi.x:.2f}, Y={roi.y:.2f}, Z={roi.z:.2f} Mean: {roi.mean_value:.2f}; " +
+                  f"Mean Contrast: {roi.mean_contrast:.2f}; Max Contrast: {roi.max_hot_contrast:.2f}\n")
         return s
 
     def plot(self, show: bool = True) -> (list[Figure], list[Axes]):
@@ -947,7 +958,7 @@ class EARL:
         )
         cont_ax.plot(
             [int(idx) for idx in self.rois.keys()],
-            [roi.max_contrast for roi in self.rois.values()],
+            [roi.max_hot_contrast for roi in self.rois.values()],
             color="r",
             marker="o",
             label="Max Contrast",
