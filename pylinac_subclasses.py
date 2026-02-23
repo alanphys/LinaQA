@@ -74,6 +74,7 @@ def patch_tomo_res_axis_data():
 
     @functools.wraps(original_post_init)
     def new_post_init(self):
+        # np.argmax is a better estimator for the position of the peak than np.mean
         xs = np.arange(len(self.profile_array)) * self.pixel_size
         self.popt, _ = curve_fit(
             gaussian_fit,
@@ -98,7 +99,8 @@ from pylinac.nuclear import (
     TomographicContrast,
     CenterOfRotation,
     contrast_f,
-    TomographicROI)
+    TomographicROI,
+    get_fov)
 from pylinac.core import pdf
 
 
@@ -455,12 +457,29 @@ class LinaQAQuadrantRes(QuadrantResolution):
 class LinaQATomoUniformity(TomographicUniformity):
     _model = "Tomographic Uniformity"
 
-    def __init__(self, path: str | Path | list[Dataset]) -> None:
-        self.stack = NMImageStack(path)
+    mean_value: float
+
+    def __init__(self, path: str | Path | list[Dataset], raw_pixels: bool) -> None:
+        self.stack = NMImageStack(path, raw_pixels)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
         else:
             self.path = Path(path)
+
+    def center_mean_value(self, center_ratio: float) -> float:
+        """The center mean value.
+
+        The center ROI is a 6cm diameter circle in the center of the phantom.
+        """
+        array = np.copy(self.stack.frames[0].array)
+        # remove pixels that are <75% of mean of "meaningful" pixels
+        # meaningful pixels are those > 10% of max
+        # this helps remove the background
+        threshold = array[array > np.max(array) * 0.10].mean() * self.threshold
+        array[array < threshold] = 0
+        center_array, center_x, center_y = get_fov(array, size=center_ratio)
+        center_array[center_array == 0] = np.nan
+        return np.nanmean(center_array)
 
     def analyze(
         self,
@@ -489,8 +508,24 @@ class LinaQATomoUniformity(TomographicUniformity):
             The ratio of the center ROI to the phantom.
         threshold : float
             The threshold to use for the image.
+        window_size : int
+            Number of pixels for differential uniformity
         """
         super().analyze(first_frame, last_frame, ufov_ratio, cfov_ratio, center_ratio, threshold, window_size)
+        self.mean_value = self.center_mean_value(center_ratio)
+
+    def results(self) -> str:
+        """Return a string representation of the results."""
+        return (
+            f"Tomographic Uniformity results for {self.path.name}\n"
+            f"Frames: {self.first_frame}:{self.last_frame}\n"
+            f"CFOV Integral Uniformity: {self.frame_result['cfov'].integral_uniformity:.3f}%\n"
+            f"CFOV Differential Uniformity: {self.frame_result['cfov'].differential_uniformity:.3f}%\n"
+            f"UFOV Integral Uniformity: {self.frame_result['ufov'].integral_uniformity:.3f}%\n"
+            f"UFOV Differential Uniformity: {self.frame_result['ufov'].differential_uniformity:.3f}%\n"
+            f"Center-to-Border ratio: {self.center_ratio:.3f}\n"
+            f"CFOV Mean Value: {self.mean_value:.3f}"
+        )
 
     def publish_pdf(
         self,

@@ -1239,7 +1239,7 @@ class LinaQA(QMainWindow):
     @catch_nm_type_error
     @show_wait_cursor
     def tomographic_uniformity(self):
-        tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets)
+        tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets, not self.imager.rescale)
         tu.analyze(
             first_frame=int(self.ui.sbFirstFrame.value()),
             last_frame=int(self.ui.sbLastFrame.value()),
