@@ -19,6 +19,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+import matplotlib.colors as colors
 from scipy.optimize import curve_fit, minimize
 from scipy.ndimage import center_of_mass
 from skimage.morphology import isotropic_erosion
@@ -936,17 +937,11 @@ class EARL:
         for roi in self.rois.values():
             roi.plot_to(roi_ax)
         roi_ax.set_title(f"Sphere frame ({median_slice+1})")
+
         # plot the uniformity ROI
-        '''unif_fig, unif_ax = plt.subplots()
-        unif_ax.imshow(
-            self.stack.frames[int(self.uniformity_frame) - 1].array, cmap="gray"
-        )
-        un_data = self.slice_data[self.uniformity_frame]
-        Circle(
-            (un_data["center"].x, un_data["center"].y),
-            radius=un_data["fov diameter"] / 2,
-        ).plot2axes(unif_ax, edgecolor="b")
-        unif_ax.set_title(f"Uniformity frame ({self.uniformity_frame})")'''
+        color_map = colors.ListedColormap(['none', 'blue'])
+        roi_ax.imshow(self.backgnd_roi, cmap=color_map, alpha=0.3)
+
         # plot the contrast vs sphere number
         cont_fig, cont_ax = plt.subplots()
         cont_ax.plot(
@@ -970,7 +965,6 @@ class EARL:
         cont_ax.set_title("Contrast vs Sphere Number")
         if show:
             plt.show()
-        # return (roi_fig, unif_fig, cont_fig), (roi_ax, unif_ax, cont_ax)
         return (roi_fig, cont_fig), (roi_ax, cont_ax)
 
     def publish_pdf(
