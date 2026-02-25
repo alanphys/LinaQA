@@ -21,6 +21,7 @@ from platform import system
 from PyQt5.QtWidgets import (
      QApplication,
      QMainWindow,
+     QDialog,
      QFileDialog,
      QMessageBox,
      QComboBox,
@@ -46,8 +47,7 @@ import webbrowser
 from LinaQAForm import Ui_LinaQAForm
 from linaqa_types import (
     supported_modalities,
-    spatial_res_list,
-    settings)
+    spatial_res_list)
 from aboutpackage import About
 from aboutpackage.aboutform import version
 from settingsunit import Settings, set_default_settings
@@ -61,16 +61,7 @@ from misc_utils import (
     text_to_tag,
     dataset_to_stream,
     datasets_to_stream)
-from qt_subclasses import PopupToolbar, LongPressToolButton
-from popups import (
-    create_3dphantom_popup,
-    create_mlc_popup,
-    create_vmat_popup,
-    create_2dphantom_popup,
-    create_scale_popup,
-    create_spatialres_popup,
-    create_tomouniformity_popup,
-    create_simplesens_popup)
+from popups import create_popups, initialize_popups
 import pylinac_subclasses
 from tablemodel import TableModel
 
@@ -111,22 +102,16 @@ class LinaQA(QMainWindow):
         self.old_tab = 0
         self.ui = Ui_LinaQAForm()
         self.ui.setupUi(self)
-        # self.settings = QSettings()
-        if settings.contains('Window/Size'):
-            self.resize(settings.value('Window/Size'))
-        if settings.contains('Window/Position'):
-            self.move(settings.value('Window/Position'))
-        set_default_settings(settings)
+        self.settings = QSettings()
+        if self.settings.contains('Window/Size'):
+            self.resize(self.settings.value('Window/Size'))
+        if self.settings.contains('Window/Position'):
+            self.move(self.settings.value('Window/Position'))
+        set_default_settings(self.settings)
 
         # create popups for tool buttons
-        create_3dphantom_popup(self)
-        create_mlc_popup(self)
-        create_vmat_popup(self)
-        create_2dphantom_popup(self)
-        create_scale_popup(self)
-        create_spatialres_popup(self)
-        create_tomouniformity_popup(self)
-        create_simplesens_popup(self)
+        create_popups(self)
+        initialize_popups(self)
 
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
@@ -209,14 +194,14 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
         self.ui.tabWidget.setTabVisible(4, False)
-        self.ui.action_Scale_LUT.setChecked(settings.value('PyDicom/Use rescale', False, type=bool))
-        self.ui.action_Rx_Toolbar.setChecked(settings.value('Window/Show Rx Toolbar', True, type=bool))
+        self.ui.action_Scale_LUT.setChecked(self.settings.value('PyDicom/Use rescale', False, type=bool))
+        self.ui.action_Rx_Toolbar.setChecked(self.settings.value('Window/Show Rx Toolbar', True, type=bool))
         self.show_rx_toolbar()
-        self.ui.action_DICOM_tags.setChecked(settings.value('Window/Show DCM Toolbar', False, type=bool))
+        self.ui.action_DICOM_tags.setChecked(self.settings.value('Window/Show DCM Toolbar', False, type=bool))
         self.show_dicom_toolbar()
-        self.ui.action_Dx_Toolbar.setChecked(settings.value('Window/Show Dx Toolbar', False, type=bool))
+        self.ui.action_Dx_Toolbar.setChecked(self.settings.value('Window/Show Dx Toolbar', False, type=bool))
         self.show_dx_toolbar()
-        self.ui.action_NM_Toolbar.setChecked(settings.value('Window/Show NM Toolbar', False, type=bool))
+        self.ui.action_NM_Toolbar.setChecked(self.settings.value('Window/Show NM Toolbar', False, type=bool))
         self.show_nm_toolbar()
         self.ui.statusbar.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
 
@@ -224,8 +209,8 @@ class LinaQA(QMainWindow):
 # User interface routines
 # ---------------------------------------------------------------------------------------------------------------------
     def closeEvent(self, event):
-        settings.setValue('Window/Size', self.size())
-        settings.setValue('Window/Position', self.pos())
+        self.settings.setValue('Window/Size', self.size())
+        self.settings.setValue('Window/Position', self.pos())
         if self.is_changed:
             reply = QMessageBox.question(self, 'Quit', 'You have made changes. Are you sure you want to quit?',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
@@ -327,7 +312,7 @@ class LinaQA(QMainWindow):
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
                                   if os.path.isfile(os.path.join(dir_path, file_name))]
         # is the file a DICOM file?
-        force_open = settings.value('PyDicom/Force', False, type=bool)
+        force_open = self.settings.value('PyDicom/Force', False, type=bool)
         if pydicom.misc.is_dicom(self.filenames[0]) or force_open:
             self.open_image(self.filenames, force_open)
             # does the file have a recognised image format?
@@ -447,10 +432,10 @@ class LinaQA(QMainWindow):
     def pylinac_help():
         webbrowser.open('https://pylinac.readthedocs.io/en/latest/')
 
-    @staticmethod
-    def show_settings():
+    def show_settings(self):
         settings = Settings()
         settings.exec()
+        initialize_popups(self)
 
     def show_rx_toolbar(self):
         self.ui.toolBar_Rx.setVisible(self.ui.action_Rx_Toolbar.isChecked())
@@ -583,8 +568,8 @@ class LinaQA(QMainWindow):
             notes = self.ui.pte_notes.toPlainText().split('\n') if self.ui.pte_notes.toPlainText() != '' else None
             test.publish_pdf(filename,
                              notes=notes,
-                             metadata=settings.value('General/Metadata'),
-                             logo=settings.value('General/Logo'))
+                             metadata=self.settings.value('General/Metadata'),
+                             logo=self.settings.value('General/Logo'))
             if open_path(filename):
                 self.ui.statusbar.status_message('Results displayed in PDF')
             else:
@@ -907,9 +892,9 @@ class LinaQA(QMainWindow):
             cat = ACRMRILarge(streams)
         else:
             cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
-            param_list = {"hu_tolerance": int(settings.value('3D Phantoms/HU Tolerance')),
-                          "thickness_tolerance": float(settings.value('3D Phantoms/Thickness Tolerance')),
-                          "scaling_tolerance": float(settings.value('3D Phantoms/Scaling Tolerance'))}
+            param_list = {"hu_tolerance": int(self.settings.value('3D Phantoms/HU Tolerance')),
+                          "thickness_tolerance": float(self.settings.value('3D Phantoms/Thickness Tolerance')),
+                          "scaling_tolerance": float(self.settings.value('3D Phantoms/Scaling Tolerance'))}
         if self.imager.invflag:
             for im in cat.dicom_stack.images:
                 im.invert()
@@ -920,22 +905,22 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_picket_fence(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
-        if settings.value('Picket Fence/Apply median filter', False, type=bool):
+        if self.settings.value('Picket Fence/Apply median filter', False, type=bool):
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText(), filter=3)
         else:
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText())
         try:
-            pf.analyze(tolerance=float(settings.value('Picket Fence/Leaf Tolerance')),
-                       action_tolerance=float(settings.value('Picket Fence/Leaf Action')),
-                       num_pickets=int(settings.value('Picket Fence/Number of pickets')),
+            pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
+                       action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
+                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
                        invert=self.imager.invflag)
             self.show_results(pf)
         except ValueError:
             # if it throws an exception fall back to this as per issue #470
             self.ui.statusbar.status_warn('Could not analyze picket fence as is. Trying fallback method.')
-            pf.analyze(tolerance=float(settings.value('Picket Fence/Leaf Tolerance')),
-                       action_tolerance=float(settings.value('Picket Fence/Leaf Action')),
-                       num_pickets=int(settings.value('Picket Fence/Number of pickets')),
+            pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
+                       action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
+                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
                        invert=self.imager.invflag,
                        required_prominence=0.1)
             self.show_results(pf)
@@ -948,9 +933,9 @@ class LinaQA(QMainWindow):
         if self.imager.invflag:
             for im in wl.images:
                 im.invert()
-        wl.analyze(bb_size_mm=float(settings.value('Winston-Lutz/BB Size')),
-                   open_field=settings.value('Winston-Lutz/Open field', False, type=bool),
-                   low_density_bb=settings.value('Winston-Lutz/Low density BB', False, type=bool))
+        wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
+                   open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
+                   low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
         self.show_results(wl)
 
     @check_valid_image
@@ -961,17 +946,17 @@ class LinaQA(QMainWindow):
                          if hasattr(obj, 'common_name') and obj.common_name == self.ui.cbPhan2D.currentText()]
         phan = phantom_class[0](stream)
         phan.analyze(
-            low_contrast_threshold=float(settings.value('2D Phantoms/Low contrast threshold')),
-            high_contrast_threshold=float(settings.value('2D Phantoms/High contrast threshold')),
+            low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
+            high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
             invert=self.imager.invflag,
             angle_override=(None if self.ui.sbAngle.value() == 0
                             else self.ui.sbAngle.value()),
             center_override=(None if self.ui.sbCentreX.value() == 0 and self.ui.sbCentreY.value() == 0
                              else (self.ui.sbCentreX.value(), self.ui.sbCentreY.value())),
-            size_override=(None if settings.value('2D Phantoms/Size override') == '0'
-                           else float(settings.value('2D Phantoms/Size override'))),
-            ssd=('auto' if settings.value('2D Phantoms/SSD') == '1000'
-                 else float(settings.value('2D Phantoms/SSD'))))
+            size_override=(None if self.settings.value('2D Phantoms/Size override') == '0'
+                           else float(self.settings.value('2D Phantoms/Size override'))),
+            ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'
+                 else float(self.settings.value('2D Phantoms/SSD'))))
         self.show_results(phan)
 
     @check_valid_image
@@ -987,7 +972,7 @@ class LinaQA(QMainWindow):
                 v = vmat.DRMLC(image_paths=images)
             elif self.ui.cbVMAT.currentText() == 'DRCS':
                 v = vmat.DRCS(image_paths=images)
-            v.analyze(tolerance=float(settings.value('VMAT/Tolerance')))
+            v.analyze(tolerance=float(self.settings.value('VMAT/Tolerance')))
             v.open_image.base_path = self.filenames[0]
             v.dmlc_image.base_path = self.ref_filename
             self.show_results(v)
@@ -1001,20 +986,20 @@ class LinaQA(QMainWindow):
         if len(self.filenames) == 1:
             if ext == '.zip':
                 star = starshot.Starshot.from_zip(self.filenames[0],
-                                                  sid=float(settings.value('Star shot/SID')),
-                                                  dpi=float(settings.value('Star shot/DPI')))
+                                                  sid=float(self.settings.value('Star shot/SID')),
+                                                  dpi=float(self.settings.value('Star shot/DPI')))
             else:
                 star = starshot.Starshot(self.filenames[0],
-                                         sid=float(settings.value('Star shot/SID')),
-                                         dpi=float(settings.value('Star shot/DPI')))
+                                         sid=float(self.settings.value('Star shot/SID')),
+                                         dpi=float(self.settings.value('Star shot/DPI')))
         else:
             star = starshot.Starshot.from_multiple_images(self.filenames,
-                                                          sid=float(settings.value('Star shot/SID')),
-                                                          dpi=float(settings.value('Star shot/DPI')))
+                                                          sid=float(self.settings.value('Star shot/SID')),
+                                                          dpi=float(self.settings.value('Star shot/DPI')))
         try:
-            star.analyze(radius=float(settings.value('Star shot/Normalised analysis radius')),
-                         tolerance=float(settings.value('Star shot/Tolerance')),
-                         recursive=settings.value('Star shot/Recursive analysis', False, type=bool),
+            star.analyze(radius=float(self.settings.value('Star shot/Normalised analysis radius')),
+                         tolerance=float(self.settings.value('Star shot/Tolerance')),
+                         recursive=self.settings.value('Star shot/Recursive analysis', False, type=bool),
                          invert=self.imager.invflag if self.imager is not None else None)
             filename = filename + '.pdf'
             self.show_results(star, filename)
@@ -1043,23 +1028,23 @@ class LinaQA(QMainWindow):
                 eval_img.normalize()
                 ref_img.normalize()
                 gamma = eval_img.gamma(comparison_image=ref_img,
-                                       doseTA=settings.value('Gamma Analysis/Dose to agreement', 2.0, type=float),
-                                       distTA=settings.value('Gamma Analysis/Distance to agreement', 2.0, type=float),
-                                       threshold=settings.value('Gamma Analysis/Dose threshold', 0.05, type=float))
+                                       doseTA=self.settings.value('Gamma Analysis/Dose to agreement', 2.0, type=float),
+                                       distTA=self.settings.value('Gamma Analysis/Distance to agreement', 2.0, type=float),
+                                       threshold=self.settings.value('Gamma Analysis/Dose threshold', 0.05, type=float))
                 gamma_plot = plt.imshow(gamma)
                 gamma_plot.set_cmap('bwr')
-                plt.title(f'Gamma Analysis ({settings.value("Gamma Analysis/Dose to agreement")}'
-                          f'%/{settings.value("Gamma Analysis/Distance to agreement")}mm)')
+                plt.title(f'Gamma Analysis ({self.settings.value("Gamma Analysis/Dose to agreement")}'
+                          f'%/{self.settings.value("Gamma Analysis/Distance to agreement")}mm)')
                 plt.ylabel('Distance (pixels)')
                 plt.xlabel('Distance (pixels)')
                 plt.colorbar()
-                plt.clim(0, settings.value('Gamma Analysis/Gamma cap', 2.0, type=float))
+                plt.clim(0, self.settings.value('Gamma Analysis/Gamma cap', 2.0, type=float))
     #            plt.show()
                 filename = osp.splitext(self.filenames[0])[0] + '.pdf'
                 canvas = pdf.PylinacCanvas(filename,
                                            page_title='Gamma analysis',
-                                           metadata=settings.value('General/Metadata'),
-                                           logo=settings.value('General/Logo'))
+                                           metadata=self.settings.value('General/Metadata'),
+                                           logo=self.settings.value('General/Logo'))
                 notes = self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
                 if notes is not None:
                     canvas.add_text(text="Notes:", location=(1, 4.5), font_size=14)
@@ -1118,7 +1103,7 @@ class LinaQA(QMainWindow):
             if 'TransferSyntaxUID' not in ds.file_meta:
                 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
             datasets.append(ds)
-            self.ref_imager = Imager(datasets, settings.value('PyDicom/Use rescale', False, type=bool))
+            self.ref_imager = Imager(datasets, self.settings.value('PyDicom/Use rescale', False, type=bool))
         except pydicom.errors.InvalidDicomError:
             self.ui.statusbar.status_error('Error reading DICOM image file.')
 
@@ -1217,7 +1202,7 @@ class LinaQA(QMainWindow):
         ss.analyze(
             activity_mbq=float(self.ui.dsbSimpleSensActivity.value()),
             nuclide=getattr(pylinac_subclasses.Nuclide,
-                            settings.value('Simple Sensitivity/Nuclide', 'Tc99m', type=str)))
+                            self.settings.value('Simple Sensitivity/Nuclide', 'Tc99m', type=str)))
         self.show_results(ss)
 
     @check_valid_image
@@ -1236,17 +1221,17 @@ class LinaQA(QMainWindow):
         if self.ui.cbSpatialRes.currentText() == spatial_res_list[0]:
             sr = pylinac_subclasses.LinaQAFourBarRes(self.imager.datasets)
             sr.analyze(
-                separation_mm=settings.value('Spatial Resolution/Separation mm', 100, type=float),
-                roi_width_mm=settings.value('Spatial Resolution/ROI width mm', 10, type=float))
+                separation_mm=self.settings.value('Spatial Resolution/Separation mm', 100, type=float),
+                roi_width_mm=self.settings.value('Spatial Resolution/ROI width mm', 10, type=float))
         # quadrant test
         elif self.ui.cbSpatialRes.currentText() == spatial_res_list[1]:
             sr = pylinac_subclasses.LinaQAQuadrantRes(self.imager.datasets)
-            widths_str = settings.value('Spatial Resolution/Bar widths mm', '(4.23, 3.18, 2.54, 2.12)', type=str)
+            widths_str = self.settings.value('Spatial Resolution/Bar widths mm', '(4.23, 3.18, 2.54, 2.12)', type=str)
             widths = tuple(float(w.strip()) for w in widths_str.strip('()').split(','))
             sr.analyze(
                 bar_widths=widths,
-                roi_diameter_mm=settings.value('Spatial Resolution/ROI diameter mm', 70.0, type=float),
-                distance_from_center_mm=settings.value('Spatial Resolution/Distance from center mm',
+                roi_diameter_mm=self.settings.value('Spatial Resolution/ROI diameter mm', 70.0, type=float),
+                distance_from_center_mm=self.settings.value('Spatial Resolution/Distance from center mm',
                                                             130.0,
                                                             type=float))
         self.show_results(sr)
@@ -1259,11 +1244,11 @@ class LinaQA(QMainWindow):
         tu.analyze(
             first_frame=int(self.ui.sbFirstFrame.value()),
             last_frame=int(self.ui.sbLastFrame.value()),
-            ufov_ratio=settings.value('Tomographic Uniformity/UFOV ratio', 0.80, type=float),
-            cfov_ratio=settings.value('Tomographic Uniformity/CFOV ratio', 0.75, type=float),
-            center_ratio=settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
-            threshold=settings.value('Tomographic Uniformity/Threshold', 0.75, type=float),
-            window_size=settings.value('Tomographic Uniformity/Window size', 5, type=int))
+            ufov_ratio=self.settings.value('Tomographic Uniformity/UFOV ratio', 0.80, type=float),
+            cfov_ratio=self.settings.value('Tomographic Uniformity/CFOV ratio', 0.75, type=float),
+            center_ratio=self.settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
+            threshold=self.settings.value('Tomographic Uniformity/Threshold', 0.75, type=float),
+            window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
         self.show_results(tu)
 
     @check_valid_image
@@ -1279,18 +1264,18 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def tomographic_contrast(self):
         tc = pylinac_subclasses.LinaQATomoContrast(self.imager.datasets)
-        sphere_diam_str = settings.value('Tomographic Contrast/Sphere diameters mm',
+        sphere_diam_str = self.settings.value('Tomographic Contrast/Sphere diameters mm',
                                               '(38, 31.8, 25.4, 19.1, 15.9, 12.7)',
                                               type=str)
         sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
-        sphere_ang_str = settings.value('Tomographic Contrast/Sphere angles',
+        sphere_ang_str = self.settings.value('Tomographic Contrast/Sphere angles',
                                              '(-10, -70, -130, -190, 110, 50)',
                                              type=str)
         sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
         tc.analyze(
             sphere_diameters_mm=sphere_diam,
             sphere_angles=sphere_ang,
-            ufov_ratio=settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float))
+            ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float))
         self.show_results(tc)
 
     @check_valid_image

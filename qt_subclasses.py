@@ -256,5 +256,5 @@ class LongPressToolButton(QToolButton):
         if self.popup_widget:
             # Call initializer callback if set
             if self.popup_initializer:
-                self.popup_initializer(self.popup_widget)
+                self.popup_initializer()
             self.popup_widget.show_next_to(self)

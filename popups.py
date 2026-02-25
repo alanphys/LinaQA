@@ -13,8 +13,7 @@ from linaqa_types import (
     vmat_list,
     phantom2D_list,
     spatial_res_list,
-    mlc_list,
-    settings)
+    mlc_list)
 from qt_subclasses import MyDoubleSpinBox, PopupToolbar, LongPressToolButton
 
 from PyQt5.QtWidgets import QComboBox, QSpinBox, QLabel
@@ -45,147 +44,186 @@ def replace_action_with_long_press(toolbar, action, popup_widget):
     return button
 
 
-def create_3dphantom_popup(self):
+def create_popups(form):
+    create_3dphantom_popup(form)
+    create_mlc_popup(form)
+    create_vmat_popup(form)
+    create_2dphantom_popup(form)
+    create_scale_popup(form)
+    create_spatialres_popup(form)
+    create_tomouniformity_popup(form)
+    create_simplesens_popup(form)
+
+
+def initialize_popups(form):
+    initialize_3dphantom_popup(form)
+    initialize_mlc_popup(form)
+    initialize_vmat_popup(form)
+    initialize_2dphantom_popup(form)
+    initialize_scale_popup(form)
+    initialize_spatialres_popup(form)
+    initialize_tomouniformity_popup(form)
+    initialize_simplesens_popup(form)
+
+
+def create_3dphantom_popup(form):
     # create popup for the 3D phantom analysis
-    self.ui.phantom3d_popup = PopupToolbar()
-    self.ui.cbCatPhan = QComboBox()
-    self.ui.cbCatPhan.setFixedWidth(120)
-    self.ui.phantom3d_popup.add_vcontrol('Select phantom:', self.ui.cbCatPhan)
-    self.ui.cbCatPhan.addItems(phantom3D_list)
-    self.ui.cbCatPhan.currentIndexChanged.connect(self.on_cbcatphan_changed)
-    button = replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
-    button.set_popup_initializer(initialize_3dphantom_popup)
-    button = replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_CatPhan, self.ui.phantom3d_popup)
-    button.set_popup_initializer(initialize_3dphantom_popup)
+    form.ui.phantom3d_popup = PopupToolbar()
+    form.ui.cbCatPhan = QComboBox()
+    form.ui.cbCatPhan.setFixedWidth(120)
+    form.ui.phantom3d_popup.add_vcontrol('Select phantom:', form.ui.cbCatPhan)
+    form.ui.cbCatPhan.addItems(phantom3D_list)
+    form.ui.cbCatPhan.currentIndexChanged.connect(form.on_cbcatphan_changed)
+    replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_CatPhan, form.ui.phantom3d_popup)
+    replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_CatPhan, form.ui.phantom3d_popup)
 
 
-def initialize_3dphantom_popup(self):
-    """Called before showing save popup - update values here"""
-    catphan_type = settings.value('3D Phantoms/3D Type')
-    index = self.ui.cbCatPhan.findText(catphan_type)
+def initialize_3dphantom_popup(form):
+    catphan_type = form.settings.value('3D Phantoms/3D Type')
+    index = form.ui.cbCatPhan.findText(catphan_type)
     if index >= 0:
-        self.ui.cbCatPhan.setCurrentIndex(index)
+        form.ui.cbCatPhan.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in 3D Phantoms/3D Type')
 
 
-def create_mlc_popup(self):
+def create_mlc_popup(form):
     # create popup for the mlc analysis
-    self.ui.mlc_popup = PopupToolbar()
-    self.ui.cbMLC = QComboBox()
-    self.ui.cbMLC.setFixedWidth(120)
-    self.ui.mlc_popup.add_vcontrol('Select MLC:', self.ui.cbMLC)
-    self.ui.cbMLC.addItems(mlc_list)
-    self.ui.cbMLC.currentIndexChanged.connect(self.on_cbmlc_changed)
-    mlc_type = settings.value('Picket Fence/MLC Type')
-    index = self.ui.cbMLC.findText(mlc_type)
+    form.ui.mlc_popup = PopupToolbar()
+    form.ui.cbMLC = QComboBox()
+    form.ui.cbMLC.setFixedWidth(120)
+    form.ui.mlc_popup.add_vcontrol('Select MLC:', form.ui.cbMLC)
+    form.ui.cbMLC.addItems(mlc_list)
+    form.ui.cbMLC.currentIndexChanged.connect(form.on_cbmlc_changed)
+    replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_Picket_Fence, form.ui.mlc_popup)
+
+
+def initialize_mlc_popup(form):
+    mlc_type = form.settings.value('Picket Fence/MLC Type')
+    index = form.ui.cbMLC.findText(mlc_type)
     if index >= 0:
-        self.ui.cbMLC.setCurrentIndex(index)
+        form.ui.cbMLC.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in Picket Fence/MLC Type')
-    replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_Picket_Fence, self.ui.mlc_popup)
 
 
-def create_vmat_popup(self):
+def create_vmat_popup(form):
     # create popup for the VMAT analysis
-    self.ui.vmat_popup = PopupToolbar()
-    self.ui.cbVMAT = QComboBox()
-    self.ui.cbVMAT.setFixedWidth(120)
-    self.ui.vmat_popup.add_vcontrol('Select VMAT test:', self.ui.cbVMAT)
-    self.ui.cbVMAT.addItems(vmat_list)
-    self.ui.cbVMAT.currentIndexChanged.connect(self.on_cbvmat_changed)
-    vmat_type = settings.value('VMAT/VMAT test')
-    index = self.ui.cbVMAT.findText(vmat_type)
+    form.ui.vmat_popup = PopupToolbar()
+    form.ui.cbVMAT = QComboBox()
+    form.ui.cbVMAT.setFixedWidth(120)
+    form.ui.vmat_popup.add_vcontrol('Select VMAT test:', form.ui.cbVMAT)
+    form.ui.cbVMAT.addItems(vmat_list)
+    form.ui.cbVMAT.currentIndexChanged.connect(form.on_cbvmat_changed)
+    replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_VMAT, form.ui.vmat_popup)
+    form.on_cbvmat_changed(form.ui.cbVMAT.currentIndex())
+
+
+def initialize_vmat_popup(form):
+    vmat_type = form.settings.value('VMAT/VMAT test')
+    index = form.ui.cbVMAT.findText(vmat_type)
     if index >= 0:
-        self.ui.cbVMAT.setCurrentIndex(index)
+        form.ui.cbVMAT.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in VMAT/VMAT test')
-    replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_VMAT, self.ui.vmat_popup)
-    self.on_cbvmat_changed(self.ui.cbVMAT.currentIndex())
 
 
-def create_2dphantom_popup(self):
+def create_2dphantom_popup(form):
     # create popup for the 2D phantom analysis
-    self.ui.phantom2d_popup = PopupToolbar()
+    form.ui.phantom2d_popup = PopupToolbar()
 
     # add select phantom listbox
-    self.ui.cbPhan2D = QComboBox()
-    self.ui.phantom2d_popup.add_vcontrol('Select phantom:', self.ui.cbPhan2D)
-    self.ui.cbPhan2D.addItems(phantom2D_list)
-    self.ui.cbPhan2D.currentIndexChanged.connect(self.on_2dphantom_changed)
-    phan2d_type = settings.value('2D Phantoms/2D Type')
-    index = self.ui.cbPhan2D.findText(phan2d_type)
-    if index >= 0:
-        self.ui.cbPhan2D.setCurrentIndex(index)
-    else:
-        raise Exception('Invalid setting in 2D Phantoms/2D Type')
+    form.ui.cbPhan2D = QComboBox()
+    form.ui.phantom2d_popup.add_vcontrol('Select phantom:', form.ui.cbPhan2D)
+    form.ui.cbPhan2D.addItems(phantom2D_list)
+    form.ui.cbPhan2D.currentIndexChanged.connect(form.on_2dphantom_changed)
 
     # add angle override spinbox
-    self.ui.sbAngle = QSpinBox()
-    self.ui.sbAngle.setRange(-180, 360)
-    self.ui.phantom2d_popup.add_vcontrol('Angle Override:', self.ui.sbAngle)
-    self.ui.sbAngle.setValue(settings.value('2D Phantoms/Angle override', 0.0, type=int))
+    form.ui.sbAngle = QSpinBox()
+    form.ui.sbAngle.setRange(-180, 360)
+    form.ui.phantom2d_popup.add_vcontrol('Angle Override:', form.ui.sbAngle)
 
     # add centre override spinboxes
-    self.ui.sbCentreX = QSpinBox()
-    self.ui.sbCentreY = QSpinBox()
-    self.ui.sbCentreX.setRange(0, 2048)
-    self.ui.sbCentreY.setRange(0, 2048)
-    self.ui.phantom2d_popup.add_vcontrol('Center Override:')
-    self.ui.phantom2d_popup.add_hcontrol('X', self.ui.sbCentreX)
-    self.ui.phantom2d_popup.add_hcontrol('Y', self.ui.sbCentreY)
-    point = settings.value('2D Phantoms/Center override', QPoint(0, 0), type=QPoint)
-    self.ui.sbCentreX.setValue(point.x())
-    self.ui.sbCentreY.setValue(point.y())
+    form.ui.sbCentreX = QSpinBox()
+    form.ui.sbCentreY = QSpinBox()
+    form.ui.sbCentreX.setRange(0, 2048)
+    form.ui.sbCentreY.setRange(0, 2048)
+    form.ui.phantom2d_popup.add_vcontrol('Center Override:')
+    form.ui.phantom2d_popup.add_hcontrol('X', form.ui.sbCentreX)
+    form.ui.phantom2d_popup.add_hcontrol('Y', form.ui.sbCentreY)
 
-    replace_action_with_long_press(self.ui.toolBar_Rx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
-    replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_2DPhantoms, self.ui.phantom2d_popup)
+    replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_2DPhantoms, form.ui.phantom2d_popup)
+    replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_2DPhantoms, form.ui.phantom2d_popup)
 
 
-def create_scale_popup(self):
-    # create a popup for the scale factor
-    self.ui.scale_popup = PopupToolbar()
-    self.ui.dsbScaleFactor = MyDoubleSpinBox()
-    self.ui.dsbScaleFactor.setSingleStep(0.01)
-    self.ui.scale_popup.add_hcontrol('Scale Factor:', self.ui.dsbScaleFactor)
-    self.ui.dsbScaleFactor.setValue(settings.value('PyDicom/Scale factor', 1.0, type=float))
-    replace_action_with_long_press(self.ui.toolBar_Dx, self.ui.action_Scale_Image, self.ui.scale_popup)
-
-
-def create_spatialres_popup(self):
-    # we have to insert a Combox for the spatial resolution test manually into the toolbar
-    self.ui.spatialres_popup = PopupToolbar()
-    self.ui.cbSpatialRes = QComboBox()
-    self.ui.spatialres_popup.add_vcontrol('Select spatial resolution test:', self.ui.cbSpatialRes)
-    self.ui.cbSpatialRes.addItems(spatial_res_list)
-    self.ui.cbSpatialRes.currentIndexChanged.connect(self.on_spatialres_changed)
-    spatial_res_type = settings.value('Spatial Resolution/Resolution test', 'Four Bar', type=str)
-    index = self.ui.cbSpatialRes.findText(spatial_res_type)
+def initialize_2dphantom_popup(form):
+    phan2d_type = form.settings.value('2D Phantoms/2D Type')
+    index = form.ui.cbPhan2D.findText(phan2d_type)
     if index >= 0:
-        self.ui.cbSpatialRes.setCurrentIndex(index)
+        form.ui.cbPhan2D.setCurrentIndex(index)
+    else:
+        raise Exception('Invalid setting in 2D Phantoms/2D Type')
+    form.ui.sbAngle.setValue(form.settings.value('2D Phantoms/Angle override', 0, type=int))
+    point = form.settings.value('2D Phantoms/Center override', QPoint(0, 0), type=QPoint)
+    form.ui.sbCentreX.setValue(point.x())
+    form.ui.sbCentreY.setValue(point.y())
+
+
+def create_scale_popup(form):
+    # create a popup for the scale factor
+    form.ui.scale_popup = PopupToolbar()
+    form.ui.dsbScaleFactor = MyDoubleSpinBox()
+    form.ui.dsbScaleFactor.setSingleStep(0.01)
+    form.ui.scale_popup.add_hcontrol('Scale Factor:', form.ui.dsbScaleFactor)
+    replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_Scale_Image, form.ui.scale_popup)
+
+
+def initialize_scale_popup(form):
+    form.ui.dsbScaleFactor.setValue(form.settings.value('PyDicom/Scale factor', 1.0, type=float))
+
+
+def create_spatialres_popup(form):
+    # we have to insert a Combox for the spatial resolution test manually into the toolbar
+    form.ui.spatialres_popup = PopupToolbar()
+    form.ui.cbSpatialRes = QComboBox()
+    form.ui.spatialres_popup.add_vcontrol('Select spatial resolution test:', form.ui.cbSpatialRes)
+    form.ui.cbSpatialRes.addItems(spatial_res_list)
+    form.ui.cbSpatialRes.currentIndexChanged.connect(form.on_spatialres_changed)
+    replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Spatial_Res, form.ui.spatialres_popup)
+
+
+def initialize_spatialres_popup(form):
+    spatial_res_type = form.settings.value('Spatial Resolution/Resolution test', 'Four Bar', type=str)
+    index = form.ui.cbSpatialRes.findText(spatial_res_type)
+    if index >= 0:
+        form.ui.cbSpatialRes.setCurrentIndex(index)
     else:
         raise Exception('Invalid setting in Spatial Resolution/Resolution test')
-    replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Spatial_Res, self.ui.spatialres_popup)
 
 
-def create_tomouniformity_popup(self):
+def create_tomouniformity_popup(form):
     # create a popup for the scale factor
-    self.ui.tomouniformity_popup = PopupToolbar()
-    self.ui.sbFirstFrame = QSpinBox()
-    self.ui.tomouniformity_popup.add_hcontrol('First frame', self.ui.sbFirstFrame)
-    self.ui.sbFirstFrame.setValue(settings.value('Tomographic Uniformity/First frame', 0, type=int))
-    self.ui.sbLastFrame = QSpinBox()
-    self.ui.tomouniformity_popup.add_hcontrol('Last frame', self.ui.sbLastFrame)
-    self.ui.sbLastFrame.setValue(settings.value('Tomographic Uniformity/Last frame', -1, type=int))
-    replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Tomo_Uni, self.ui.tomouniformity_popup)
+    form.ui.tomouniformity_popup = PopupToolbar()
+    form.ui.sbFirstFrame = QSpinBox()
+    form.ui.tomouniformity_popup.add_hcontrol('First frame', form.ui.sbFirstFrame)
+    form.ui.sbLastFrame = QSpinBox()
+    form.ui.tomouniformity_popup.add_hcontrol('Last frame', form.ui.sbLastFrame)
+    replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Tomo_Uni, form.ui.tomouniformity_popup)
 
 
-def create_simplesens_popup(self):
+def initialize_tomouniformity_popup(form):
+    form.ui.sbFirstFrame.setValue(form.settings.value('Tomographic Uniformity/First frame', 0, type=int))
+    form.ui.sbLastFrame.setValue(form.settings.value('Tomographic Uniformity/Last frame', -1, type=int))
+
+
+def create_simplesens_popup(form):
     # create a popup for the simple sensitivity analysis
-    self.ui.simplesens_popup = PopupToolbar()
-    self.ui.dsbSimpleSensActivity = MyDoubleSpinBox()
-    self.ui.dsbSimpleSensActivity.setSingleStep(0.01)
-    self.ui.simplesens_popup.add_hcontrol('Activity (MBq):', self.ui.dsbSimpleSensActivity)
-    self.ui.dsbSimpleSensActivity.setValue(settings.value('Simple Sensitivity/Activity MBq', 40.0, type=float))
-    replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_Simple_Sens, self.ui.simplesens_popup)
+    form.ui.simplesens_popup = PopupToolbar()
+    form.ui.dsbSimpleSensActivity = MyDoubleSpinBox()
+    form.ui.dsbSimpleSensActivity.setSingleStep(0.01)
+    form.ui.simplesens_popup.add_hcontrol('Activity (MBq):', form.ui.dsbSimpleSensActivity)
+    replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Simple_Sens, form.ui.simplesens_popup)
 
+
+def initialize_simplesens_popup(form):
+    form.ui.dsbSimpleSensActivity.setValue(form.settings.value('Simple Sensitivity/Activity MBq', 40.0, type=float))
