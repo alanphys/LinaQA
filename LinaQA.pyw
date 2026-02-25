@@ -21,10 +21,8 @@ from platform import system
 from PyQt5.QtWidgets import (
      QApplication,
      QMainWindow,
-     QDialog,
      QFileDialog,
      QMessageBox,
-     QComboBox,
      QLabel,
      QAction,
      QInputDialog,
@@ -41,7 +39,6 @@ from PyQt5.QtGui import (
      QPalette)
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
 import matplotlib.pyplot as plt
-import numpy as np
 import webbrowser
 
 from LinaQAForm import Ui_LinaQAForm
