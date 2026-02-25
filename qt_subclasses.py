@@ -8,7 +8,16 @@ Extra functionality for PyQT classes.
 # copyright: AC Chamberlain (c) 2023-2026
 # SPDX-License-Identifier: Licence.txt:
 
-from PyQt5.QtWidgets import (QApplication, QToolButton, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QStatusBar)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QToolButton,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QFrame,
+    QStatusBar,
+    QDoubleSpinBox)
 from PyQt5.QtCore import QTimer, Qt, pyqtSignal, QEvent
 from PyQt5.QtGui import QPalette
 from linaqa_types import faint_red, faint_green, faint_yellow
@@ -48,6 +57,16 @@ class ColorStatusBar(QStatusBar):
         self.setStyleSheet(mystylesheet)
         self.setToolTip(self.toolTip() + '\n' + status_message)
         self.showMessage(status_message)
+
+
+class MyDoubleSpinBox(QDoubleSpinBox):
+    def validate(self, text: str, pos: int) -> object:
+        text = text.replace(".", ",")
+        return QDoubleSpinBox.validate(self, text, pos)
+
+    def valueFromText(self, text: str) -> float:
+        text = text.replace(",", ".")
+        return float(text)
 
 
 class PopupToolbar(QFrame):
@@ -186,10 +205,25 @@ class LongPressToolButton(QToolButton):
         self.long_press_duration = 500  # milliseconds
         self.is_long_press = False
         self.popup_widget = None
+        self.popup_initializer = None  # Callback to initialize popup before showing
 
     def set_popup_widget(self, widget):
         """Set the popup widget that will appear on long press"""
         self.popup_widget = widget
+
+    def set_popup_initializer(self, callback):
+        """
+        Set a callback function that will be called before showing the popup.
+        The callback receives the popup widget as parameter.
+
+        Example:
+            def init_popup(popup):
+                # Update values in popup before showing
+                popup.some_widget.setText("new value")
+
+            button.set_popup_initializer(init_popup)
+        """
+        self.popup_initializer = callback
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -220,4 +254,7 @@ class LongPressToolButton(QToolButton):
         self.longPressed.emit()
 
         if self.popup_widget:
+            # Call initializer callback if set
+            if self.popup_initializer:
+                self.popup_initializer(self.popup_widget)
             self.popup_widget.show_next_to(self)

@@ -9,9 +9,11 @@ Type definitions for LinaQA
 
 import inspect
 from PyQt5.QtWidgets import QDoubleSpinBox
+from PyQt5.QtCore import QSettings
 from pylinac.picketfence import MLC
 from pylinac.nuclear import Nuclide
 from pylinac import planar_imaging
+# from settingsunit import set_default_settings
 
 supported_modalities = ['RTIMAGE', 'RTDOSE', 'CT', 'NM', 'PT', 'MR', 'OT', 'XA']
 # TODO pull these directly from class def
@@ -32,12 +34,6 @@ faint_red = '#ff7979'
 faint_yellow = '#fffccf'
 faint_green = '#d3ffe4'
 
+settings = QSettings()
+# set_default_settings(settings)
 
-class MyDoubleSpinBox(QDoubleSpinBox):
-    def validate(self, text: str, pos: int) -> object:
-        text = text.replace(".", ",")
-        return QDoubleSpinBox.validate(self, text, pos)
-
-    def valueFromText(self, text: str) -> float:
-        text = text.replace(",", ".")
-        return float(text)

@@ -16,13 +16,13 @@ from PyQt5.QtWidgets import (
      QHeaderView, QItemDelegate, QComboBox, QStyle, QSpinBox, QStyleOptionViewItem,
      QTableWidgetItem, QTreeWidget, QTreeWidgetItem)
 from linaqa_types import (
-     MyDoubleSpinBox,
      phantom2D_list,
      phantom3D_list,
      vmat_list,
      spatial_res_list,
      mlc_list,
      nuclide_list)
+from qt_subclasses import MyDoubleSpinBox
 
 sys_path = path.dirname(path.realpath(inspect.getframeinfo(inspect.currentframe()).filename))
 logo_path = path.join(sys_path, 'Icons/LinacToolkit.png')
