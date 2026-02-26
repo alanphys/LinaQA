@@ -277,4 +277,14 @@ def initialize_suv_uptake_popup(form):
     """Load values according to
     https://qibawiki.rsna.org/images/6/62/SUV_vendorneutral_pseudocode_happypathonly_20180626_DAC.pdf"""
     if form.imager is not None:
+        # pull values from current image
         ds = form.imager.datasets[form.imager.index]
+        try:
+            corrected_image = ds[0x0028, 0x0051].value
+            decay_correction = ds[0x0054, 0x1102].value
+            units = ds[0x0054, 0x1001].value
+        except:
+            raise ValueError("Missing DICOM tag(s).")
+
+
+
