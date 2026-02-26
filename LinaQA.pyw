@@ -309,6 +309,7 @@ class LinaQA(QMainWindow):
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
                                   if os.path.isfile(os.path.join(dir_path, file_name))]
         # is the file a DICOM file?
+        self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
         force_open = self.settings.value('PyDicom/Force', False, type=bool)
         if pydicom.misc.is_dicom(self.filenames[0]) or force_open:
             self.open_image(self.filenames, force_open)
@@ -352,7 +353,6 @@ class LinaQA(QMainWindow):
                            'All files (*)')
         self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath, file_filter)[0]
         if len(self.filenames) > 0:
-            self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
             self.open_file()
 
     def save_file(self):
@@ -806,6 +806,7 @@ class LinaQA(QMainWindow):
 
             # get tag value
             ds = self.imager.datasets[self.imager.index]
+            # TODO: this does not work for private tags
             orig_tag_value = get_dot_attr(ds, tag_path)
 
             # display in dialog for editing
