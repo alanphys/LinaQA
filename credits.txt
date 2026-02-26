@@ -27,3 +27,5 @@ https://doc.qt.io/qtforpython-6/examples/example_corelib_settingseditor.html
 # Copyright (C) 2013 Riverbank Computing Limited.
 # Copyright (C) 2022 The Qt Company Ltd.
 
+Quantitative Image Informatics for Cancer Research
+https://github.com/QIICR

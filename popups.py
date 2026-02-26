@@ -53,6 +53,7 @@ def create_popups(form):
     create_spatialres_popup(form)
     create_tomouniformity_popup(form)
     create_simplesens_popup(form)
+    create_suv_uptake_popup(form)
 
 
 def initialize_popups(form):
@@ -225,47 +226,55 @@ def create_simplesens_popup(form):
     replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Simple_Sens, form.ui.simplesens_popup)
 
 
-def create_earl_popup(self):
-    # create a popup for the EARL contrast analysis
-    self.ui.earl_popup = PopupToolbar()
-
-    self.ui.earl_popup.add_hcontrol('Background compartment')
-    self.ui.sbBgndVol = QSpinBox()
-    self.ui.earl_popup.add_hcontrol('Volume (ml):', self.ui.sbBgndVol)
-
-    self.ui.sbBgndDose = QSpinBox()
-    self.ui.earl_popup.add_hcontrol('Dose (MBq):', self.ui.sbBgndDose)
-
-    self.ui.sbBgndDoseTime = QTimeEdit()
-    self.ui.sbBgndDoseTime.setDisplayFormat('hh:mm:ss')
-    self.ui.earl_popup.add_hcontrol('Measured at:', self.ui.sbBgndDoseTime)
-
-    self.ui.sbBgndRes = QSpinBox()
-    self.ui.earl_popup.add_hcontrol('Residual Dose (MBq)', self.ui.sbBgndRes)
-
-    self.ui.sbBgndResTime = QTimeEdit()
-    self.ui.sbBgndResTime.setDisplayFormat('hh:mm:ss')
-    self.ui.earl_popup.add_hcontrol('Measured at:', self.ui.sbBgndResTime)
-
-    self.ui.earl_popup.add_hcontrol('Stock solution (spheres)')
-    self.ui.sbStockVol = QSpinBox()
-    self.ui.earl_popup.add_hcontrol('Volume (ml):', self.ui.sbStockVol)
-
-    self.ui.sbStockDose = QSpinBox()
-    self.ui.earl_popup.add_hcontrol('Dose (spheres) (MBq):', self.ui.sbStockDose)
-
-    self.ui.sbStockDoseTime = QTimeEdit()
-    self.ui.sbStockDoseTime.setDisplayFormat('hh:mm:ss')
-    self.ui.earl_popup.add_hcontrol('Measured at:', self.ui.sbStockDoseTime)
-
-    self.ui.sbStockRes = QSpinBox()
-    self.ui.earl_popup.add_hcontrol('Residual Dose (MBq)', self.ui.sbStockRes)
-
-    self.ui.sbStockResTime = QTimeEdit()
-    self.ui.sbStockResTime.setDisplayFormat('hh:mm:ss')
-    self.ui.earl_popup.add_hcontrol('Measured at:', self.ui.sbStockResTime)
-
-    replace_action_with_long_press(self.ui.toolBar_NM, self.ui.action_SUV_Uptake, self.ui.earl_popup)
-
 def initialize_simplesens_popup(form):
     form.ui.dsbSimpleSensActivity.setValue(form.settings.value('Simple Sensitivity/Activity MBq', 40.0, type=float))
+
+
+def create_suv_uptake_popup(form):
+    # create a popup for the EARL contrast analysis
+    form.ui.earl_popup = PopupToolbar()
+
+    form.ui.earl_popup.add_hcontrol('Background compartment')
+    form.ui.sbBgndVol = QSpinBox()
+    form.ui.earl_popup.add_hcontrol('Volume (ml):', form.ui.sbBgndVol)
+
+    form.ui.sbBgndDose = QSpinBox()
+    form.ui.earl_popup.add_hcontrol('Dose (MBq):', form.ui.sbBgndDose)
+
+    form.ui.sbBgndDoseTime = QTimeEdit()
+    form.ui.sbBgndDoseTime.setDisplayFormat('hh:mm:ss')
+    form.ui.earl_popup.add_hcontrol('Measured at:', form.ui.sbBgndDoseTime)
+
+    form.ui.sbBgndRes = QSpinBox()
+    form.ui.earl_popup.add_hcontrol('Residual Dose (MBq)', form.ui.sbBgndRes)
+
+    form.ui.sbBgndResTime = QTimeEdit()
+    form.ui.sbBgndResTime.setDisplayFormat('hh:mm:ss')
+    form.ui.earl_popup.add_hcontrol('Measured at:', form.ui.sbBgndResTime)
+
+    form.ui.earl_popup.add_hcontrol('Stock solution (spheres)')
+    form.ui.sbStockVol = QSpinBox()
+    form.ui.earl_popup.add_hcontrol('Volume (ml):', form.ui.sbStockVol)
+
+    form.ui.sbStockDose = QSpinBox()
+    form.ui.earl_popup.add_hcontrol('Dose (spheres) (MBq):', form.ui.sbStockDose)
+
+    form.ui.sbStockDoseTime = QTimeEdit()
+    form.ui.sbStockDoseTime.setDisplayFormat('hh:mm:ss')
+    form.ui.earl_popup.add_hcontrol('Measured at:', form.ui.sbStockDoseTime)
+
+    form.ui.sbStockRes = QSpinBox()
+    form.ui.earl_popup.add_hcontrol('Residual Dose (MBq)', form.ui.sbStockRes)
+
+    form.ui.sbStockResTime = QTimeEdit()
+    form.ui.sbStockResTime.setDisplayFormat('hh:mm:ss')
+    form.ui.earl_popup.add_hcontrol('Measured at:', form.ui.sbStockResTime)
+
+    replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_SUV_Uptake, form.ui.earl_popup)
+
+
+def initialize_suv_uptake_popup(form):
+    """Load values according to
+    https://qibawiki.rsna.org/images/6/62/SUV_vendorneutral_pseudocode_happypathonly_20180626_DAC.pdf"""
+    if form.imager is not None:
+        ds = form.imager.datasets[form.imager.index]

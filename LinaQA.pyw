@@ -1281,7 +1281,7 @@ class LinaQA(QMainWindow):
 #    @catch_nm_type_error
     @show_wait_cursor
     def suv_uptake(self):
-        su = pylinac_subclasses.EARL(self.imager.datasets)
+        su = pylinac_subclasses.SUVUptake(self.imager.datasets)
         sphere_diam_str = '(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)'
         sphere_ang_str = '(120, 60, 0, -60, -120, -180)'
         sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))

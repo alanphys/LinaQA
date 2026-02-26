@@ -789,7 +789,7 @@ class LinaQATomoContrast(TomographicContrast):
         canvas.finish()
 
 
-class EARLTomoROI(TomographicROI):
+class SUVTomoROI(TomographicROI):
     # Original TomographicROI was defined for "cold" spheres with no activity.
     # We must add functionality for "hot" spheres with activity
     @property
@@ -801,7 +801,9 @@ class EARLTomoROI(TomographicROI):
         return michelson(np.asarray([self.max_value, self.uniformity_baseline])) * 100
 
 
-class EARL:
+class SUVUptake:
+    """Use the methods detailed here for SUV calculation
+    https://qibawiki.rsna.org/index.php/Standardized_Uptake_Value_(SUV)"""
     _model = "EARL Contrast"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
@@ -906,7 +908,7 @@ class EARL:
             # res = brute(contrast_f, ranges=[(col_x - search_window_px, col_x + search_window_px), (row_y - search_window_px, row_y + search_window_px), (unif_z - search_slices, unif_z + search_slices)], args=(array3d, radius, self.uniformity_value), Ns=search_window_px*2, full_output=False, finish=None)
             # res = differential_evolution(contrast_f, bounds=[(col_x - search_window_px, col_x + search_window_px), (row_y - search_window_px, row_y + search_window_px), (unif_z - search_slices, unif_z + search_slices)], args=(array3d, radius, self.uniformity_value), polish=False, x0=(col_x, row_y, unif_z), seed=1234)
             col, row, zed = res.x
-            roi = EARLTomoROI(
+            roi = SUVTomoROI(
                 array3d=self.scaled_3d_array,
                 x=col,
                 y=row,
