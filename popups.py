@@ -17,7 +17,7 @@ from linaqa_types import (
 from qt_subclasses import MyDoubleSpinBox, PopupToolbar, LongPressToolButton
 
 from PyQt5.QtWidgets import QComboBox, QSpinBox, QTimeEdit
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint, QTime
 
 
 def replace_action_with_long_press(toolbar, action, popup_widget):
@@ -65,6 +65,7 @@ def initialize_popups(form):
     initialize_spatialres_popup(form)
     initialize_tomouniformity_popup(form)
     initialize_simplesens_popup(form)
+    # initialize_suv_uptake_popup(form)
 
 
 def create_3dphantom_popup(form):
@@ -236,14 +237,16 @@ def create_suv_uptake_popup(form):
 
     form.ui.earl_popup.add_hcontrol('Background compartment')
     form.ui.sbBgndVol = QSpinBox()
+    form.ui.sbBgndVol.setRange(0, 10000)
     form.ui.earl_popup.add_hcontrol('Volume (ml):', form.ui.sbBgndVol)
 
     form.ui.sbBgndDose = QSpinBox()
+    form.ui.sbBgndDose.setRange(0, 1000000000)
     form.ui.earl_popup.add_hcontrol('Dose (MBq):', form.ui.sbBgndDose)
 
-    form.ui.sbBgndDoseTime = QTimeEdit()
-    form.ui.sbBgndDoseTime.setDisplayFormat('hh:mm:ss')
-    form.ui.earl_popup.add_hcontrol('Measured at:', form.ui.sbBgndDoseTime)
+    form.ui.teBgndDoseTime = QTimeEdit()
+    form.ui.teBgndDoseTime.setDisplayFormat('hh:mm:ss')
+    form.ui.earl_popup.add_hcontrol('Measured at:', form.ui.teBgndDoseTime)
 
     form.ui.sbBgndRes = QSpinBox()
     form.ui.earl_popup.add_hcontrol('Residual Dose (MBq)', form.ui.sbBgndRes)
@@ -270,7 +273,8 @@ def create_suv_uptake_popup(form):
     form.ui.sbStockResTime.setDisplayFormat('hh:mm:ss')
     form.ui.earl_popup.add_hcontrol('Measured at:', form.ui.sbStockResTime)
 
-    replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_SUV_Uptake, form.ui.earl_popup)
+    button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_SUV_Uptake, form.ui.earl_popup)
+    button.set_popup_initializer(lambda: initialize_suv_uptake_popup(form))
 
 
 def initialize_suv_uptake_popup(form):
@@ -280,11 +284,22 @@ def initialize_suv_uptake_popup(form):
         # pull values from current image
         ds = form.imager.datasets[form.imager.index]
         try:
-            corrected_image = ds[0x0028, 0x0051].value
-            decay_correction = ds[0x0054, 0x1102].value
-            units = ds[0x0054, 0x1001].value
-        except:
-            raise ValueError("Missing DICOM tag(s).")
+            # TODO: check if volume tag exists and use that otherwise estimate from patient weight
+            vol = ds[0x0010, 0x1030].value * 1000
+            form.ui.sbBgndVol.setValue(int(vol))
+
+            # Get Radiopharmaceutical Information Sequence
+            seq = ds[0x0054, 0x0016][0]
+
+            # get Radionuclide Total Dose
+            injected_dose = seq[0x0018, 0x1074].value
+            form.ui.sbBgndDose.setValue(int(injected_dose))
+
+            # get Radionuclide measurement time
+            measure_time = seq[0x0018, 0x1072].value
+            form.ui.teBgndDoseTime.setTime(QTime.fromString(measure_time, "HHmmss.z"))
+        except KeyError:
+            form.ui.statusbar.status_error("Missing DICOM tag(s)")
 
 
 
