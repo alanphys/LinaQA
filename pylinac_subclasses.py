@@ -14,6 +14,7 @@ import math
 from collections.abc import Sequence
 from functools import cached_property
 from pathlib import Path
+from dataclasses import dataclass
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -23,6 +24,7 @@ import matplotlib.colors as colors
 from scipy.optimize import curve_fit, minimize
 from scipy.ndimage import center_of_mass
 from skimage.morphology import isotropic_erosion
+from PyQt5.QtCore import QDate, QTime, QDateTime
 
 from pydicom import Dataset, dcmread
 
@@ -789,22 +791,50 @@ class LinaQATomoContrast(TomographicContrast):
         canvas.finish()
 
 
+@dataclass
 class SUVTomoROI(TomographicROI):
     # Original TomographicROI was defined for "cold" spheres with no activity.
-    # We must add functionality for "hot" spheres with activity
+    # We must add functionality for "hot" spheres with activity and recovery coefficients
+    backgnd_dose_vol: float
+    sphere_dose_vol: float
+
     @property
     def max_value(self) -> float:
         return float(np.nanmax(self.sphere_array))
 
     @property
+    def mean_contrast(self) -> float:
+        return michelson(np.asarray([self.mean_value, self.uniformity_baseline]))
+
+    @property
     def max_hot_contrast(self) -> float:
-        return michelson(np.asarray([self.max_value, self.uniformity_baseline])) * 100
+        return michelson(np.asarray([self.max_value, self.uniformity_baseline]))
+
+    @property
+    def mean_recovery_coeff(self) -> float:
+        return self.mean_value / self.sphere_dose_vol
+
+    @property
+    def peak_recovery_coeff(self) -> float:
+        return self.max_value / self.sphere_dose_vol
+
+    @property
+    def corrected_mean_recovery_coeff(self) -> float:
+        scan = (self.mean_value - self.uniformity_baseline) / self.uniformity_baseline
+        measured = (self.sphere_dose_vol - self.backgnd_dose_vol) / self.backgnd_dose_vol
+        return scan / measured
+
+    @property
+    def corrected_peak_recovery_coeff(self) -> float:
+        scan = (self.max_value - self.uniformity_baseline) / self.uniformity_baseline
+        measured = (self.sphere_dose_vol - self.backgnd_dose_vol) / self.backgnd_dose_vol
+        return scan / measured
 
 
 class SUVUptake:
     """Use the methods detailed here for SUV calculation
     https://qibawiki.rsna.org/index.php/Standardized_Uptake_Value_(SUV)"""
-    _model = "EARL Contrast"
+    _model = "SUV Uptake"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
         self.stack = NMImageStack(path)
@@ -813,6 +843,9 @@ class SUVUptake:
             self.path = Path(path[0].filename)
         else:
             self.path = Path(path)
+        self.rois = None
+        self.sphere_dose_vol = 0
+        self.background_dose_vol = 0
 
     @cached_property
     def sphere_slice_index(self):
@@ -862,6 +895,13 @@ class SUVUptake:
         ufov_ratio: float = 0.8,
         search_window_px: int = 5,
         search_slices: int = 3,
+        background_vol: int = 9400,
+        background_dose: float | None = None,
+        background_time: QTime = QTime.fromString("12:00:00", "hh:mm:ss"),
+        sphere_vol: int = 1000,
+        sphere_dose: float | None = None,
+        sphere_time: QTime = QTime.fromString("12:00:00", "hh:mm:ss"),
+        measurement_time: QTime | None = None
     ) -> None:
         """Analyze the image to determine the contrast.
 
@@ -879,9 +919,46 @@ class SUVUptake:
             Number of slices to search around the sphere slice
         """
         if len(sphere_diameters_mm) != len(sphere_angles):
-            raise ValueError(
-                "The number of sphere diameters and angles must be the same."
-            )
+            raise ValueError("The number of sphere diameters and angles must be the same.")
+
+        # get SUVbw scale factor according to https://qibawiki.rsna.org/images/6/62/SUV_vendorneutral_pseudocode_happypathonly_20180626_DAC.pdf
+        metadata = self.stack.metadata
+
+        # check if images is decay and attenuation corrected
+        if (["ATTN", "DECY"] not in metadata.CorrectedImage
+            and metadata.DecayCorrection != "START"
+            and metadata.Units != "BQML"):
+            raise ValueError("Not a corrected PET image")
+
+        # check that acquisition is on the same day
+        series_date = QDate.fromString(metadata.SeriesDate, "yyyyMMdd")
+        acquisition_date = QDate.fromString(metadata.AcquisitionDate, "yyyyMMdd")
+        if series_date > acquisition_date:
+            raise ValueError("Acquisition time is inconsistent")
+
+        # get scan time
+        if measurement_time is None:
+            measurement_time = QTime.fromString(metadata.SeriesTime.split(".")[0], "hh:mm:ss")
+
+        seq = metadata[0x0054, 0x0016][0]            # Radiopharmaceutical Information Sequence
+        half_life = seq[0x0018, 0x1075].value        # Radionuclide half life
+
+        background_decay_time = background_time.secsTo(measurement_time)
+        sphere_decay_time = sphere_time.secsTo(measurement_time)
+
+        # get doses, we assume the recorded dose is the sphere dose.
+        if sphere_dose is None:
+            sphere_dose = int(seq[0x0018, 0x1074].value)
+        if background_dose is None:
+            background_dose = sphere_dose
+
+        # decay doses to scan start time
+        decayed_sphere_dose = sphere_dose * math.exp(-0.693147181 * sphere_decay_time / half_life)
+        decayed_background_dose = background_dose * math.exp(-0.693147181 * background_decay_time / half_life)
+
+        # get dose per volume
+        self.sphere_dose_vol = decayed_sphere_dose / sphere_vol
+        self.background_dose_vol = decayed_background_dose / background_vol
 
         # get radius to ring of spheres
         sphere_radius = self.phantom_radius * 0.434
@@ -915,6 +992,8 @@ class SUVUptake:
                 z=zed,
                 radius=radius,
                 uniformity_baseline=self.backgnd['mean'],
+                backgnd_dose_vol=self.background_dose_vol,
+                sphere_dose_vol=self.sphere_dose_vol,
                 number=idx + 1,
             )
             rois[str(idx + 1)] = roi
@@ -922,11 +1001,17 @@ class SUVUptake:
 
     def results(self) -> str:
         """Return a string representation of the results."""
-        s = f"Tomographic Contrast results for {self.path.name}\n"
-        s += f"Background baseline: {self.backgnd['mean']:.1f}\n"
+        s = f"Tomographic Contrast results for {self.path.name}\n\n"
+        s += f"Background baseline: {self.backgnd['mean']:.1f}\n\n"
         for idx, roi in self.rois.items():
             s += (f"Sphere {idx}: X={roi.x:.2f}, Y={roi.y:.2f}, Z={roi.z:.2f} Mean: {roi.mean_value:.2f}; " +
                   f"Mean Contrast: {roi.mean_contrast:.2f}; Max Contrast: {roi.max_hot_contrast:.2f}\n")
+        s += f"\nRecovery coefficient results for {self.path.name}\n\n"
+        for idx, roi in self.rois.items():
+            s += f"Sphere {idx}: Mean {roi.mean_recovery_coeff:.2f}; Max {roi.peak_recovery_coeff:.2f}\n"
+        s += f"\nCorrected recovery coefficient results for {self.path.name}\n\n"
+        for idx, roi in self.rois.items():
+            s += f"Sphere {idx}: Mean {roi.corrected_mean_recovery_coeff:.2f}; Max {roi.corrected_peak_recovery_coeff:.2f}\n"
         return s
 
     def plot(self, show: bool = True) -> (list[Figure], list[Axes]):
@@ -960,8 +1045,36 @@ class SUVUptake:
             marker="o",
             label="Max Contrast",
         )
+        cont_ax.plot(
+            [int(idx) for idx in self.rois.keys()],
+            [roi.mean_recovery_coeff for roi in self.rois.values()],
+            color="g",
+            marker="o",
+            label="Mean Recovery Coefficient",
+        )
+        cont_ax.plot(
+            [int(idx) for idx in self.rois.keys()],
+            [roi.peak_recovery_coeff for roi in self.rois.values()],
+            color="c",
+            marker="o",
+            label="Peak Recovery Coefficient",
+        )
+        cont_ax.plot(
+            [int(idx) for idx in self.rois.keys()],
+            [roi.corrected_mean_recovery_coeff for roi in self.rois.values()],
+            color="m",
+            marker="o",
+            label="Corrected Mean Recovery Coefficient",
+        )
+        cont_ax.plot(
+            [int(idx) for idx in self.rois.keys()],
+            [roi.corrected_peak_recovery_coeff for roi in self.rois.values()],
+            color="y",
+            marker="o",
+            label="Corrected Peak Recovery Coefficient",
+        )
         cont_ax.set_xlabel("Sphere Number")
-        cont_ax.set_ylabel("Contrast (Michelson * 100)")
+        cont_ax.set_ylabel("Contrast/Recovery")
         cont_ax.legend()
         cont_ax.grid(True)
         cont_ax.set_title("Contrast vs Sphere Number")
@@ -1005,6 +1118,11 @@ class SUVUptake:
         for idx, text in enumerate(results_text):
             canvas.add_text(text=text, location=(2.0, 22-idx*0.5))
 
+        if notes is not None:
+            canvas.add_text(text="Notes:", location=(1, 2.5), font_size=12)
+            canvas.add_text(text=notes, location=(1, 2))
+
+        canvas.add_new_page()
         plt.clf()
         figs, axs = self.plot(show=False)
         # makes more sense to display the contrast graphs first
@@ -1012,14 +1130,9 @@ class SUVUptake:
         figs[1].tight_layout()
         analysis_image = io.BytesIO()
         figs[1].savefig(analysis_image, bbox_inches='tight')
-        canvas.add_image(analysis_image, location=(1, 3), dimensions=(15, 15), preserve_aspect_ratio=True)
+        canvas.add_image(analysis_image, location=(1, 13), dimensions=(15, 15), preserve_aspect_ratio=True)
 
-        if notes is not None:
-            canvas.add_text(text="Notes:", location=(1, 2.5), font_size=12)
-            canvas.add_text(text=notes, location=(1, 2))
-
-        canvas.add_new_page()
         analysis_image = io.BytesIO()
         figs[0].savefig(analysis_image)
-        canvas.add_image(analysis_image, location=(1, 13), dimensions=(15, 15), preserve_aspect_ratio=True)
+        canvas.add_image(analysis_image, location=(1, 2), dimensions=(15, 15), preserve_aspect_ratio=True)
         canvas.finish()

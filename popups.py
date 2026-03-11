@@ -240,9 +240,9 @@ def create_suv_uptake_popup(form):
     form.ui.sbBgndVol.setRange(0, 10000)
     form.ui.earl_popup.add_hcontrol("Volume (ml):", form.ui.sbBgndVol)
 
-    form.ui.sbBgndDose = QSpinBox()
-    form.ui.sbBgndDose.setRange(0, 1000000000)
-    form.ui.earl_popup.add_hcontrol("Dose (MBq):", form.ui.sbBgndDose)
+    form.ui.dsbBgndDose = MyDoubleSpinBox()
+    form.ui.dsbBgndDose.setRange(0.0, 200.0)
+    form.ui.earl_popup.add_hcontrol("Dose (MBq):", form.ui.dsbBgndDose)
 
     form.ui.teBgndDoseTime = QTimeEdit()
     form.ui.teBgndDoseTime.setDisplayFormat("hh:mm:ss")
@@ -260,9 +260,9 @@ def create_suv_uptake_popup(form):
     form.ui.sbStockVol.setRange(0, 10000)
     form.ui.earl_popup.add_hcontrol("Volume (ml):", form.ui.sbStockVol)
 
-    form.ui.sbStockDose = QSpinBox()
-    form.ui.sbStockDose.setRange(0, 1000000000)
-    form.ui.earl_popup.add_hcontrol("Dose (spheres) (MBq):", form.ui.sbStockDose)
+    form.ui.dsbStockDose = MyDoubleSpinBox()
+    form.ui.dsbStockDose.setRange(0, 200)
+    form.ui.earl_popup.add_hcontrol("Dose (spheres) (MBq):", form.ui.dsbStockDose)
 
     form.ui.teStockDoseTime = QTimeEdit()
     form.ui.teStockDoseTime.setDisplayFormat("hh:mm:ss")
@@ -299,9 +299,9 @@ def initialize_suv_uptake_popup(form):
             seq = ds[0x0054, 0x0016][0]
 
             # get Radionuclide Total Dose
-            injected_dose = int(seq[0x0018, 0x1074].value)
-            form.ui.sbBgndDose.setValue(injected_dose)
-            form.ui.sbStockDose.setValue(injected_dose)
+            injected_dose = int(seq[0x0018, 0x1074].value) / 1000000            # convert to megabequerel
+            form.ui.dsbBgndDose.setValue(injected_dose)
+            form.ui.dsbStockDose.setValue(injected_dose)
 
             # get Radionuclide measurement time
             measure_time = seq[0x0018, 0x1072].value
@@ -319,6 +319,3 @@ def initialize_suv_uptake_popup(form):
             form.ui.teSeriesTime.setTime(QTime.fromString(series_time.split(".")[0], "HHmmss"))
         except KeyError:
             form.ui.statusbar.status_error("Missing DICOM tag(s)")
-
-
-

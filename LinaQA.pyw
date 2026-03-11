@@ -1286,10 +1286,37 @@ class LinaQA(QMainWindow):
         sphere_ang_str = '(120, 60, 0, -60, -120, -180)'
         sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
         sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
+
+        # get popup values
+        backgnd_vol = self.ui.sbBgndVol.value()
+        backgnd_dose = self.ui.dsbBgndDose.value() * 1000000       # convert to Becquerel
+        backgnd_time = self.ui.teBgndDoseTime.time()
+        backgnd_res = self.ui.sbBgndRes.value()
+        backgnd_res_time = self.ui.teBgndResTime.time()
+        stock_vol = self.ui.sbStockVol.value()
+        stock_dose = self.ui.dsbStockDose.value() * 1000000        # convert to Becquerel
+        stock_time = self.ui.teStockDoseTime.time()
+        stock_res = self.ui.sbStockRes.value()
+        stock_res_time = self.ui.teStockResTime.time()
+        scan_time = self.ui.teSeriesTime.time()
+
+        # correct for residuals
+        # TODO: account for decay for residual
+        backgnd_dose -= backgnd_res
+        stock_dose -= stock_res
+
         su.analyze(
             sphere_diameters_mm=sphere_diam,
             sphere_angles=sphere_ang,
-            ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float))
+            ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float),
+            background_vol=backgnd_vol,
+            background_dose=backgnd_dose,
+            background_time=backgnd_time,
+            sphere_vol=stock_vol,
+            sphere_dose=stock_dose,
+            sphere_time=stock_time,
+            measurement_time=scan_time
+        )
         self.show_results(su)
 
     @check_valid_image
