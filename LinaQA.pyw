@@ -1282,8 +1282,12 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def suv_uptake(self):
         su = pylinac_subclasses.SUVUptake(self.imager.datasets)
-        sphere_diam_str = '(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)'
-        sphere_ang_str = '(120, 60, 0, -60, -120, -180)'
+        sphere_diam_str = self.settings.value('SUV Uptake/Sphere diameters mm',
+                                              '(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)',
+                                              type=str)
+        sphere_ang_str = self.settings.value('SUV Uptake/Sphere angles',
+                                             '(120, 60, 0, -60, -120, -180)',
+                                             type=str)
         sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
         sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
 

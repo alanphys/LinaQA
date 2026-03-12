@@ -195,6 +195,17 @@ def set_default_settings(settings):
         settings.setValue('Search slices', '3')
     settings.endGroup()
 
+    settings.beginGroup('SUV Uptake')
+    if not settings.contains('Sphere diameters mm'):
+        settings.setValue('Sphere diameters mm', '(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)')
+    if not settings.contains('Sphere angles'):
+        settings.setValue('Sphere angles', '(120, 60, 0, -60, -120, -180)')
+    if not settings.contains('Search window px'):
+        settings.setValue('Search window px', '5')
+    if not settings.contains('Search slices'):
+        settings.setValue('Search slices', '3')
+    settings.endGroup()
+
 
 class TypeChecker:
     def __init__(self, parent=None):

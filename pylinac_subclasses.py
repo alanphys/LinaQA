@@ -892,7 +892,6 @@ class SUVUptake:
         self,
         sphere_diameters_mm: Sequence[float] = (37.0, 28.0, 22.0, 17.0, 13.0, 10.0),
         sphere_angles: Sequence[float] = (120, 60, 0, -60, -120, -180),
-        ufov_ratio: float = 0.8,
         search_window_px: int = 5,
         search_slices: int = 3,
         background_vol: int = 9400,
@@ -911,8 +910,6 @@ class SUVUptake:
             The diameters of the spheres in mm.
         sphere_angles : list
             The angles of the spheres in degrees.
-        ufov_ratio: float = 0.8
-            Ratio of the useful field of view to the phantom size
         search_window_px: int = 5
             Number of pixels to search around the estimated centre
         search_slices: int = 3
@@ -1064,14 +1061,14 @@ class SUVUptake:
             [roi.corrected_mean_recovery_coeff for roi in self.rois.values()],
             color="m",
             marker="o",
-            label="Corrected Mean Recovery Coefficient",
+            label="Corrected Mean Recovery Coeff",
         )
         cont_ax.plot(
             [int(idx) for idx in self.rois.keys()],
             [roi.corrected_peak_recovery_coeff for roi in self.rois.values()],
             color="y",
             marker="o",
-            label="Corrected Peak Recovery Coefficient",
+            label="Corrected Peak Recovery Coeff",
         )
         cont_ax.set_xlabel("Sphere Number")
         cont_ax.set_ylabel("Contrast/Recovery")
@@ -1130,9 +1127,9 @@ class SUVUptake:
         figs[1].tight_layout()
         analysis_image = io.BytesIO()
         figs[1].savefig(analysis_image, bbox_inches='tight')
-        canvas.add_image(analysis_image, location=(1, 13), dimensions=(15, 15), preserve_aspect_ratio=True)
+        canvas.add_image(analysis_image, location=(1, 13), dimensions=(19, 13), preserve_aspect_ratio=False)
 
         analysis_image = io.BytesIO()
         figs[0].savefig(analysis_image)
-        canvas.add_image(analysis_image, location=(1, 2), dimensions=(15, 15), preserve_aspect_ratio=True)
+        canvas.add_image(analysis_image, location=(1, 0), dimensions=(15, 15), preserve_aspect_ratio=True)
         canvas.finish()
