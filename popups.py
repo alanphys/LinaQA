@@ -68,6 +68,11 @@ def initialize_popups(form):
     # initialize_suv_uptake_popup(form)
 
 
+def update_popups(form):
+    if form.imager.datasets[0].Modality == "PT":
+        update_suv_uptake_popup(form)
+
+
 def create_3dphantom_popup(form):
     # create popup for the 3D phantom analysis
     form.ui.phantom3d_popup = PopupToolbar()
@@ -280,28 +285,35 @@ def create_suv_uptake_popup(form):
     form.ui.earl_popup.add_hcontrol("Acquisition time:", form.ui.teSeriesTime)
 
     button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_SUV_Uptake, form.ui.earl_popup)
-    button.set_popup_initializer(lambda: initialize_suv_uptake_popup(form))
+    # button.set_popup_initializer(lambda: initialize_suv_uptake_popup(form))
 
 
-def initialize_suv_uptake_popup(form):
+def update_suv_uptake_popup(form):
     """Load values according to
     https://qibawiki.rsna.org/images/6/62/SUV_vendorneutral_pseudocode_happypathonly_20180626_DAC.pdf"""
     if form.imager is not None:
         # pull values from current image
         ds = form.imager.datasets[form.imager.index]
         try:
-            # get volume
-            # TODO: check if volume tag exists and use that otherwise estimate from patient weight
-            vol = ds[0x0010, 0x1030].value * 1000
+            # get volume if not defined in settings
+            vol = form.settings.value("SUV Uptake/Background vol", 0, type=int)
+            if vol == 0:
+                # TODO: check if volume tag exists and use that otherwise estimate from patient weight
+                vol = ds[0x0010, 0x1030].value * 1000
             form.ui.sbBgndVol.setValue(int(vol))
 
             # Get Radiopharmaceutical Information Sequence
             seq = ds[0x0054, 0x0016][0]
 
             # get Radionuclide Total Dose
-            injected_dose = int(seq[0x0018, 0x1074].value) / 1000000            # convert to megabequerel
-            form.ui.dsbBgndDose.setValue(injected_dose)
-            form.ui.dsbStockDose.setValue(injected_dose)
+            backgnd_dose = form.settings.value("SUV Uptake/Background dose", 0, type=float)
+            if backgnd_dose == 0:
+                backgnd_dose = int(seq[0x0018, 0x1074].value) / 1000000            # convert to megabequerel
+            form.ui.dsbBgndDose.setValue(backgnd_dose)
+            stock_dose = form.settings.value("SUV Uptake/Stock dose", 0, type=float)
+            if stock_dose == 0:
+                stock_dose = backgnd_dose
+            form.ui.dsbStockDose.setValue(stock_dose)
 
             # get Radionuclide measurement time
             measure_time = seq[0x0018, 0x1072].value
@@ -312,7 +324,7 @@ def initialize_suv_uptake_popup(form):
             form.ui.teStockResTime.setTime(time)
 
             # Stock solution for spheres is 1L
-            form.ui.sbStockVol.setValue(1000)
+            form.ui.sbStockVol.setValue(form.settings.value("SUV Uptake/Stock vol", 0, type=int))
 
             # get series time
             series_time = ds[0x0008, 0x0031].value

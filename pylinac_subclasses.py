@@ -914,6 +914,20 @@ class SUVUptake:
             Number of pixels to search around the estimated centre
         search_slices: int = 3
             Number of slices to search around the sphere slice
+        background_vol: int = 9400
+            Volume of phantom background compartment (phantom vol - inserts vol)
+        background_dose: float
+            Activity in Bequerels (Bq) injected into background vol. If None it will be taken from sphere_dose
+        background_time: QTime = "12:00:00"
+            When the background dose was measured
+        sphere_vol: int = 1000
+            Volume of stock solution injected into spheres
+        sphere_dose: float
+            Activity in Bq injected into stock solution. If None it will be taken from series metadata.
+        sphere_time: QTime = "12:00:00"
+            Time stock dose was measured
+        measurement_time: QTime
+            Time the scan series was done. If None taken from series metadata.
         """
         if len(sphere_diameters_mm) != len(sphere_angles):
             raise ValueError("The number of sphere diameters and angles must be the same.")
@@ -943,11 +957,11 @@ class SUVUptake:
         background_decay_time = background_time.secsTo(measurement_time)
         sphere_decay_time = sphere_time.secsTo(measurement_time)
 
-        # get doses, we assume the recorded dose is the sphere dose.
-        if sphere_dose is None:
-            sphere_dose = int(seq[0x0018, 0x1074].value)
+        # get doses, we assume the recorded dose is the background dose.
         if background_dose is None:
-            background_dose = sphere_dose
+            background_dose = int(seq[0x0018, 0x1074].value)
+        if sphere_dose is None:
+            sphere_dose = sphere_dose
 
         # decay doses to scan start time
         decayed_sphere_dose = sphere_dose * math.exp(-0.693147181 * sphere_decay_time / half_life)

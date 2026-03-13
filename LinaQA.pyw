@@ -58,7 +58,7 @@ from misc_utils import (
     text_to_tag,
     dataset_to_stream,
     datasets_to_stream)
-from popups import create_popups, initialize_popups
+from popups import create_popups, initialize_popups, update_popups
 import pylinac_subclasses
 from tablemodel import TableModel
 
@@ -319,6 +319,7 @@ class LinaQA(QMainWindow):
                     and hasattr(self.imager.datasets[0], 'PixelData')):
                 self.tab_changed(0)
                 self.edit_pixel_data()
+                update_popups(self)
             else:
                 self.ui.tabWidget.setTabVisible(0, False)
                 self.ui.action_DICOM_tags.setChecked(True)
@@ -1312,7 +1313,6 @@ class LinaQA(QMainWindow):
         su.analyze(
             sphere_diameters_mm=sphere_diam,
             sphere_angles=sphere_ang,
-            ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float),
             background_vol=backgnd_vol,
             background_dose=backgnd_dose,
             background_time=backgnd_time,

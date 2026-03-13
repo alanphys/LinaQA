@@ -204,6 +204,14 @@ def set_default_settings(settings):
         settings.setValue('Search window px', '5')
     if not settings.contains('Search slices'):
         settings.setValue('Search slices', '3')
+    if not settings.contains('Background vol'):
+        settings.setValue('Background vol', '9400')
+    if not settings.contains('Background dose'):
+        settings.setValue('Background dose', '20')
+    if not settings.contains('Stock vol'):
+        settings.setValue('Stock vol', '1000')
+    if not settings.contains('Stock dose'):
+        settings.setValue('Stock dose', '20')
     settings.endGroup()
 
 

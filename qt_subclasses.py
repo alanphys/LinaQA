@@ -232,8 +232,8 @@ class LongPressToolButton(QToolButton):
             event.accept()
         elif event.button() == Qt.RightButton:
             if self.popup_widget:
-                if self.popup_initializer:
-                    self.popup_initializer()
+                # if self.popup_initializer:
+                #     self.popup_initializer()
                 self.popup_widget.show_next_to(self)
                 event.accept()
         else:
