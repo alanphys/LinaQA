@@ -17,6 +17,7 @@ from pathlib import Path
 from dataclasses import dataclass
 
 import numpy as np
+from numpy.lib.stride_tricks import sliding_window_view
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -797,6 +798,7 @@ class SUVTomoROI(TomographicROI):
     # We must add functionality for "hot" spheres with activity and recovery coefficients
     backgnd_dose_vol: float
     sphere_dose_vol: float
+    pixel_spacing: float
 
     @property
     def max_value(self) -> float:
@@ -815,8 +817,17 @@ class SUVTomoROI(TomographicROI):
         return self.mean_value / self.sphere_dose_vol
 
     @property
-    def peak_recovery_coeff(self) -> float:
+    def max_recovery_coeff(self) -> float:
         return self.max_value / self.sphere_dose_vol
+
+    @property
+    def peak_recovery_coeff(self):
+        """ Strictly speaking this should be a circular window. But the window size will be only 2 or 3 pixels
+        and to make this round is difficult."""
+        window_size = int(10 / self.pixel_spacing)
+        windows = sliding_window_view(self.sphere_array[0], (window_size, window_size, window_size))
+        window_means = np.nanmean(windows, axis=(-1, -2, -3))
+        return np.nanmax(window_means) / self.sphere_dose_vol
 
     @property
     def corrected_mean_recovery_coeff(self) -> float:
@@ -825,8 +836,20 @@ class SUVTomoROI(TomographicROI):
         return scan / measured
 
     @property
-    def corrected_peak_recovery_coeff(self) -> float:
+    def corrected_max_recovery_coeff(self) -> float:
         scan = (self.max_value - self.uniformity_baseline) / self.uniformity_baseline
+        measured = (self.sphere_dose_vol - self.backgnd_dose_vol) / self.backgnd_dose_vol
+        return scan / measured
+
+    @property
+    def corrected_peak_recovery_coeff(self):
+        """ Strictly speaking this should be a circular window. But the window size will be only 2 or 3 pixels
+        and to make this round is difficult."""
+        window_size = int(10 / self.pixel_spacing)
+        windows = sliding_window_view(self.sphere_array[0], (window_size, window_size, window_size))
+        window_means = np.nanmean(windows, axis=(-1, -2, -3))
+        max_mean = float(np.nanmax(window_means))
+        scan = (max_mean - self.uniformity_baseline) / self.uniformity_baseline
         measured = (self.sphere_dose_vol - self.backgnd_dose_vol) / self.backgnd_dose_vol
         return scan / measured
 
@@ -978,7 +1001,7 @@ class SUVUptake:
 
         rois = {}
         for idx, (angle, diameter) in enumerate(zip(sphere_angles, sphere_diameters_mm)):
-            radius = diameter / (2 * self.stack.metadata.PixelSpacing[0])
+            radius = diameter / (2 * metadata.PixelSpacing[0])
             col_x, row_y = direction_to_coords(self.phantom_center[1], self.phantom_center[0], sphere_radius, angle)
             # quicker but less accurate at the smallest ROIs
             res = minimize(
@@ -1004,6 +1027,7 @@ class SUVUptake:
                 radius=radius,
                 uniformity_baseline=self.backgnd['mean'],
                 backgnd_dose_vol=self.background_dose_vol,
+                pixel_spacing=metadata.PixelSpacing[0],
                 sphere_dose_vol=self.sphere_dose_vol,
                 number=idx + 1,
             )
@@ -1019,10 +1043,14 @@ class SUVUptake:
                   f"Mean Contrast: {roi.mean_contrast:.2f}; Max Contrast: {roi.max_hot_contrast:.2f}\n")
         s += f"\nRecovery coefficient results for {self.path.name}\n\n"
         for idx, roi in self.rois.items():
-            s += f"Sphere {idx}: Mean {roi.mean_recovery_coeff:.2f}; Max {roi.peak_recovery_coeff:.2f}\n"
+            s += f"Sphere {idx}: Mean {roi.mean_recovery_coeff:.2f}; "
+            s += f"Max {roi.max_recovery_coeff:.2f}; "
+            s += f"Peak {roi.peak_recovery_coeff:.2f}\n"
         s += f"\nCorrected recovery coefficient results for {self.path.name}\n\n"
         for idx, roi in self.rois.items():
-            s += f"Sphere {idx}: Mean {roi.corrected_mean_recovery_coeff:.2f}; Max {roi.corrected_peak_recovery_coeff:.2f}\n"
+            s += f"Sphere {idx}: Mean {roi.corrected_mean_recovery_coeff:.2f}; "
+            s += f"Max {roi.corrected_max_recovery_coeff:.2f}; "
+            s += f"Peak {roi.corrected_peak_recovery_coeff:.2f}\n"
         return s
 
     def plot(self, show: bool = True) -> (list[Figure], list[Axes]):
@@ -1065,8 +1093,15 @@ class SUVUptake:
         )
         cont_ax.plot(
             [int(idx) for idx in self.rois.keys()],
-            [roi.peak_recovery_coeff for roi in self.rois.values()],
+            [roi.max_recovery_coeff for roi in self.rois.values()],
             color="c",
+            marker="o",
+            label="Max Recovery Coefficient",
+        )
+        cont_ax.plot(
+            [int(idx) for idx in self.rois.keys()],
+            [roi.peak_recovery_coeff for roi in self.rois.values()],
+            color="orange",
             marker="o",
             label="Peak Recovery Coefficient",
         )
@@ -1079,8 +1114,15 @@ class SUVUptake:
         )
         cont_ax.plot(
             [int(idx) for idx in self.rois.keys()],
-            [roi.corrected_peak_recovery_coeff for roi in self.rois.values()],
+            [roi.corrected_max_recovery_coeff for roi in self.rois.values()],
             color="y",
+            marker="o",
+            label="Corrected Max Recovery Coeff",
+        )
+        cont_ax.plot(
+            [int(idx) for idx in self.rois.keys()],
+            [roi.corrected_peak_recovery_coeff for roi in self.rois.values()],
+            color="pink",
             marker="o",
             label="Corrected Peak Recovery Coeff",
         )
