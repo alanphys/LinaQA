@@ -1036,11 +1036,14 @@ class SUVUptake:
 
     def results(self) -> str:
         """Return a string representation of the results."""
-        s = f"Tomographic Contrast results for {self.path.name}\n\n"
-        s += f"Background baseline: {self.backgnd['mean']:.1f}\n\n"
+        s = f"Summary statistics for {self.path.name}\n\n"
+        s += f"Background baseline: Mean: {self.backgnd['mean']:.1f}; Standard Deviation: {self.backgnd['stddev']:.1f}\n\n"
         for idx, roi in self.rois.items():
             s += (f"Sphere {idx}: X={roi.x:.2f}, Y={roi.y:.2f}, Z={roi.z:.2f} Mean: {roi.mean_value:.2f}; " +
-                  f"Mean Contrast: {roi.mean_contrast:.2f}; Max Contrast: {roi.max_hot_contrast:.2f}\n")
+                  f"Maximum: {roi.max_value:.2f}\n")
+        s += f"\nTomographic Contrast results for {self.path.name}\n\n"
+        for idx, roi in self.rois.items():
+            s += f"Sphere {idx}: Mean Contrast: {roi.mean_contrast:.2f}; Max Contrast: {roi.max_hot_contrast:.2f}\n"
         s += f"\nRecovery coefficient results for {self.path.name}\n\n"
         for idx, roi in self.rois.items():
             s += f"Sphere {idx}: Mean {roi.mean_recovery_coeff:.2f}; "
