@@ -12,7 +12,7 @@ from PyQt5.QtCore import (
      QRect, QRegularExpression, QSettings, QSize, QTime, QTimer, Qt, pyqtSlot as Slot)
 from PyQt5.QtGui import (QColor, QIcon, QIntValidator, QDoubleValidator, QRegularExpressionValidator, QValidator)
 from PyQt5.QtWidgets import (
-     QAbstractItemView, QCheckBox, QDialog, QDialogButtonBox, QGridLayout, QLineEdit,
+     QAbstractItemView, QCheckBox, QDialog, QDialogButtonBox, QVBoxLayout, QLineEdit,
      QHeaderView, QItemDelegate, QComboBox, QStyle, QSpinBox, QStyleOptionViewItem,
      QTableWidgetItem, QTreeWidget, QTreeWidgetItem)
 from linaqa_types import (
@@ -337,19 +337,28 @@ class TypeChecker:
 class Settings(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.gridLayout = QGridLayout()
-        self.setLayout(self.gridLayout)
-        self.gridLayout.setObjectName("gridLayout")
+        buttons = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        self.buttonBox = QDialogButtonBox(buttons, parent=self)
+
+        # Connect the signals to the dialog's slots
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.layout.setObjectName("Layout")
+        self.layout.addWidget(self.buttonBox)
         self.settings_tree = SettingsTree()
         self.settings_tree.header().setSectionResizeMode(QHeaderView.ResizeToContents)
-        self.gridLayout.addWidget(self.settings_tree, 0, 0, 1, 1)
+        self.layout.addWidget(self.settings_tree)
         self.setWindowTitle("Settings Editor")
         self.resize(500, 600)
         settings = QSettings()
         self.set_settings_object(settings)
+        self.setLayout(self.layout)
 
     def set_settings_object(self, settings):
-        settings.setFallbacksEnabled(True)
+        settings.setFallbacksEnabled(False)
         self.settings_tree.set_settings_object(settings)
         nice_name = QDir.fromNativeSeparators(settings.fileName())
         nice_name = nice_name.split('/')[-1]
