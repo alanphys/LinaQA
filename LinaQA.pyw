@@ -901,7 +901,7 @@ class LinaQA(QMainWindow):
         cat.analyze(**param_list)
         self.show_results(cat)
 
-    @check_valid_image
+#    @check_valid_image
     @show_wait_cursor
     def analyse_picket_fence(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
@@ -909,18 +909,26 @@ class LinaQA(QMainWindow):
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText(), filter=3)
         else:
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText())
+
+        # get settings
+        tolerance = self.settings.value('Picket Fence/Leaf Tolerance', 0.5, type=float)
+        action_tolerance = self.settings.value('Picket Fence/Leaf Action', 0.25, type=float)
+        num_pickets = self.settings.value('Picket Fence/Number of pickets', 0, type=int)
+        picket_spacing = self.settings.value("Picket Fence/Picket Spacing", 0, type=int)
         try:
-            pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
-                       action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
-                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
+            pf.analyze(tolerance=tolerance,
+                       action_tolerance=None if action_tolerance == 0 else action_tolerance,
+                       num_pickets=None if num_pickets == 0 else num_pickets,
+                       picket_spacing=None if picket_spacing == 0 else picket_spacing,
                        invert=self.imager.invflag)
             self.show_results(pf)
         except ValueError:
             # if it throws an exception fall back to this as per issue #470
             self.ui.statusbar.status_warn('Could not analyze picket fence as is. Trying fallback method.')
-            pf.analyze(tolerance=float(self.settings.value('Picket Fence/Leaf Tolerance')),
-                       action_tolerance=float(self.settings.value('Picket Fence/Leaf Action')),
-                       num_pickets=int(self.settings.value('Picket Fence/Number of pickets')),
+            pf.analyze(tolerance=tolerance,
+                       action_tolerance=None if action_tolerance == 0 else action_tolerance,
+                       num_pickets=None if num_pickets == 0 else num_pickets,
+                       picket_spacing=None if picket_spacing == 0 else picket_spacing,
                        invert=self.imager.invflag,
                        required_prominence=0.1)
             self.show_results(pf)

@@ -58,6 +58,8 @@ def set_default_settings(settings):
         settings.setValue('Number of pickets', '10')
     if not settings.contains('Apply median filter'):
         settings.setValue('Apply median filter', 'False')
+    if not settings.contains('Picket Spacing'):
+        settings.setValue('Picket Spacing', '0')
     settings.endGroup()
 
     settings.beginGroup('Star shot')
