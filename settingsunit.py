@@ -25,241 +25,241 @@ from linaqa_types import (
 from qt_subclasses import MyDoubleSpinBox
 
 sys_path = path.dirname(path.realpath(inspect.getframeinfo(inspect.currentframe()).filename))
-logo_path = path.join(sys_path, 'Icons/LinacToolkit.png')
+logo_path = path.join(sys_path, "Icons/LinacToolkit.png")
 
 
 def set_default_settings(settings):
-    settings.beginGroup('General')
-    if not settings.contains('Logo'):
-        settings.setValue('Logo', logo_path)
-    if not settings.contains('Metadata'):
-        settings.setValue('Metadata', {'Physicist': '', 'Linac': ''})
+    settings.beginGroup("General")
+    if not settings.contains("Logo"):
+        settings.setValue("Logo", logo_path)
+    if not settings.contains("Metadata"):
+        settings.setValue("Metadata", {"Physicist": "", "Linac": ""})
     settings.endGroup()
 
-    settings.beginGroup('3D Phantoms')
-    if not settings.contains('3D Type'):
-        settings.setValue('3D Type', 'CatPhan604')
-    if not settings.contains('HU Tolerance'):
-        settings.setValue('HU Tolerance', '40')
-    if not settings.contains('Thickness Tolerance'):
-        settings.setValue('Thickness Tolerance', '0.2')
-    if not settings.contains('Scaling Tolerance'):
-        settings.setValue('Scaling Tolerance', '1')
+    settings.beginGroup("3D Phantoms")
+    if not settings.contains("3D Type"):
+        settings.setValue("3D Type", "CatPhan604")
+    if not settings.contains("HU Tolerance"):
+        settings.setValue("HU Tolerance", "40")
+    if not settings.contains("Thickness Tolerance"):
+        settings.setValue("Thickness Tolerance", "0.2")
+    if not settings.contains("Scaling Tolerance"):
+        settings.setValue("Scaling Tolerance", "1")
     settings.endGroup()
 
-    settings.beginGroup('Picket Fence')
-    if not settings.contains('MLC Type'):
-        settings.setValue('MLC Type', 'HD Millennium')
-    if not settings.contains('Leaf Tolerance'):
-        settings.setValue('Leaf Tolerance', '0.5')
-    if not settings.contains('Leaf Action'):
-        settings.setValue('Leaf Action', '0.25')
-    if not settings.contains('Number of pickets'):
-        settings.setValue('Number of pickets', '10')
-    if not settings.contains('Apply median filter'):
-        settings.setValue('Apply median filter', 'False')
-    if not settings.contains('Picket Spacing'):
-        settings.setValue('Picket Spacing', '0')
+    settings.beginGroup("Picket Fence")
+    if not settings.contains("MLC Type"):
+        settings.setValue("MLC Type", "HD Millennium")
+    if not settings.contains("Leaf Tolerance"):
+        settings.setValue("Leaf Tolerance", "0.5")
+    if not settings.contains("Leaf Action"):
+        settings.setValue("Leaf Action", "0.25")
+    if not settings.contains("Number of pickets"):
+        settings.setValue("Number of pickets", "10")
+    if not settings.contains("Apply median filter"):
+        settings.setValue("Apply median filter", "False")
+    if not settings.contains("Picket Spacing"):
+        settings.setValue("Picket Spacing", "0")
     settings.endGroup()
 
-    settings.beginGroup('Star shot')
-    if not settings.contains('DPI'):
-        settings.setValue('DPI', '76')
-    if not settings.contains('SID'):
-        settings.setValue('SID', '1000')
-    if not settings.contains('Normalised analysis radius'):
-        settings.setValue('Normalised analysis radius', '0.85')
-    if not settings.contains('Tolerance'):
-        settings.setValue('Tolerance', '1')
-    if not settings.contains('Recursive analysis'):
-        settings.setValue('Recursive analysis', 'False')
+    settings.beginGroup("Star shot")
+    if not settings.contains("DPI"):
+        settings.setValue("DPI", "76")
+    if not settings.contains("SID"):
+        settings.setValue("SID", "1000")
+    if not settings.contains("Normalised analysis radius"):
+        settings.setValue("Normalised analysis radius", "0.85")
+    if not settings.contains("Tolerance"):
+        settings.setValue("Tolerance", "1")
+    if not settings.contains("Recursive analysis"):
+        settings.setValue("Recursive analysis", "False")
     settings.endGroup()
 
-    settings.beginGroup('VMAT')
-    if not settings.contains('VMAT test'):
-        settings.setValue('VMAT test', 'DRGS')
-    if not settings.contains('Tolerance'):
-        settings.setValue('Tolerance', '1.5')
+    settings.beginGroup("VMAT")
+    if not settings.contains("VMAT test"):
+        settings.setValue("VMAT test", "DRGS")
+    if not settings.contains("Tolerance"):
+        settings.setValue("Tolerance", "1.5")
     settings.endGroup()
 
-    settings.beginGroup('Winston-Lutz')
-    if not settings.contains('BB Size'):
-        settings.setValue('BB Size', '5')
-    if not settings.contains('Open field'):
-        settings.setValue('Open field', 'False')
-    if not settings.contains('Low density BB'):
-        settings.setValue('Low density BB', 'False')
+    settings.beginGroup("Winston-Lutz")
+    if not settings.contains("BB Size"):
+        settings.setValue("BB Size", "5")
+    if not settings.contains("Open field"):
+        settings.setValue("Open field", "False")
+    if not settings.contains("Low density BB"):
+        settings.setValue("Low density BB", "False")
     settings.endGroup()
 
-    settings.beginGroup('2D Phantoms')
-    if not settings.contains('2D Type'):
-        settings.setValue('2D Type', 'Leeds')
-    if not settings.contains('Low contrast threshold'):
-        settings.setValue('Low contrast threshold', '0.1')
-    if not settings.contains('High contrast threshold'):
-        settings.setValue('High contrast threshold', '0.5')
-    if not settings.contains('Angle override'):
-        settings.setValue('Angle override', '0')
-    if not settings.contains('Center override'):
-        settings.setValue('Center override', QPoint(0, 0))
-    if not settings.contains('Size override'):
-        settings.setValue('Size override', '0')
-    if not settings.contains('SSD'):
-        settings.setValue('SSD', '1000')
+    settings.beginGroup("2D Phantoms")
+    if not settings.contains("2D Type"):
+        settings.setValue("2D Type", "Leeds")
+    if not settings.contains("Low contrast threshold"):
+        settings.setValue("Low contrast threshold", "0.1")
+    if not settings.contains("High contrast threshold"):
+        settings.setValue("High contrast threshold", "0.5")
+    if not settings.contains("Angle override"):
+        settings.setValue("Angle override", "0")
+    if not settings.contains("Center override"):
+        settings.setValue("Center override", QPoint(0, 0))
+    if not settings.contains("Size override"):
+        settings.setValue("Size override", "0")
+    if not settings.contains("SSD"):
+        settings.setValue("SSD", "1000")
     settings.endGroup()
 
-    settings.beginGroup('Gamma Analysis')
-    if not settings.contains('Dose to agreement'):
-        settings.setValue('Dose to agreement', '2.0')
-    if not settings.contains('Distance to agreement'):
-        settings.setValue('Distance to agreement', '2.0')
-    if not settings.contains('Gamma cap'):
-        settings.setValue('Gamma cap', '2.0')
-    if not settings.contains('Global dose'):
-        settings.setValue('Global dose', 'True')
-    if not settings.contains('Dose threshold'):
-        settings.setValue('Dose threshold', '0.05')
+    settings.beginGroup("Gamma Analysis")
+    if not settings.contains("Dose to agreement"):
+        settings.setValue("Dose to agreement", "2.0")
+    if not settings.contains("Distance to agreement"):
+        settings.setValue("Distance to agreement", "2.0")
+    if not settings.contains("Gamma cap"):
+        settings.setValue("Gamma cap", "2.0")
+    if not settings.contains("Global dose"):
+        settings.setValue("Global dose", "True")
+    if not settings.contains("Dose threshold"):
+        settings.setValue("Dose threshold", "0.05")
     settings.endGroup()
 
     settings.beginGroup("PyDicom")
-    if not settings.contains('Force'):
-        settings.setValue('Force', 'False')
-    if not settings.contains('Use rescale'):
-        settings.setValue('Use rescale', 'False')
-    if not settings.contains('Scale factor'):
-        settings.setValue('Scale factor', '1.0')
+    if not settings.contains("Force"):
+        settings.setValue("Force", "False")
+    if not settings.contains("Use rescale"):
+        settings.setValue("Use rescale", "False")
+    if not settings.contains("Scale factor"):
+        settings.setValue("Scale factor", "1.0")
     settings.endGroup()
 
-    settings.beginGroup('Window')
-    if not settings.contains('Position'):
-        settings.setValue('Position', QPoint(100, 200))
-    if not settings.contains('Size'):
-        settings.setValue('Size', QSize(678, 682))
-    if not settings.contains('Show Rx Toolbar'):
-        settings.setValue('Show Rx Toolbar', 'True')
-    if not settings.contains('Show Dx Toolbar'):
-        settings.setValue('Show Dx Toolbar', 'False')
-    if not settings.contains('Show NM Toolbar'):
-        settings.setValue('Show NM Toolbar', 'False')
-    if not settings.contains('Show DCM Toolbar'):
-        settings.setValue('Show DCM Toolbar', 'False')
+    settings.beginGroup("Window")
+    if not settings.contains("Position"):
+        settings.setValue("Position", QPoint(100, 200))
+    if not settings.contains("Size"):
+        settings.setValue("Size", QSize(678, 682))
+    if not settings.contains("Show Rx Toolbar"):
+        settings.setValue("Show Rx Toolbar", "True")
+    if not settings.contains("Show Dx Toolbar"):
+        settings.setValue("Show Dx Toolbar", "False")
+    if not settings.contains("Show NM Toolbar"):
+        settings.setValue("Show NM Toolbar", "False")
+    if not settings.contains("Show DCM Toolbar"):
+        settings.setValue("Show DCM Toolbar", "False")
     settings.endGroup()
 
     settings.beginGroup("Tomographic Uniformity")
-    if not settings.contains('First frame'):
-        settings.setValue('First frame', '0')
-    if not settings.contains('Last frame'):
-        settings.setValue('Last frame', '-1')
-    if not settings.contains('UFOV ratio'):
-        settings.setValue('UFOV ratio', '0.80')
-    if not settings.contains('CFOV ratio'):
-        settings.setValue('CFOV ratio', '0.75')
-    if not settings.contains('Center ratio'):
-        settings.setValue('Center ratio', '0.4')
-    if not settings.contains('Threshold'):
-        settings.setValue('Threshold', '0.75')
-    if not settings.contains('Window size'):
-        settings.setValue('Window size', '5')
+    if not settings.contains("First frame"):
+        settings.setValue("First frame", "0")
+    if not settings.contains("Last frame"):
+        settings.setValue("Last frame", "-1")
+    if not settings.contains("UFOV ratio"):
+        settings.setValue("UFOV ratio", "0.80")
+    if not settings.contains("CFOV ratio"):
+        settings.setValue("CFOV ratio", "0.75")
+    if not settings.contains("Center ratio"):
+        settings.setValue("Center ratio", "0.4")
+    if not settings.contains("Threshold"):
+        settings.setValue("Threshold", "0.75")
+    if not settings.contains("Window size"):
+        settings.setValue("Window size", "5")
     settings.endGroup()
 
     settings.beginGroup("Simple Sensitivity")
-    if not settings.contains('Nuclide'):
-        settings.setValue('Nuclide', 'Tc99m')
-    if not settings.contains('Activity'):
-        settings.setValue('Activity MBq', '40.0')
+    if not settings.contains("Nuclide"):
+        settings.setValue("Nuclide", "Tc99m")
+    if not settings.contains("Activity"):
+        settings.setValue("Activity MBq", "40.0")
     settings.endGroup()
 
-    settings.beginGroup('Spatial Resolution')
-    if not settings.contains('Resolution test'):
-        settings.setValue('Resolution test', 'Four Bar')
-    if not settings.contains('Separation mm'):
-        settings.setValue('Separation mm', '100.0')
-    if not settings.contains('ROI width mm'):
-        settings.setValue('ROI width mm', '10.0')
-    if not settings.contains('Bar widths mm'):
-        settings.setValue('Bar widths mm', '(4.23, 3.18, 2.54, 2.12)')
-    if not settings.contains('ROI diameter mm'):
-        settings.setValue('ROI diameter mm', '70.0')
-    if not settings.contains('Distance from center mm'):
-        settings.setValue('Distance from center mm', '130')
+    settings.beginGroup("Spatial Resolution")
+    if not settings.contains("Resolution test"):
+        settings.setValue("Resolution test", "Four Bar")
+    if not settings.contains("Separation mm"):
+        settings.setValue("Separation mm", "100.0")
+    if not settings.contains("ROI width mm"):
+        settings.setValue("ROI width mm", "10.0")
+    if not settings.contains("Bar widths mm"):
+        settings.setValue("Bar widths mm", "(4.23, 3.18, 2.54, 2.12)")
+    if not settings.contains("ROI diameter mm"):
+        settings.setValue("ROI diameter mm", "70.0")
+    if not settings.contains("Distance from center mm"):
+        settings.setValue("Distance from center mm", "130")
     settings.endGroup()
 
-    settings.beginGroup('Tomographic Contrast')
-    if not settings.contains('Sphere diameters mm'):
-        settings.setValue('Sphere diameters mm', '(38, 31.8, 25.4, 19.1, 15.9, 12.7)')
-    if not settings.contains('Sphere angles'):
-        settings.setValue('Sphere angles', '(-10, -70, -130, -190, 110, 50)')
-    if not settings.contains('UFOV ratio'):
-        settings.setValue('UFOV ratio', '0.8')
-    if not settings.contains('Search window px'):
-        settings.setValue('Search window px', '5')
-    if not settings.contains('Search slices'):
-        settings.setValue('Search slices', '3')
+    settings.beginGroup("Tomographic Contrast")
+    if not settings.contains("Sphere diameters mm"):
+        settings.setValue("Sphere diameters mm", "(38, 31.8, 25.4, 19.1, 15.9, 12.7)")
+    if not settings.contains("Sphere angles"):
+        settings.setValue("Sphere angles", "(-10, -70, -130, -190, 110, 50)")
+    if not settings.contains("UFOV ratio"):
+        settings.setValue("UFOV ratio", "0.8")
+    if not settings.contains("Search window px"):
+        settings.setValue("Search window px", "5")
+    if not settings.contains("Search slices"):
+        settings.setValue("Search slices", "3")
     settings.endGroup()
 
-    settings.beginGroup('SUV Uptake')
-    if not settings.contains('Sphere diameters mm'):
-        settings.setValue('Sphere diameters mm', '(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)')
-    if not settings.contains('Sphere angles'):
-        settings.setValue('Sphere angles', '(120, 60, 0, -60, -120, -180)')
-    if not settings.contains('Search window px'):
-        settings.setValue('Search window px', '5')
-    if not settings.contains('Search slices'):
-        settings.setValue('Search slices', '3')
-    if not settings.contains('Background vol'):
-        settings.setValue('Background vol', '9400')
-    if not settings.contains('Background dose'):
-        settings.setValue('Background dose', '20')
-    if not settings.contains('Stock vol'):
-        settings.setValue('Stock vol', '1000')
-    if not settings.contains('Stock dose'):
-        settings.setValue('Stock dose', '20')
+    settings.beginGroup("SUV Uptake")
+    if not settings.contains("Sphere diameters mm"):
+        settings.setValue("Sphere diameters mm", "(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)")
+    if not settings.contains("Sphere angles"):
+        settings.setValue("Sphere angles", "(120, 60, 0, -60, -120, -180)")
+    if not settings.contains("Search window px"):
+        settings.setValue("Search window px", "5")
+    if not settings.contains("Search slices"):
+        settings.setValue("Search slices", "3")
+    if not settings.contains("Background vol"):
+        settings.setValue("Background vol", "9400")
+    if not settings.contains("Background dose"):
+        settings.setValue("Background dose", "20")
+    if not settings.contains("Stock vol"):
+        settings.setValue("Stock vol", "1000")
+    if not settings.contains("Stock dose"):
+        settings.setValue("Stock dose", "20")
     settings.endGroup()
 
 
 class TypeChecker:
     def __init__(self, parent=None):
-        self.bool_exp = QRegularExpression('^(true)|(false)$')
+        self.bool_exp = QRegularExpression("^(true)|(false)$")
         assert self.bool_exp.isValid()
         self.bool_exp.setPatternOptions(QRegularExpression.CaseInsensitiveOption)
 
-        self.byteArray_exp = QRegularExpression(r'^[\x00-\xff]*$')
+        self.byteArray_exp = QRegularExpression(r"^[\x00-\xff]*$")
         assert self.byteArray_exp.isValid()
 
-        self.char_exp = QRegularExpression('^.$')
+        self.char_exp = QRegularExpression("^.$")
         assert self.char_exp.isValid()
 
-        pattern = r'^[+-]?\d+$'
+        pattern = r"^[+-]?\d+$"
         self.int_exp = QRegularExpression(pattern)
         assert self.int_exp.isValid()
 
-        pattern = r'^-?(?:\d+\.\d*|\.\d+)(?:[eE][+-]?\d+)?$'
+        pattern = r"^-?(?:\d+\.\d*|\.\d+)(?:[eE][+-]?\d+)?$"
         self.float_exp = QRegularExpression(pattern)
         assert self.float_exp.isValid()
 
-        pattern = r'^\(([0-9]*),([0-9]*),([0-9]*),([0-9]*)\)$'
+        pattern = r"^\(([0-9]*),([0-9]*),([0-9]*),([0-9]*)\)$"
         self.color_exp = QRegularExpression(pattern)
         assert self.color_exp.isValid()
 
-        pattern = r'^\((-?[0-9]*),(-?[0-9]*)\)$'
+        pattern = r"^\((-?[0-9]*),(-?[0-9]*)\)$"
         self.point_exp = QRegularExpression(pattern)
         assert self.point_exp.isValid()
 
-        pattern = r'^\((-?[0-9]*),(-?[0-9]*),(-?[0-9]*),(-?[0-9]*)\)$'
+        pattern = r"^\((-?[0-9]*),(-?[0-9]*),(-?[0-9]*),(-?[0-9]*)\)$"
         self.rect_exp = QRegularExpression(pattern)
         assert self.rect_exp.isValid()
 
         self.size_exp = QRegularExpression(self.point_exp)
 
-        date_pattern = '([0-9]{,4})-([0-9]{,2})-([0-9]{,2})'
-        self.date_exp = QRegularExpression(f'^{date_pattern}$')
+        date_pattern = "([0-9]{,4})-([0-9]{,2})-([0-9]{,2})"
+        self.date_exp = QRegularExpression(f"^{date_pattern}$")
         assert self.date_exp.isValid()
 
-        time_pattern = '([0-9]{,2}):([0-9]{,2}):([0-9]{,2})'
-        self.time_exp = QRegularExpression(f'^{time_pattern}$')
+        time_pattern = "([0-9]{,2}):([0-9]{,2}):([0-9]{,2})"
+        self.time_exp = QRegularExpression(f"^{time_pattern}$")
         assert self.time_exp.isValid()
 
-        pattern = f'^{date_pattern}T{time_pattern}$'
+        pattern = f"^{date_pattern}T{time_pattern}$"
         self.dateTime_exp = QRegularExpression(pattern)
         assert self.dateTime_exp.isValid()
 
@@ -328,11 +328,11 @@ class TypeChecker:
             return QSize(int(match.captured(1)),
                          int(match.captured(2)))
         if isinstance(original_value, list):
-            return text.split(',')
+            return text.split(",")
         if isinstance(original_value, dict):
-            text = text.strip('{}').replace('\"', '').replace('\'', '')
-            pairs = text.split(',')
-            return {key.strip(' '): value.strip(' ') for key, value in (pair.split(':') for pair in pairs)}
+            text = text.strip("{}").replace("\"", "").replace("\'", "")
+            pairs = text.split(",")
+            return {key.strip(" "): value.strip(" ") for key, value in (pair.split(":") for pair in pairs)}
         return type(original_value)(text)
 
 
@@ -401,7 +401,7 @@ class SettingsTree(QTreeWidget):
         ancestor = item.parent()
 
         while ancestor:
-            key = ancestor.text(0) + '/' + key
+            key = ancestor.text(0) + "/" + key
             ancestor = ancestor.parent()
 
         self.settings.setValue(key, item.data(2, Qt.UserRole))
@@ -416,8 +416,8 @@ class SettingsTree(QTreeWidget):
             child_index = self.find_child(parent, group, divider_index)
             if child_index != -1:
                 child = self.child_at(parent, child_index)
-                child.setText(1, '')
-                child.setText(2, '')
+                child.setText(1, "")
+                child.setText(2, "")
                 child.setData(2, Qt.UserRole, None)
                 self.move_item_forward(parent, child_index, divider_index)
             else:
@@ -447,7 +447,7 @@ class SettingsTree(QTreeWidget):
 
             value = self.settings.value(key)
             if value is None:
-                child.setText(1, 'Invalid')
+                child.setText(1, "Invalid")
             else:
                 # Try to convert to type unless a QByteArray is received
                 if isinstance(value, str):
@@ -542,21 +542,21 @@ class VariantDelegate(QItemDelegate):
         elif isinstance(original_value, float):
             editor = MyDoubleSpinBox(parent)
             editor.setRange(-1000, 1000)
-        elif isinstance(original_value, str) and key in ['2D Type', '3D Type', 'MLC Type', 'VMAT test', 'Nuclide', 'Resolution test']:
+        elif isinstance(original_value, str) and key in ["2D Type", "3D Type", "MLC Type", "VMAT test", "Nuclide", "Resolution test"]:
             editor = QComboBox(parent)
             editor.setFrame(False)
             key = index.model().data(index.sibling(index.row(), 0))
-            if key == '2D Type':
+            if key == "2D Type":
                 editor.addItems(phantom2D_list)
-            elif key == '3D Type':
+            elif key == "3D Type":
                 editor.addItems(phantom3D_list)
-            elif key == 'MLC Type':
+            elif key == "MLC Type":
                 editor.addItems(mlc_list)
-            elif key == 'VMAT test':
+            elif key == "VMAT test":
                 editor.addItems(vmat_list)
-            elif key == 'Nuclide':
+            elif key == "Nuclide":
                 editor.addItems(nuclide_list)
-            elif key == 'Resolution test':
+            elif key == "Resolution test":
                 editor.addItems(spatial_res_list)
         else:
             editor = QLineEdit(parent)
@@ -620,33 +620,33 @@ class VariantDelegate(QItemDelegate):
         if isinstance(value, str):
             return value
         if isinstance(value, bool):
-            return '✓' if value else '☐'
+            return "✓" if value else "☐"
         if isinstance(value, (int, float, QByteArray)):
             return str(value)
         if isinstance(value, QColor):
             (r, g, b, a) = (value.red(), value.green(), value.blue(), value.alpha())
-            return f'({r},{g},{b},{a})'
+            return f"({r},{g},{b},{a})"
         if isinstance(value, (QDate, QDateTime, QTime)):
             return value.toString(Qt.ISODate)
         if isinstance(value, QPoint):
             x = value.x()
             y = value.y()
-            return f'({x},{y})'
+            return f"({x},{y})"
         if isinstance(value, QRect):
             x = value.x()
             y = value.y()
             w = value.width()
             h = value.height()
-            return f'({x},{y},{w},{h})'
+            return f"({x},{y},{w},{h})"
         if isinstance(value, QSize):
             w = value.width()
             h = value.height()
-            return f'({w},{h})'
+            return f"({w},{h})"
         if isinstance(value, list):
-            return ','.join(map(repr, value))
+            return ",".join(map(repr, value))
         if isinstance(value, dict):
             return str(value)
         if value is None:
-            return '<Invalid>'
+            return "<Invalid>"
 
-        return f'<{value}>'
+        return f"<{value}>"
