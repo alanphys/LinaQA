@@ -30,32 +30,32 @@ class ColorStatusBar(QStatusBar):
         qsb_color = self.palette().color(QPalette.Base).getRgb()
         mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
         self.setStyleSheet(mystylesheet)
-        self.showMessage('')
+        self.showMessage("")
 
     def status_message(self, status_message):
         # Clear the status bar
         qsb_color = self.palette().color(QPalette.Base).getRgb()
         mystylesheet = f"background-color: {qsb_color}; border-top: 1px outset grey;"
         self.setStyleSheet(mystylesheet)
-        # self.setToolTip(self.toolTip() + '\n' + status_message)
+        # self.setToolTip(self.toolTip() + "\n" + status_message)
         self.showMessage(status_message)
 
     def status_warn(self, status_message):
         mystylesheet = f"background-color: {faint_yellow}; border-top: 1px outset grey;"
         self.setStyleSheet(mystylesheet)
-        self.setToolTip(self.toolTip() + '\n' + status_message)
+        self.setToolTip(self.toolTip() + "\n" + status_message)
         self.showMessage(status_message)
 
     def status_good(self, status_message):
         mystylesheet = f"background-color: {faint_green}; border-top: 1px outset grey;"
         self.setStyleSheet(mystylesheet)
-        self.setToolTip(self.toolTip() + '\n' + status_message)
+        self.setToolTip(self.toolTip() + "\n" + status_message)
         self.showMessage(status_message)
 
     def status_error(self, status_message):
         mystylesheet = f"background-color: {faint_red}; border-top: 1px outset grey;"
         self.setStyleSheet(mystylesheet)
-        self.setToolTip(self.toolTip() + '\n' + status_message)
+        self.setToolTip(self.toolTip() + "\n" + status_message)
         self.showMessage(status_message)
 
 
@@ -91,7 +91,7 @@ class PopupToolbar(QFrame):
     def add_hcontrol(self, label, widget: QWidget=None):
         """Add a labeled control to the popup toolbar"""
         row = QHBoxLayout()
-        if label != '':
+        if label != "":
             row.addWidget(QLabel(label))
         if widget is not None:
             row.addWidget(widget)
@@ -100,7 +100,7 @@ class PopupToolbar(QFrame):
     def add_vcontrol(self, label, widget: QWidget=None):
         """Add a labeled control to the popup toolbar"""
         col = QVBoxLayout()
-        if label != '':
+        if label != "":
             col.addWidget(QLabel(label))
         if widget is not None:
             col.addWidget(widget)
@@ -162,7 +162,7 @@ class PopupToolbar(QFrame):
                         # Check if it's a popup window related to our widgets (like combobox dropdown)
                         for child in self.findChildren(QWidget):
                             # Check for combobox dropdowns and other popups
-                            if hasattr(child, 'view') and callable(child.view):
+                            if hasattr(child, "view") and callable(child.view):
                                 # This is likely a combobox
                                 try:
                                     view = child.view()

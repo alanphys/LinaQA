@@ -6,18 +6,18 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'LinaQA'
-copyright = '2025, AC Chamberlain'
-author = 'AC Chamberlain'
-release = '1.00'
+project = "LinaQA"
+copyright = "2025, AC Chamberlain"
+author = "AC Chamberlain"
+release = "1.00"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = []
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+templates_path = ["_templates"]
+exclude_patterns = ["_build", 'Thumbs.db', '.DS_Store']
 
 
 

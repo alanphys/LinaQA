@@ -89,8 +89,8 @@ class LinaQA(QMainWindow):
         self.changed = False
         self.mouse_last_pos = None
         self.filenames = []
-        self.ref_filename = ''
-        self.working_dir = ''
+        self.ref_filename = ""
+        self.working_dir = ""
         self.zip_dir = None
         self.source_model = None
         self.proxy_model = None
@@ -100,10 +100,10 @@ class LinaQA(QMainWindow):
         self.ui = Ui_LinaQAForm()
         self.ui.setupUi(self)
         self.settings = QSettings()
-        if self.settings.contains('Window/Size'):
-            self.resize(self.settings.value('Window/Size'))
-        if self.settings.contains('Window/Position'):
-            self.move(self.settings.value('Window/Position'))
+        if self.settings.contains("Window/Size"):
+            self.resize(self.settings.value("Window/Size"))
+        if self.settings.contains("Window/Position"):
+            self.move(self.settings.value("Window/Position"))
         set_default_settings(self.settings)
 
         # create popups for tool buttons
@@ -186,32 +186,32 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.currentChanged.connect(self.tab_changed)
 
         # prepare ui
-        self.setWindowTitle(f'LinaQA v{version}')
+        self.setWindowTitle(f"LinaQA v{version}")
         self.ui.treeView.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.ui.tabWidget.setTabVisible(1, False)
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
         self.ui.tabWidget.setTabVisible(4, False)
         self.ui.tabWidget.setTabVisible(5, False)
-        self.ui.action_Scale_LUT.setChecked(self.settings.value('PyDicom/Use rescale', False, type=bool))
-        self.ui.action_Rx_Toolbar.setChecked(self.settings.value('Window/Show Rx Toolbar', True, type=bool))
+        self.ui.action_Scale_LUT.setChecked(self.settings.value("PyDicom/Use rescale", False, type=bool))
+        self.ui.action_Rx_Toolbar.setChecked(self.settings.value("Window/Show Rx Toolbar", True, type=bool))
         self.show_rx_toolbar()
-        self.ui.action_DICOM_tags.setChecked(self.settings.value('Window/Show DCM Toolbar', False, type=bool))
+        self.ui.action_DICOM_tags.setChecked(self.settings.value("Window/Show DCM Toolbar", False, type=bool))
         self.show_dicom_toolbar()
-        self.ui.action_Dx_Toolbar.setChecked(self.settings.value('Window/Show Dx Toolbar', False, type=bool))
+        self.ui.action_Dx_Toolbar.setChecked(self.settings.value("Window/Show Dx Toolbar", False, type=bool))
         self.show_dx_toolbar()
-        self.ui.action_NM_Toolbar.setChecked(self.settings.value('Window/Show NM Toolbar', False, type=bool))
+        self.ui.action_NM_Toolbar.setChecked(self.settings.value("Window/Show NM Toolbar", False, type=bool))
         self.show_nm_toolbar()
-        self.ui.statusbar.status_good('LinaQA initialised correctly. Open DICOM file or drag and drop')
+        self.ui.statusbar.status_good("LinaQA initialised correctly. Open DICOM file or drag and drop")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # User interface routines
 # ---------------------------------------------------------------------------------------------------------------------
     def closeEvent(self, event):
-        self.settings.setValue('Window/Size', self.size())
-        self.settings.setValue('Window/Position', self.pos())
+        self.settings.setValue("Window/Size", self.size())
+        self.settings.setValue("Window/Position", self.pos())
         if self.is_changed:
-            reply = QMessageBox.question(self, 'Quit', 'You have made changes. Are you sure you want to quit?',
+            reply = QMessageBox.question(self, "Quit", "You have made changes. Are you sure you want to quit?",
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
             if reply == QMessageBox.Yes:
                 event.accept()
@@ -221,22 +221,22 @@ class LinaQA(QMainWindow):
     def open_image(self, filenames, force_read: bool = False):
         num_total = len(filenames)
         num_bad = 0
-        first_modality = ''
+        first_modality = ""
         frames = 0
-        sorted_method = 'None'
+        sorted_method = "None"
 
         # Clear non-dicom files
         datasets = []
         # we have to treat the first file separately to get the image modality
         try:
             ds = pydicom.dcmread(filenames[0], force=force_read)
-            if 'TransferSyntaxUID' not in ds.file_meta:
+            if "TransferSyntaxUID" not in ds.file_meta:
                 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-            if 'SpacingBetweenSlices' not in ds:
-                ds.SpacingBetweenSlices = ds.SliceThickness if 'SliceThickness' in ds else 1
-            if 'Modality' in ds:
+            if "SpacingBetweenSlices" not in ds:
+                ds.SpacingBetweenSlices = ds.SliceThickness if "SliceThickness" in ds else 1
+            if "Modality" in ds:
                 first_modality = ds.Modality
-            frames = ds.NumberOfFrames if 'NumberOfFrames' in ds else 1
+            frames = ds.NumberOfFrames if "NumberOfFrames" in ds else 1
             if ds.file_meta.TransferSyntaxUID.is_compressed:
                 ds.decompress()
             datasets.append(ds)
@@ -250,14 +250,14 @@ class LinaQA(QMainWindow):
             for file in filenames[1:]:
                 try:
                     ds = pydicom.dcmread(file, force=force_read)
-                    if 'TransferSyntaxUID' not in ds.file_meta:
+                    if "TransferSyntaxUID" not in ds.file_meta:
                         ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-                    if 'SpacingBetweenSlices' not in ds:
-                        ds.SpacingBetweenSlices = ds.SliceThickness if hasattr(ds, 'SliceThickness') else 1
+                    if "SpacingBetweenSlices" not in ds:
+                        ds.SpacingBetweenSlices = ds.SliceThickness if hasattr(ds, "SliceThickness") else 1
                     modality = ds.Modality
-                    frames = ds.NumberOfFrames if 'NumberOfFrames' in ds else 1
+                    frames = ds.NumberOfFrames if "NumberOfFrames" in ds else 1
                     # cannot mix modalities or multi frame images
-                    if (modality != first_modality) or (frames > 1) or not hasattr(ds, 'PixelData'):
+                    if (modality != first_modality) or (frames > 1) or not hasattr(ds, "PixelData"):
                         raise pydicom.errors.InvalidDicomError
                     if ds.file_meta.TransferSyntaxUID.is_compressed:
                         ds.decompress()
@@ -303,21 +303,21 @@ class LinaQA(QMainWindow):
                 # self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
                 #                   if os.path.isfile(os.path.join(dir_path, file_name))]
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
-                                  if osp.splitext(file_name)[1] in ['.dcm', '.DCM', '.ima', '.IMA', '.2']]
+                                  if osp.splitext(file_name)[1] in [".dcm", ".DCM", ".ima", ".IMA", ".2"]]
             # check if file is archive
-            elif osp.splitext(self.filenames[0])[1] == '.zip':
+            elif osp.splitext(self.filenames[0])[1] == ".zip":
                 self.zip_dir = TemporaryZipDirectory(self.filenames[0], delete=False)
                 dir_path = self.zip_dir.name
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
                                   if os.path.isfile(os.path.join(dir_path, file_name))]
         # is the file a DICOM file?
         self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
-        force_open = self.settings.value('PyDicom/Force', False, type=bool)
+        force_open = self.settings.value("PyDicom/Force", False, type=bool)
         if pydicom.misc.is_dicom(self.filenames[0]) or force_open:
             self.open_image(self.filenames, force_open)
             # does the file have a recognised image format?
             if ((self.imager.datasets[0].Modality in supported_modalities)
-                    and hasattr(self.imager.datasets[0], 'PixelData')):
+                    and hasattr(self.imager.datasets[0], "PixelData")):
                 self.tab_changed(0)
                 self.edit_pixel_data()
                 update_popups(self)
@@ -344,64 +344,64 @@ class LinaQA(QMainWindow):
         else:
             dirpath = self.working_dir
         ostype = system()
-        if ostype == 'Windows':
-            file_filter = ('DICOM files (*.dcm *.2 *.img *.ima);;'
-                           'ZIP files (*.zip);;'
-                           'Machine log files (*.bin *.txt);;'
-                           'All files (*.*)')
+        if ostype == "Windows":
+            file_filter = ("DICOM files (*.dcm *.2 *.img *.ima);;"
+                           "ZIP files (*.zip);;"
+                           "Machine log files (*.bin *.txt);;"
+                           "All files (*.*)")
         else:
-            file_filter = ('DICOM files (*.dcm *.2 *.img *.ima);;'
-                           'ZIP files (*.zip);;'
-                           'Machine log files (*.bin *.txt);;'
-                           'All files (*)')
-        self.filenames = QFileDialog.getOpenFileNames(self, 'Open DICOM file', dirpath, file_filter)[0]
+            file_filter = ("DICOM files (*.dcm *.2 *.img *.ima);;"
+                           "ZIP files (*.zip);;"
+                           "Machine log files (*.bin *.txt);;"
+                           "All files (*)")
+        self.filenames = QFileDialog.getOpenFileNames(self, "Open DICOM file", dirpath, file_filter)[0]
         if len(self.filenames) > 0:
             self.open_file()
 
     def save_file(self):
         if self.imager:
             ds = self.imager.datasets[self.imager.index]
-            if hasattr(ds, 'pixel_array'):
+            if hasattr(ds, "pixel_array"):
                 arr = ds.pixel_array
                 ds.PixelData = arr.tobytes()
             ds.save_as(ds.filename, True)
             self.is_changed = False
-            self.ui.statusbar.status_message('File saved')
+            self.ui.statusbar.status_message("File saved")
 
     def save_file_as(self):
         self.ui.statusbar.status_clear()
         dirpath = osp.dirname(osp.realpath(self.filenames[self.imager.index]))
         ostype = system()
-        if ostype == 'Windows':
-            filename = QFileDialog.getSaveFileName(self, 'Save DICOM file', dirpath,
-                                                         'DICOM files (*.dcm);;All files (*.*)')[0]
+        if ostype == "Windows":
+            filename = QFileDialog.getSaveFileName(self, "Save DICOM file", dirpath,
+                                                         "DICOM files (*.dcm);;All files (*.*)")[0]
         else:
-            filename = QFileDialog.getSaveFileName(self, 'Save DICOM file', dirpath,
-                                                         'DICOM files (*.dcm);;All files (*)')[0]
-        if self.imager and filename != '':
+            filename = QFileDialog.getSaveFileName(self, "Save DICOM file", dirpath,
+                                                         "DICOM files (*.dcm);;All files (*)")[0]
+        if self.imager and filename != "":
             ds = self.imager.datasets[self.imager.index]
-            if hasattr(ds, 'pixel_array'):
+            if hasattr(ds, "pixel_array"):
                 arr = ds.pixel_array
                 ds.PixelData = arr.tobytes()
             ds.save_as(filename, True)
             self.is_changed = False
-            self.ui.statusbar.status_message('File save as ' + filename)
+            self.ui.statusbar.status_message("File save as " + filename)
 
     def save_all(self):
         self.ui.statusbar.status_clear()
         dirpath = osp.dirname(osp.realpath(self.filenames[self.imager.index]))
         ostype = system()
-        dirpath = QFileDialog.getExistingDirectory(self, 'Choose directory to save files to', dirpath)
-        if self.imager and dirpath != '':
+        dirpath = QFileDialog.getExistingDirectory(self, "Choose directory to save files to", dirpath)
+        if self.imager and dirpath != "":
             for i, ds in enumerate(self.imager.datasets):
-                if hasattr(ds, 'pixel_array'):
+                if hasattr(ds, "pixel_array"):
                     arr = ds.pixel_array
                     ds.PixelData = arr.tobytes()
                 filename = osp.basename(self.filenames[i])
-                filename = osp.splitext(filename)[0] + '_un.dcm'
+                filename = osp.splitext(filename)[0] + "_un.dcm"
                 ds.save_as(osp.join(dirpath, filename), True)
             self.is_changed = False
-            self.ui.statusbar.status_message(f'{i} images saved in ' + dirpath)
+            self.ui.statusbar.status_message(f"{i} images saved in " + dirpath)
 
     @staticmethod
     def show_image(numpy_array, label: QLabel):
@@ -420,17 +420,17 @@ class LinaQA(QMainWindow):
 
     @staticmethod
     def linaqa_help():
-        rel_path = 'html/index.html'
+        rel_path = "html/index.html"
         abs_path = osp.abspath(rel_path)
-        webbrowser.open(f'file://{abs_path}')
+        webbrowser.open(f"file://{abs_path}")
 
     @staticmethod
     def pydicom_help():
-        webbrowser.open('https://pydicom.github.io/pydicom/stable/')
+        webbrowser.open("https://pydicom.github.io/pydicom/stable/")
 
     @staticmethod
     def pylinac_help():
-        webbrowser.open('https://pylinac.readthedocs.io/en/latest/')
+        webbrowser.open("https://pylinac.readthedocs.io/en/latest/")
 
     def show_settings(self):
         if self.ui.action_Settings.isChecked():
@@ -516,7 +516,7 @@ class LinaQA(QMainWindow):
             self.filenames = []
             for url in urls:
                 if url != "":
-                    filename = url.split('/', 2)[2]
+                    filename = url.split("/", 2)[2]
                     if filename != "":
                         self.filenames.append(filename)
             if self.filenames:
@@ -535,7 +535,7 @@ class LinaQA(QMainWindow):
         if self.imager:
             if (index == 0) and (self.imager is not None):
                 if self.old_tab == 3:
-                    if hasattr(self.imager.datasets[self.imager.index], 'pixel_array'):
+                    if hasattr(self.imager.datasets[self.imager.index], "pixel_array"):
                         self.imager.datasets[self.imager.index].PixelData = (
                             self.imager.datasets[self.imager.index].pixel_array.tobytes())
                         self.imager.load_pixel_data(self.imager.datasets)
@@ -560,26 +560,26 @@ class LinaQA(QMainWindow):
         else:
             self.ui.tabWidget.setTabVisible(4, False)
 
-    def show_results(self, test, filename=''):
-        if filename == '':
+    def show_results(self, test, filename=""):
+        if filename == "":
             if len(self.filenames) == 1:
-                filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+                filename = osp.splitext(self.filenames[0])[0] + ".pdf"
             elif len(self.filenames) > 1:
-                filename = test._model + ' Analysis.pdf' if hasattr(test, '_model') else 'Analysis.pdf'
+                filename = test._model + " Analysis.pdf" if hasattr(test, "_model") else "Analysis.pdf"
                 filename = osp.join(self.working_dir, filename)
         if osp.exists(filename):
             QApplication.restoreOverrideCursor()
             filename = QFileDialog.getSaveFileName(self, "File exists, save file as:", filename, "PDF files (*.pdf)")[0]
         if len(filename) > 0:
-            notes = self.ui.pte_notes.toPlainText().split('\n') if self.ui.pte_notes.toPlainText() != '' else None
+            notes = self.ui.pte_notes.toPlainText().split("\n") if self.ui.pte_notes.toPlainText() != "" else None
             test.publish_pdf(filename,
                              notes=notes,
-                             metadata=self.settings.value('General/Metadata'),
-                             logo=self.settings.value('General/Logo'))
+                             metadata=self.settings.value("General/Metadata"),
+                             logo=self.settings.value("General/Logo"))
             if open_path(filename):
-                self.ui.statusbar.status_message('Results displayed in PDF')
+                self.ui.statusbar.status_message("Results displayed in PDF")
             else:
-                self.ui.statusbar.status_error('No reader to open document')
+                self.ui.statusbar.status_error("No reader to open document")
         else:
             self.ui.statusbar.status_warn("Results not saved.")
 
@@ -622,9 +622,9 @@ class LinaQA(QMainWindow):
                 self.source_model = QStandardItemModel()
                 self.proxy_model = QSortFilterProxyModel()
             font = QFont()
-            if os == 'Linux':
+            if os == "Linux":
                 font.setFamily("Monospace")
-            elif os == 'Windows':
+            elif os == "Windows":
                 font.setFamily("Courier New")
             else:
                 font.setFamily("Courier")
@@ -685,7 +685,7 @@ class LinaQA(QMainWindow):
 
     def copy_tag(self):
         clipboard = QApplication.clipboard()
-        selected_tags = ''
+        selected_tags = ""
         indexes = self.ui.treeView.selectedIndexes()
 
         # Sort indexes by row to maintain order
@@ -699,7 +699,7 @@ class LinaQA(QMainWindow):
 
         sorted_indexes = sorted(indexes, key=get_hierarchical_path)
         for index in sorted_indexes:
-            selected_tags = selected_tags + self.ui.treeView.model().itemData(index)[0] + '\n'
+            selected_tags = selected_tags + self.ui.treeView.model().itemData(index)[0] + "\n"
         clipboard.setText(selected_tags)
 
     def selectall_tags(self):
@@ -720,37 +720,37 @@ class LinaQA(QMainWindow):
             self.ui.fsearchbar.setEnabled(True)
             self.ui.fsearchbar.activateWindow()
             self.ui.qle_filter_tag.setFocus()
-            self.ui.action_Find_tag.setText('Hide &Filter bar')
+            self.ui.action_Find_tag.setText("Hide &Filter bar")
         else:
-            self.ui.qle_filter_tag.setText('')
+            self.ui.qle_filter_tag.setText("")
             self.ui.fsearchbar.setVisible(False)
             self.ui.fsearchbar.setEnabled(False)
-            self.ui.action_Find_tag.setText('Show &Filter bar')
+            self.ui.action_Find_tag.setText("Show &Filter bar")
 
     def filter_tag(self):
         """Select tags that contain requested text"""
         tag_to_find = self.ui.qle_filter_tag.text()
-        if tag_to_find != '':
+        if tag_to_find != "":
             self.proxy_model.setFilterKeyColumn(-1)
             self.proxy_model.setRecursiveFilteringEnabled(True)
             self.proxy_model.setFilterRegularExpression(tag_to_find)
         else:
-            self.proxy_model.setFilterRegularExpression('')
+            self.proxy_model.setFilterRegularExpression("")
 
     def insert_tag(self):
-        self.ui.statusbar.status_warn('Inserting a DICOM tag may corrupt the file!')
+        self.ui.statusbar.status_warn("Inserting a DICOM tag may corrupt the file!")
 
         # get path for tag insertion
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_parent = source_index
         tag_group, _, _, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
-        if tag_group != '':                 # tag is leaf and we must select parent
+        if tag_group != "":                 # tag is leaf and we must select parent
             tag_parent = source_index.parent()
-        tag_path = ''
+        tag_path = ""
         while tag_parent.data(Qt.DisplayRole) is not None:
             _, _, parent_lable, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
-            tag_path = parent_lable + '.' + tag_path
+            tag_path = parent_lable + "." + tag_path
             tag_parent = tag_parent.parent()
         tag_path = tag_path.replace(" ", "")
 
@@ -760,38 +760,38 @@ class LinaQA(QMainWindow):
         input_dlg = QInputDialog(self)
         input_dlg.setInputMode(QInputDialog.TextInput)
         input_dlg.resize(500, 100)
-        input_dlg.setLabelText('Create new tag as: (Group, Element) Keyword VR: Value')
-        input_dlg.setTextValue('')
-        input_dlg.setWindowTitle('Insert DICOM tag')
+        input_dlg.setLabelText("Create new tag as: (Group, Element) Keyword VR: Value")
+        input_dlg.setTextValue("")
+        input_dlg.setWindowTitle("Insert DICOM tag")
         ok = input_dlg.exec_()
         tag_text = input_dlg.textValue()
 
-        if ok and tag_text != '':
+        if ok and tag_text != "":
             tag_group, tag_element, tag_keyword, tag_vr, tag_value = text_to_tag(tag_text)
-            if tag_group == '0x0002':
-                tag_header = 'file_meta.'
+            if tag_group == "0x0002":
+                tag_header = "file_meta."
             else:
-                tag_header = ''
+                tag_header = ""
             tag_path = (tag_header + tag_path.replace(" ", "") +
                         tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "").replace("-", ""))
-            if tag_vr == 'DS':
-                if tag_text[0] == '[':
-                    tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(',')
+            if tag_vr == "DS":
+                if tag_text[0] == "[":
+                    tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(",")
             try:
                 set_dot_attr(ds, tag_path, tag_value)
                 self.show_tree()
                 self.is_changed = True
-                self.ui.statusbar.status_message('Inserted ' + tag_path + ' (' + tag_group + ', ' + tag_element + ') '
-                                    + tag_keyword + ' ' + tag_vr + ':' + tag_value)
+                self.ui.statusbar.status_message("Inserted " + tag_path + " (" + tag_group + ", " + tag_element + ") "
+                                    + tag_keyword + " " + tag_vr + ":" + tag_value)
             except AttributeError:
-                self.ui.statusbar.status_error('Could not insert ' + tag_path + '.')
+                self.ui.statusbar.status_error("Could not insert " + tag_path + ".")
 
             except TypeError:
-                self.ui.statusbar.status_error('You may not insert a tag as a sequence.')
+                self.ui.statusbar.status_error("You may not insert a tag as a sequence.")
 
     def edit_tag(self):
         # get current tag
-        self.ui.statusbar.status_warn('Editing a DICOM tag may corrupt the file!')
+        self.ui.statusbar.status_warn("Editing a DICOM tag may corrupt the file!")
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_text = source_index.data(Qt.DisplayRole)
@@ -799,17 +799,17 @@ class LinaQA(QMainWindow):
             tag_group, tag_element, tag_keyword, tag_vr, _ = text_to_tag(tag_text)
 
             # get tag parents if any
-            tag_path = ''
+            tag_path = ""
             tag_parent = source_index.parent()
             while tag_parent.data(Qt.DisplayRole) is not None:
                 _, _, parent_lable, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
-                tag_path = parent_lable + '.' + tag_path
+                tag_path = parent_lable + "." + tag_path
                 tag_parent = tag_parent.parent()
-            if tag_group == '0x0002':
-                tag_header = 'file_meta.'
+            if tag_group == "0x0002":
+                tag_header = "file_meta."
             else:
-                tag_header = ''
-            label = 'Change value for ' + tag_path + '(' + tag_group + ', ' + tag_element + ') ' + tag_keyword + ' ' + tag_vr + ':'
+                tag_header = ""
+            label = "Change value for " + tag_path + "(" + tag_group + ", " + tag_element + ") " + tag_keyword + " " + tag_vr + ":"
             tag_path = (tag_header + tag_path.replace(" ", "") +
                         tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "").replace("-", ""))
 
@@ -824,28 +824,28 @@ class LinaQA(QMainWindow):
             input_dlg.resize(500, 100)
             input_dlg.setLabelText(label)
             input_dlg.setTextValue(str(orig_tag_value))
-            input_dlg.setWindowTitle('Change DICOM tag')
+            input_dlg.setWindowTitle("Change DICOM tag")
             ok = input_dlg.exec_()
             tag_text = input_dlg.textValue()
 
             # store changed tag
-            if ok and tag_text != '':
-                if tag_vr == 'DS':
-                    if tag_text[0] == '[':
-                        tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(',')
+            if ok and tag_text != "":
+                if tag_vr == "DS":
+                    if tag_text[0] == "[":
+                        tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(",")
                 try:
                     set_dot_attr(ds, tag_path, tag_text)
                     self.show_tree()
                     self.is_changed = True
-                    self.ui.statusbar.status_message('Changed ' + tag_path + ' to ' + tag_text)
+                    self.ui.statusbar.status_message("Changed " + tag_path + " to " + tag_text)
                 except AttributeError:
-                    self.ui.statusbar.status_error('Could not change ' + tag_path)
+                    self.ui.statusbar.status_error("Could not change " + tag_path)
         else:
-            self.ui.statusbar.status_warn('No tag selected!')
+            self.ui.statusbar.status_warn("No tag selected!")
 
     @show_wait_cursor
     def del_tag(self):
-        self.ui.statusbar.status_warn('Editing a DICOM tag may corrupt the file!')
+        self.ui.statusbar.status_warn("Editing a DICOM tag may corrupt the file!")
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_text = source_index.data(Qt.DisplayRole)
@@ -853,16 +853,16 @@ class LinaQA(QMainWindow):
             tag_group, _, tag_keyword, _, _ = text_to_tag(tag_text)
 
             # get tag parents if any
-            tag_path = ''
+            tag_path = ""
             tag_parent = source_index.parent()
             while tag_parent.data(Qt.DisplayRole) is not None:
                 _, _, parent_lable, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
-                tag_path = parent_lable + '.' + tag_path
+                tag_path = parent_lable + "." + tag_path
                 tag_parent = tag_parent.parent()
-            if tag_group == '0x0002':
-                tag_header = 'file_meta.'
+            if tag_group == "0x0002":
+                tag_header = "file_meta."
             else:
-                tag_header = ''
+                tag_header = ""
             tag_path = (tag_header + tag_path.replace(" ", "") +
                         tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "")).replace("-", "")
 
@@ -872,11 +872,11 @@ class LinaQA(QMainWindow):
                 del_dot_attr(ds, tag_path)
                 self.show_tree()
                 self.is_changed = True
-                self.ui.statusbar.status_message('Deleted ' + tag_path)
+                self.ui.statusbar.status_message("Deleted " + tag_path)
             except AttributeError:
-                self.ui.statusbar.status_error('Could not delete ' + tag_path)
+                self.ui.statusbar.status_error("Could not delete " + tag_path)
         else:
-            self.ui.statusbar.status_warn('No tag selected!')
+            self.ui.statusbar.status_warn("No tag selected!")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Radiotherapy analysis
@@ -891,17 +891,17 @@ class LinaQA(QMainWindow):
             # if not fall back to stream
             streams = datasets_to_stream(self.imager.datasets)
         param_list = {}
-        if self.ui.cbCatPhan.currentText() == 'QuartDVT':
+        if self.ui.cbCatPhan.currentText() == "QuartDVT":
             cat = QuartDVT(streams)
-        elif self.ui.cbCatPhan.currentText() == 'ACR CT':
+        elif self.ui.cbCatPhan.currentText() == "ACR CT":
             cat = ACRCT(streams)
-        elif self.ui.cbCatPhan.currentText() == 'ACR MRI':
+        elif self.ui.cbCatPhan.currentText() == "ACR MRI":
             cat = ACRMRILarge(streams)
         else:
             cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
-            param_list = {"hu_tolerance": int(self.settings.value('3D Phantoms/HU Tolerance')),
-                          "thickness_tolerance": float(self.settings.value('3D Phantoms/Thickness Tolerance')),
-                          "scaling_tolerance": float(self.settings.value('3D Phantoms/Scaling Tolerance'))}
+            param_list = {"hu_tolerance": int(self.settings.value("3D Phantoms/HU Tolerance")),
+                          "thickness_tolerance": float(self.settings.value("3D Phantoms/Thickness Tolerance")),
+                          "scaling_tolerance": float(self.settings.value("3D Phantoms/Scaling Tolerance"))}
         if self.imager.invflag:
             for im in cat.dicom_stack.images:
                 im.invert()
@@ -912,15 +912,15 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def analyse_picket_fence(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
-        if self.settings.value('Picket Fence/Apply median filter', False, type=bool):
+        if self.settings.value("Picket Fence/Apply median filter", False, type=bool):
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText(), filter=3)
         else:
             pf = picketfence.PicketFence(stream, mlc=self.ui.cbMLC.currentText())
 
         # get settings
-        tolerance = self.settings.value('Picket Fence/Leaf Tolerance', 0.5, type=float)
-        action_tolerance = self.settings.value('Picket Fence/Leaf Action', 0.25, type=float)
-        num_pickets = self.settings.value('Picket Fence/Number of pickets', 0, type=int)
+        tolerance = self.settings.value("Picket Fence/Leaf Tolerance", 0.5, type=float)
+        action_tolerance = self.settings.value("Picket Fence/Leaf Action", 0.25, type=float)
+        num_pickets = self.settings.value("Picket Fence/Number of pickets", 0, type=int)
         picket_spacing = self.settings.value("Picket Fence/Picket Spacing", 0, type=int)
         try:
             pf.analyze(tolerance=tolerance,
@@ -931,7 +931,7 @@ class LinaQA(QMainWindow):
             self.show_results(pf)
         except ValueError:
             # if it throws an exception fall back to this as per issue #470
-            self.ui.statusbar.status_warn('Could not analyze picket fence as is. Trying fallback method.')
+            self.ui.statusbar.status_warn("Could not analyze picket fence as is. Trying fallback method.")
             pf.analyze(tolerance=tolerance,
                        action_tolerance=None if action_tolerance == 0 else action_tolerance,
                        num_pickets=None if num_pickets == 0 else num_pickets,
@@ -948,9 +948,9 @@ class LinaQA(QMainWindow):
         if self.imager.invflag:
             for im in wl.images:
                 im.invert()
-        wl.analyze(bb_size_mm=float(self.settings.value('Winston-Lutz/BB Size')),
-                   open_field=self.settings.value('Winston-Lutz/Open field', False, type=bool),
-                   low_density_bb=self.settings.value('Winston-Lutz/Low density BB', False, type=bool))
+        wl.analyze(bb_size_mm=float(self.settings.value("Winston-Lutz/BB Size")),
+                   open_field=self.settings.value("Winston-Lutz/Open field", False, type=bool),
+                   low_density_bb=self.settings.value("Winston-Lutz/Low density BB", False, type=bool))
         self.show_results(wl)
 
     @check_valid_image
@@ -958,20 +958,20 @@ class LinaQA(QMainWindow):
     def analyse_2d_phantoms(self):
         stream = dataset_to_stream(self.imager.datasets[self.imager.index])
         phantom_class = [obj for name, obj in inspect.getmembers(planar_imaging)
-                         if hasattr(obj, 'common_name') and obj.common_name == self.ui.cbPhan2D.currentText()]
+                         if hasattr(obj, "common_name") and obj.common_name == self.ui.cbPhan2D.currentText()]
         phan = phantom_class[0](stream)
         phan.analyze(
-            low_contrast_threshold=float(self.settings.value('2D Phantoms/Low contrast threshold')),
-            high_contrast_threshold=float(self.settings.value('2D Phantoms/High contrast threshold')),
+            low_contrast_threshold=float(self.settings.value("2D Phantoms/Low contrast threshold")),
+            high_contrast_threshold=float(self.settings.value("2D Phantoms/High contrast threshold")),
             invert=self.imager.invflag,
             angle_override=(None if self.ui.sbAngle.value() == 0
                             else self.ui.sbAngle.value()),
             center_override=(None if self.ui.sbCentreX.value() == 0 and self.ui.sbCentreY.value() == 0
                              else (self.ui.sbCentreX.value(), self.ui.sbCentreY.value())),
-            size_override=(None if self.settings.value('2D Phantoms/Size override') == '0'
-                           else float(self.settings.value('2D Phantoms/Size override'))),
-            ssd=('auto' if self.settings.value('2D Phantoms/SSD') == '1000'
-                 else float(self.settings.value('2D Phantoms/SSD'))))
+            size_override=(None if self.settings.value("2D Phantoms/Size override") == "0"
+                           else float(self.settings.value("2D Phantoms/Size override"))),
+            ssd=("auto" if self.settings.value("2D Phantoms/SSD") == "1000"
+                 else float(self.settings.value("2D Phantoms/SSD"))))
         self.show_results(phan)
 
     @check_valid_image
@@ -981,45 +981,45 @@ class LinaQA(QMainWindow):
         try:
             ref_stream = dataset_to_stream(self.ref_imager.datasets[self.imager.index])
             images = (stream, ref_stream)
-            if self.ui.cbVMAT.currentText() == 'DRGS':
+            if self.ui.cbVMAT.currentText() == "DRGS":
                 v = vmat.DRGS(image_paths=images)
-            elif self.ui.cbVMAT.currentText() == 'DRMLC':
+            elif self.ui.cbVMAT.currentText() == "DRMLC":
                 v = vmat.DRMLC(image_paths=images)
-            elif self.ui.cbVMAT.currentText() == 'DRCS':
+            elif self.ui.cbVMAT.currentText() == "DRCS":
                 v = vmat.DRCS(image_paths=images)
-            v.analyze(tolerance=float(self.settings.value('VMAT/Tolerance')))
+            v.analyze(tolerance=float(self.settings.value("VMAT/Tolerance")))
             v.open_image.base_path = self.filenames[0]
             v.dmlc_image.base_path = self.ref_filename
             self.show_results(v)
         except AttributeError:
-            self.ui.statusbar.status_error('No reference image defined. Please open a reference image.')
+            self.ui.statusbar.status_error("No reference image defined. Please open a reference image.")
 
     @show_wait_cursor
     # we can't check if image is valid yet as we can have a jpeg image
     def analyse_star(self):
         filename, ext = osp.splitext(self.filenames[0])
         if len(self.filenames) == 1:
-            if ext == '.zip':
+            if ext == ".zip":
                 star = starshot.Starshot.from_zip(self.filenames[0],
-                                                  sid=float(self.settings.value('Star shot/SID')),
-                                                  dpi=float(self.settings.value('Star shot/DPI')))
+                                                  sid=float(self.settings.value("Star shot/SID")),
+                                                  dpi=float(self.settings.value("Star shot/DPI")))
             else:
                 star = starshot.Starshot(self.filenames[0],
-                                         sid=float(self.settings.value('Star shot/SID')),
-                                         dpi=float(self.settings.value('Star shot/DPI')))
+                                         sid=float(self.settings.value("Star shot/SID")),
+                                         dpi=float(self.settings.value("Star shot/DPI")))
         else:
             star = starshot.Starshot.from_multiple_images(self.filenames,
-                                                          sid=float(self.settings.value('Star shot/SID')),
-                                                          dpi=float(self.settings.value('Star shot/DPI')))
+                                                          sid=float(self.settings.value("Star shot/SID")),
+                                                          dpi=float(self.settings.value("Star shot/DPI")))
         try:
-            star.analyze(radius=float(self.settings.value('Star shot/Normalised analysis radius')),
-                         tolerance=float(self.settings.value('Star shot/Tolerance')),
-                         recursive=self.settings.value('Star shot/Recursive analysis', False, type=bool),
+            star.analyze(radius=float(self.settings.value("Star shot/Normalised analysis radius")),
+                         tolerance=float(self.settings.value("Star shot/Tolerance")),
+                         recursive=self.settings.value("Star shot/Recursive analysis", False, type=bool),
                          invert=self.imager.invflag if self.imager is not None else None)
-            filename = filename + '.pdf'
+            filename = filename + ".pdf"
             self.show_results(star, filename)
         except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f"Could not analyze image(s). Reason: {repr(e)}")
 
     @show_wait_cursor
     def analyse_log(self):
@@ -1027,7 +1027,7 @@ class LinaQA(QMainWindow):
             log = log_analyzer.load_log(self.filenames[0])
             self.show_results(log)
         except Exception as e:
-            self.ui.statusbar.status_error(f'Could not analyze log. Reason: {repr(e)}')
+            self.ui.statusbar.status_error(f"Could not analyze log. Reason: {repr(e)}")
 
     @check_valid_image
     @show_wait_cursor
@@ -1043,24 +1043,24 @@ class LinaQA(QMainWindow):
                 eval_img.normalize()
                 ref_img.normalize()
                 gamma = eval_img.gamma(comparison_image=ref_img,
-                                       doseTA=self.settings.value('Gamma Analysis/Dose to agreement', 2.0, type=float),
-                                       distTA=self.settings.value('Gamma Analysis/Distance to agreement', 2.0, type=float),
-                                       threshold=self.settings.value('Gamma Analysis/Dose threshold', 0.05, type=float))
+                                       doseTA=self.settings.value("Gamma Analysis/Dose to agreement", 2.0, type=float),
+                                       distTA=self.settings.value("Gamma Analysis/Distance to agreement", 2.0, type=float),
+                                       threshold=self.settings.value("Gamma Analysis/Dose threshold", 0.05, type=float))
                 gamma_plot = plt.imshow(gamma)
-                gamma_plot.set_cmap('bwr')
-                plt.title(f'Gamma Analysis ({self.settings.value("Gamma Analysis/Dose to agreement")}'
-                          f'%/{self.settings.value("Gamma Analysis/Distance to agreement")}mm)')
-                plt.ylabel('Distance (pixels)')
-                plt.xlabel('Distance (pixels)')
+                gamma_plot.set_cmap("bwr")
+                plt.title(f"Gamma Analysis ({self.settings.value('Gamma Analysis/Dose to agreement')}"
+                          f"%/{self.settings.value('Gamma Analysis/Distance to agreement')}mm)")
+                plt.ylabel("Distance (pixels)")
+                plt.xlabel("Distance (pixels)")
                 plt.colorbar()
-                plt.clim(0, self.settings.value('Gamma Analysis/Gamma cap', 2.0, type=float))
+                plt.clim(0, self.settings.value("Gamma Analysis/Gamma cap", 2.0, type=float))
     #            plt.show()
-                filename = osp.splitext(self.filenames[0])[0] + '.pdf'
+                filename = osp.splitext(self.filenames[0])[0] + ".pdf"
                 canvas = pdf.PylinacCanvas(filename,
-                                           page_title='Gamma analysis',
-                                           metadata=self.settings.value('General/Metadata'),
-                                           logo=self.settings.value('General/Logo'))
-                notes = self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != '' else None,
+                                           page_title="Gamma analysis",
+                                           metadata=self.settings.value("General/Metadata"),
+                                           logo=self.settings.value("General/Logo"))
+                notes = self.ui.pte_notes.toPlainText() if self.ui.pte_notes.toPlainText() != "" else None,
                 if notes is not None:
                     canvas.add_text(text="Notes:", location=(1, 4.5), font_size=14)
                     canvas.add_text(text=notes, location=(1, 4))
@@ -1069,14 +1069,14 @@ class LinaQA(QMainWindow):
                 canvas.add_image(img, location=(1, 5), dimensions=(18, 18))
                 canvas.finish()
                 if open_path(filename):
-                    self.ui.statusbar.status_message('Results displayed in PDF')
+                    self.ui.statusbar.status_message("Results displayed in PDF")
                 else:
-                    self.ui.statusbar.status_error('No reader to open document')
+                    self.ui.statusbar.status_error("No reader to open document")
             except Exception as e:
-                self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+                self.ui.statusbar.status_error(f"Could not analyze image(s). Reason: {repr(e)}")
         else:
             self.ui.tabWidget.setTabVisible(3, False)
-            self.ui.statusbar.status_error('No reference image defined. Please open a reference image.')
+            self.ui.statusbar.status_error("No reference image defined. Please open a reference image.")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Reference image section
@@ -1094,12 +1094,12 @@ class LinaQA(QMainWindow):
         else:
             dirpath = osp.realpath(self.ref_filename)
         ostype = system()
-        if ostype == 'Windows':
-            self.ref_filename = QFileDialog.getOpenFileName(self, 'Open DICOM file', dirpath,
-                                                            'DICOM files (*.dcm);;All files (*.*)')[0]
+        if ostype == "Windows":
+            self.ref_filename = QFileDialog.getOpenFileName(self, "Open DICOM file", dirpath,
+                                                            "DICOM files (*.dcm);;All files (*.*)")[0]
         else:
-            self.ref_filename = QFileDialog.getOpenFileName(self, 'Open DICOM file', dirpath,
-                                                            'DICOM files (*.dcm);;All files (*)')[0]
+            self.ref_filename = QFileDialog.getOpenFileName(self, "Open DICOM file", dirpath,
+                                                            "DICOM files (*.dcm);;All files (*)")[0]
         if self.ref_filename:
             if pydicom.misc.is_dicom(self.ref_filename):
                 self.open_ref_image(self.ref_filename)
@@ -1107,7 +1107,7 @@ class LinaQA(QMainWindow):
                 # self.ui.qlRef.show()
                 self.tab_changed(2)
             else:
-                self.ui.statusbar.status_error('Not a DICOM image file.')
+                self.ui.statusbar.status_error("Not a DICOM image file.")
 
     def open_ref_image(self, filename):
         # Assumes only one file to be loaded
@@ -1115,12 +1115,12 @@ class LinaQA(QMainWindow):
         datasets = []
         try:
             ds = pydicom.dcmread(filename, force=True)
-            if 'TransferSyntaxUID' not in ds.file_meta:
+            if "TransferSyntaxUID" not in ds.file_meta:
                 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
             datasets.append(ds)
-            self.ref_imager = Imager(datasets, self.settings.value('PyDicom/Use rescale', False, type=bool))
+            self.ref_imager = Imager(datasets, self.settings.value("PyDicom/Use rescale", False, type=bool))
         except pydicom.errors.InvalidDicomError:
-            self.ui.statusbar.status_error('Error reading DICOM image file.')
+            self.ui.statusbar.status_error("Error reading DICOM image file.")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Image processing and editing
@@ -1177,7 +1177,7 @@ class LinaQA(QMainWindow):
         self.imager.sum_images()
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
         self.is_changed = True
-        self.ui.statusbar.status_message(f'{num_images} images were summed. Image has been rescaled.')
+        self.ui.statusbar.status_message(f"{num_images} images were summed. Image has been rescaled.")
 
     @check_valid_image
     def avg_image(self):
@@ -1185,7 +1185,7 @@ class LinaQA(QMainWindow):
         self.imager.avg_images()
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
         self.is_changed = True
-        self.ui.statusbar.status_message(f'{num_images} images were averaged')
+        self.ui.statusbar.status_message(f"{num_images} images were averaged")
 
     @check_valid_image
     def scale_image(self):
@@ -1193,7 +1193,7 @@ class LinaQA(QMainWindow):
         self.imager.scale_images(self.ui.dsbScaleFactor.value())
         self.show_image(self.imager.get_current_image(), self.ui.qlImage)
         self.is_changed = True
-        self.ui.statusbar.status_message(f'{num_images} images were scaled')
+        self.ui.statusbar.status_message(f"{num_images} images were scaled")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Nuclear medicine analysis
@@ -1217,7 +1217,7 @@ class LinaQA(QMainWindow):
         ss.analyze(
             activity_mbq=float(self.ui.dsbSimpleSensActivity.value()),
             nuclide=getattr(pylinac_subclasses.Nuclide,
-                            self.settings.value('Simple Sensitivity/Nuclide', 'Tc99m', type=str)))
+                            self.settings.value("Simple Sensitivity/Nuclide", "Tc99m", type=str)))
         self.show_results(ss)
 
     @check_valid_image
@@ -1236,17 +1236,17 @@ class LinaQA(QMainWindow):
         if self.ui.cbSpatialRes.currentText() == spatial_res_list[0]:
             sr = pylinac_subclasses.LinaQAFourBarRes(self.imager.datasets)
             sr.analyze(
-                separation_mm=self.settings.value('Spatial Resolution/Separation mm', 100, type=float),
-                roi_width_mm=self.settings.value('Spatial Resolution/ROI width mm', 10, type=float))
+                separation_mm=self.settings.value("Spatial Resolution/Separation mm", 100, type=float),
+                roi_width_mm=self.settings.value("Spatial Resolution/ROI width mm", 10, type=float))
         # quadrant test
         elif self.ui.cbSpatialRes.currentText() == spatial_res_list[1]:
             sr = pylinac_subclasses.LinaQAQuadrantRes(self.imager.datasets)
-            widths_str = self.settings.value('Spatial Resolution/Bar widths mm', '(4.23, 3.18, 2.54, 2.12)', type=str)
-            widths = tuple(float(w.strip()) for w in widths_str.strip('()').split(','))
+            widths_str = self.settings.value("Spatial Resolution/Bar widths mm", "(4.23, 3.18, 2.54, 2.12)", type=str)
+            widths = tuple(float(w.strip()) for w in widths_str.strip("()").split(","))
             sr.analyze(
                 bar_widths=widths,
-                roi_diameter_mm=self.settings.value('Spatial Resolution/ROI diameter mm', 70.0, type=float),
-                distance_from_center_mm=self.settings.value('Spatial Resolution/Distance from center mm',
+                roi_diameter_mm=self.settings.value("Spatial Resolution/ROI diameter mm", 70.0, type=float),
+                distance_from_center_mm=self.settings.value("Spatial Resolution/Distance from center mm",
                                                             130.0,
                                                             type=float))
         self.show_results(sr)
@@ -1259,11 +1259,11 @@ class LinaQA(QMainWindow):
         tu.analyze(
             first_frame=int(self.ui.sbFirstFrame.value()),
             last_frame=int(self.ui.sbLastFrame.value()),
-            ufov_ratio=self.settings.value('Tomographic Uniformity/UFOV ratio', 0.80, type=float),
-            cfov_ratio=self.settings.value('Tomographic Uniformity/CFOV ratio', 0.75, type=float),
-            center_ratio=self.settings.value('Tomographic Uniformity/Center ratio', 0.4, type=float),
-            threshold=self.settings.value('Tomographic Uniformity/Threshold', 0.75, type=float),
-            window_size=self.settings.value('Tomographic Uniformity/Window size', 5, type=int))
+            ufov_ratio=self.settings.value("Tomographic Uniformity/UFOV ratio", 0.80, type=float),
+            cfov_ratio=self.settings.value("Tomographic Uniformity/CFOV ratio", 0.75, type=float),
+            center_ratio=self.settings.value("Tomographic Uniformity/Center ratio", 0.4, type=float),
+            threshold=self.settings.value("Tomographic Uniformity/Threshold", 0.75, type=float),
+            window_size=self.settings.value("Tomographic Uniformity/Window size", 5, type=int))
         self.show_results(tu)
 
     @check_valid_image
@@ -1279,18 +1279,18 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def tomographic_contrast(self):
         tc = pylinac_subclasses.LinaQATomoContrast(self.imager.datasets)
-        sphere_diam_str = self.settings.value('Tomographic Contrast/Sphere diameters mm',
-                                              '(38, 31.8, 25.4, 19.1, 15.9, 12.7)',
+        sphere_diam_str = self.settings.value("Tomographic Contrast/Sphere diameters mm",
+                                              "(38, 31.8, 25.4, 19.1, 15.9, 12.7)",
                                               type=str)
-        sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
-        sphere_ang_str = self.settings.value('Tomographic Contrast/Sphere angles',
-                                             '(-10, -70, -130, -190, 110, 50)',
+        sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip("()").split(","))
+        sphere_ang_str = self.settings.value("Tomographic Contrast/Sphere angles",
+                                             "(-10, -70, -130, -190, 110, 50)",
                                              type=str)
-        sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
+        sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip("()").split(","))
         tc.analyze(
             sphere_diameters_mm=sphere_diam,
             sphere_angles=sphere_ang,
-            ufov_ratio=self.settings.value('Tomographic Contrast/UFOV ratio', 0.8, type=float))
+            ufov_ratio=self.settings.value("Tomographic Contrast/UFOV ratio", 0.8, type=float))
         self.show_results(tc)
 
 #    @check_valid_image
@@ -1298,14 +1298,14 @@ class LinaQA(QMainWindow):
     @show_wait_cursor
     def suv_uptake(self):
         su = pylinac_subclasses.SUVUptake(self.imager.datasets)
-        sphere_diam_str = self.settings.value('SUV Uptake/Sphere diameters mm',
-                                              '(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)',
+        sphere_diam_str = self.settings.value("SUV Uptake/Sphere diameters mm",
+                                              "(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)",
                                               type=str)
-        sphere_ang_str = self.settings.value('SUV Uptake/Sphere angles',
-                                             '(120, 60, 0, -60, -120, -180)',
+        sphere_ang_str = self.settings.value("SUV Uptake/Sphere angles",
+                                             "(120, 60, 0, -60, -120, -180)",
                                              type=str)
-        sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip('()').split(','))
-        sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip('()').split(','))
+        sphere_diam = tuple(float(s.strip()) for s in sphere_diam_str.strip("()").split(","))
+        sphere_ang = tuple(float(s.strip()) for s in sphere_ang_str.strip("()").split(","))
 
         # get popup values
         backgnd_vol = self.ui.sbBgndVol.value()

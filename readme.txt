@@ -85,7 +85,7 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
 
 Current
-Documentation added. Error handling improved. Flip image left-right and up-down added.
+Documentation added. Error handling improved. Flip image left-right and up-down added. Toggable image display between raw pixels and real world value map, e.g. dose for EPID or activity concentration for NM/PET added. Quick set popup menus added to change parameters and analyses on the fly. DRCS added to VMAT analysis. SUV uptake analysis (EARL) added. Settings moved to Tab interface.
 
 Version 0.07
 Image sum from a set of images added. Image rescaling added. Nuclear medicine toolbar added. Toolbars can be made persistent in the settings. Implemented Maximum Count Rate, Simple Sensitivity, Planar Uniformity, Planar Spatial Resolution, Tomographic Uniformity, Tomographic Resolution, Tomographic Contrast and Centre of Rotation analysis. Added handling of multiframe images. Settings unit has been overhauled.

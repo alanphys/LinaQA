@@ -37,7 +37,7 @@ Portions of pydicom (private dictionary file(s)) were generated from the private
 
 Copyright (c) 2006-2010 Mathieu Malaterre
 Copyright (c) 1993-2005 CREATIS
-(CREATIS = Centre de Recherche et d'Applications en Traitement de l'Image)
+(CREATIS = Centre de Recherche et d"Applications en Traitement de l'Image)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

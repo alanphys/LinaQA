@@ -51,7 +51,7 @@ def patch_nm_image_stack():
                 raise TypeError("The file is not a NM image")
             full_array = ds.pixel_array
             # we may have a single dataset with multiple frames
-            if hasattr(ds, 'NumberOfFrames') and (ds.NumberOfFrames > 1):
+            if hasattr(ds, "NumberOfFrames") and (ds.NumberOfFrames > 1):
                 for i in range(ds.NumberOfFrames):
                     array = full_array[i]
                     img = DicomImage.from_dataset(ds)
@@ -134,7 +134,7 @@ class LinaQAMaxCountRate(MaxCountRate):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -232,7 +232,7 @@ class LinaQASimpleSensitivity(SimpleSensitivity):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -249,7 +249,7 @@ class LinaQASimpleSensitivity(SimpleSensitivity):
 
         analysis_image = io.BytesIO()
         plt.clf()
-        plt.imshow(self.phantom_img.array, cmap='gray')
+        plt.imshow(self.phantom_img.array, cmap="gray")
         plt.title(os.path.basename(self.phantom_path))
         plt.savefig(analysis_image)
         canvas.add_image(analysis_image, location=(1, 3), dimensions=(18, 18))
@@ -285,7 +285,7 @@ class LinaQAPlanarUniformity(PlanarUniformity):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -320,10 +320,10 @@ class LinaQAPlanarUniformity(PlanarUniformity):
                 text=f"CFOV differential uniformity {result['cfov'].differential_uniformity: .2f}%",
                 location=(2.0, 20.0))
 
-            axs[int(key) - 1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+            axs[int(key) - 1].legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
             figs[int(key) - 1].tight_layout()
             analysis_image = io.BytesIO()
-            figs[int(key) - 1].savefig(analysis_image, bbox_inches='tight')
+            figs[int(key) - 1].savefig(analysis_image, bbox_inches="tight")
             canvas.add_image(analysis_image, location=(1, 3), dimensions=(18, 18))
         canvas.finish()
 
@@ -356,7 +356,7 @@ class LinaQAFourBarRes(FourBarResolution):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -374,7 +374,7 @@ class LinaQAFourBarRes(FourBarResolution):
         plt.clf()
         figs, axs = self.plot(show=False)
         analysis_image = io.BytesIO()
-        figs[0].savefig(analysis_image, bbox_inches='tight')
+        figs[0].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 3), dimensions=(15, 15), preserve_aspect_ratio=True)
 
         if notes is not None:
@@ -382,16 +382,16 @@ class LinaQAFourBarRes(FourBarResolution):
             canvas.add_text(text=notes, location=(1, 2))
 
         canvas.add_new_page()
-        axs[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        axs[1].legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
         figs[1].tight_layout()
         analysis_image = io.BytesIO()
-        figs[1].savefig(analysis_image, bbox_inches='tight')
+        figs[1].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 13), dimensions=(15, 15), preserve_aspect_ratio=True)
 
-        axs[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        axs[2].legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
         figs[2].tight_layout()
         analysis_image = io.BytesIO()
-        figs[2].savefig(analysis_image, bbox_inches='tight')
+        figs[2].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 0), dimensions=(15, 15), preserve_aspect_ratio=True)
         canvas.finish()
 
@@ -424,7 +424,7 @@ class LinaQAQuadrantRes(QuadrantResolution):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -442,7 +442,7 @@ class LinaQAQuadrantRes(QuadrantResolution):
         plt.clf()
         figs, axs = self.plot(show=False)
         analysis_image = io.BytesIO()
-        figs[0].savefig(analysis_image, bbox_inches='tight')
+        figs[0].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 3), dimensions=(15, 15), preserve_aspect_ratio=True)
 
         if notes is not None:
@@ -551,7 +551,7 @@ class LinaQATomoUniformity(TomographicUniformity):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -569,9 +569,9 @@ class LinaQATomoUniformity(TomographicUniformity):
         analysis_images = io.BytesIO()
         plt.clf()
         self.plot(show=False)
-        plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        plt.legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
         plt.tight_layout()
-        plt.savefig(analysis_images, bbox_inches='tight')
+        plt.savefig(analysis_images, bbox_inches="tight")
         canvas.add_image(analysis_images, location=(1, 3), dimensions=(18, 18))
 
         if notes is not None:
@@ -608,7 +608,7 @@ class LinaQATomoResolution(TomographicResolution):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -628,10 +628,10 @@ class LinaQATomoResolution(TomographicResolution):
 
         plt.clf()
         figs, axs = self.plot()
-        axs[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        axs[0].legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
         figs[0].tight_layout()
         analysis_image = io.BytesIO()
-        figs[0].savefig(analysis_image, bbox_inches='tight')
+        figs[0].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 3), dimensions=(15, 15), preserve_aspect_ratio=True)
 
         if notes is not None:
@@ -639,16 +639,16 @@ class LinaQATomoResolution(TomographicResolution):
             canvas.add_text(text=notes, location=(1, 2))
 
         canvas.add_new_page()
-        axs[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        axs[1].legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
         figs[1].tight_layout()
         analysis_image = io.BytesIO()
-        figs[1].savefig(analysis_image, bbox_inches='tight')
+        figs[1].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 13), dimensions=(15, 15), preserve_aspect_ratio=True)
 
-        axs[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        axs[2].legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
         figs[2].tight_layout()
         analysis_image = io.BytesIO()
-        figs[2].savefig(analysis_image, bbox_inches='tight')
+        figs[2].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 0), dimensions=(15, 15), preserve_aspect_ratio=True)
 
         canvas.finish()
@@ -682,7 +682,7 @@ class LinaQACenterOfRotation(CenterOfRotation):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -699,10 +699,10 @@ class LinaQACenterOfRotation(CenterOfRotation):
 
         plt.clf()
         figs, axs = self.plot(show=False)
-        axs[0].legend(bbox_to_anchor=(0, -0.3), loc='upper left', borderaxespad=0)
+        axs[0].legend(bbox_to_anchor=(0, -0.3), loc="upper left", borderaxespad=0)
         figs[0].tight_layout()
         analysis_image = io.BytesIO()
-        figs[0].savefig(analysis_image, bbox_inches='tight')
+        figs[0].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 3), dimensions=(18, 18), preserve_aspect_ratio=True)
 
         if notes is not None:
@@ -711,11 +711,11 @@ class LinaQACenterOfRotation(CenterOfRotation):
 
         canvas.add_new_page()
         analysis_image = io.BytesIO()
-        figs[1].savefig(analysis_image, bbox_inches='tight')
+        figs[1].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 12.5), dimensions=(15, 15), preserve_aspect_ratio=True)
 
         analysis_image = io.BytesIO()
-        figs[2].savefig(analysis_image, bbox_inches='tight')
+        figs[2].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 0), dimensions=(15, 15), preserve_aspect_ratio=True)
 
         canvas.finish()
@@ -749,7 +749,7 @@ class LinaQATomoContrast(TomographicContrast):
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -770,10 +770,10 @@ class LinaQATomoContrast(TomographicContrast):
         plt.clf()
         figs, axs = self.plot(show=False)
         # makes more sense to display the contrast graphs first
-        axs[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        axs[2].legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
         figs[2].tight_layout()
         analysis_image = io.BytesIO()
-        figs[2].savefig(analysis_image, bbox_inches='tight')
+        figs[2].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 3), dimensions=(15, 15), preserve_aspect_ratio=True)
 
         if notes is not None:
@@ -908,8 +908,8 @@ class SUVUptake:
         start_index = int(self.sphere_slice_index - 20/self.stack.metadata.SpacingBetweenSlices)
         stop_index = int(self.sphere_slice_index + 20/self.stack.metadata.SpacingBetweenSlices)
         backgnd_slices = self.scaled_3d_array[start_index: stop_index, :, :]
-        return {'mean': backgnd_slices[:, self.backgnd_roi].mean(),
-                'stddev': backgnd_slices[:, self.backgnd_roi].std()}
+        return {"mean": backgnd_slices[:, self.backgnd_roi].mean(),
+                "stddev": backgnd_slices[:, self.backgnd_roi].std()}
 
     def analyze(
         self,
@@ -1007,7 +1007,7 @@ class SUVUptake:
             res = minimize(
                 contrast_f,
                 x0=(col_x, row_y, self.sphere_slice_index),
-                args=(self.scaled_3d_array, radius, self.backgnd['mean']),
+                args=(self.scaled_3d_array, radius, self.backgnd["mean"]),
                 method="Nelder-Mead",
                 bounds=[
                     (col_x - search_window_px, col_x + search_window_px),
@@ -1025,7 +1025,7 @@ class SUVUptake:
                 y=row,
                 z=zed,
                 radius=radius,
-                uniformity_baseline=self.backgnd['mean'],
+                uniformity_baseline=self.backgnd["mean"],
                 backgnd_dose_vol=self.background_dose_vol,
                 pixel_spacing=metadata.PixelSpacing[0],
                 sphere_dose_vol=self.sphere_dose_vol,
@@ -1068,7 +1068,7 @@ class SUVUptake:
         roi_ax.set_title(f"Sphere frame ({median_slice+1})")
 
         # plot the uniformity ROI
-        color_map = colors.ListedColormap(['none', 'blue'])
+        color_map = colors.ListedColormap(["none", "blue"])
         roi_ax.imshow(self.backgnd_roi, cmap=color_map, alpha=0.3)
 
         # plot the contrast vs sphere number
@@ -1156,7 +1156,7 @@ class SUVUptake:
             If list of strings, each list item is printed on its own line.
         metadata : dict
             Extra data to be passed and shown in the PDF. The key and value will be shown with a colon.
-            E.g. passing {'Author': 'Joe Soap', 'Unit': 'TrueBeam'} would result in text in the PDF like:
+            E.g. passing {"Author": "Joe Soap", "Unit": "TrueBeam"} would result in text in the PDF like:
             --------------
             Author: Joe Soap
             Unit: TrueBeam
@@ -1182,10 +1182,10 @@ class SUVUptake:
         plt.clf()
         figs, axs = self.plot(show=False)
         # makes more sense to display the contrast graphs first
-        axs[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        axs[1].legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
         figs[1].tight_layout()
         analysis_image = io.BytesIO()
-        figs[1].savefig(analysis_image, bbox_inches='tight')
+        figs[1].savefig(analysis_image, bbox_inches="tight")
         canvas.add_image(analysis_image, location=(1, 13), dimensions=(19, 13), preserve_aspect_ratio=False)
 
         analysis_image = io.BytesIO()

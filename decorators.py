@@ -31,13 +31,13 @@ def show_wait_cursor(function):
 def check_valid_image(function):
     # check if the imager has been created
     def _valid_image(self):
-        if (self.imager is not None) and hasattr(self.imager, 'values') and (self.imager.values is not None):
+        if (self.imager is not None) and hasattr(self.imager, "values") and (self.imager.values is not None):
             try:
                 return function(self)
             except Exception as e:
-                self.ui.statusbar.status_error(f'Could not analyze image(s). Reason: {repr(e)}')
+                self.ui.statusbar.status_error(f"Could not analyze image(s). Reason: {repr(e)}")
         else:
-            self.ui.statusbar.status_error('No image open. Please open an image!')
+            self.ui.statusbar.status_error("No image open. Please open an image!")
     return _valid_image
 
 
@@ -45,7 +45,7 @@ def check_values_exist(function):
     # check if image pixel values exist
     def _values_exist(*args, **kwargs):
         self = args[0]
-        if hasattr(self, 'values') and self.values is not None:
+        if hasattr(self, "values") and self.values is not None:
             return function(*args, **kwargs)
     return _values_exist
 

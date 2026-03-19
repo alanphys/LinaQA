@@ -1,13 +1,13 @@
-'''Verify the integrity of a set of python files
+"""Verify the integrity of a set of python files
 Author: Michael Altfield
 Adpated from https://stackoverflow.com/questions/63568328/how-to-verify-integrity-of-files-using-digest-in-python-sha256sums
-'''
+"""
 from hashlib import sha256
 import os
 
 
 # Takes the path (as a string) to a SHA256SUMS file and a list of paths to
-# local files. Returns true only if all files' checksums are present in the
+# local files. Returns true only if all files" checksums are present in the
 # SHA256SUMS file and their checksums match
 def integrity_is_ok(sha256sums_filepath, local_filepaths):
 
@@ -30,7 +30,7 @@ def integrity_is_ok(sha256sums_filepath, local_filepaths):
         local_filename = os.path.split(local_file)[1]
 
         sha256sum = sha256()
-        with open(local_file, 'rb') as fd:
+        with open(local_file, "rb") as fd:
             data_chunk = fd.read(1024)
             while data_chunk:
                 sha256sum.update(data_chunk)

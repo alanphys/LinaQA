@@ -13,7 +13,7 @@ from .aboutformui import Ui_AboutForm
 from PyQt5.QtWidgets import QDialog
 import os
 
-version = '0.08.560'  # previous git commit 154de327
+version = "0.08.560"  # previous git commit 312f79f6
 
 
 class About(QDialog):
@@ -21,7 +21,7 @@ class About(QDialog):
         super(About, self).__init__()
         self.ui = Ui_AboutForm()
         self.ui.setupUi(self)
-        self.setWindowTitle(f'About LinaQA v{version}')
+        self.setWindowTitle(f"About LinaQA v{version}")
         textpath = os.path.join(os.path.dirname(__file__), os.pardir)
 
         try:

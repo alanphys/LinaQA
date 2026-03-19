@@ -21,7 +21,7 @@ class Imager:
         self._invflag = False
 
         # check if dataset has an image
-        if (datasets[0].Modality in supported_modalities) and hasattr(datasets[0], 'PixelData'):
+        if (datasets[0].Modality in supported_modalities) and hasattr(datasets[0], "PixelData"):
 
             # Dataset has 3D volume
             if hasattr(datasets[0], "NumberOfFrames") and (int(datasets[0].NumberOfFrames) > 1):
@@ -34,7 +34,7 @@ class Imager:
             if (hasattr(datasets[0], "PixelSpacing") and
                hasattr(datasets[0], "SliceThickness") and
                (datasets[0].SliceThickness is not None) and
-               (datasets[0].SliceThickness != '')):
+               (datasets[0].SliceThickness != "")):
                 self.spacings = (float(datasets[0].PixelSpacing[0]),
                                  float(datasets[0].PixelSpacing[1]),
                                  float(datasets[0].SliceThickness))
@@ -59,9 +59,9 @@ class Imager:
     def load_pixel_data(self, datasets):
         # standard set of 2D images
         if datasets[0].pixel_array.ndim == 2:
-            self.values = np.zeros(self.size, dtype='int32')
+            self.values = np.zeros(self.size, dtype="int32")
             for i, d in enumerate(datasets):
-                # Also performs rescaling. 'unsafe' since it converts from float64 to int32
+                # Also performs rescaling. "unsafe' since it converts from float64 to int32
                 np.copyto(self.values[:, :, i], d.pixel_array, 'unsafe')
         # colour image 3 sample RGB per pixel
         elif (datasets[0].pixel_array.ndim == 3) and (hasattr(datasets[0], "SamplesPerPixel")) and (datasets[0].SamplesPerPixel == 3):

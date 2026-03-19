@@ -16,11 +16,11 @@ from pydicom import FileDataset
 def open_path(path: str) -> bool:
     """Open the specified path in the system default viewer."""
     try:
-        if os.name == 'nt':
+        if os.name == "nt":
             os.startfile(path)
-        elif os.name == 'posix':
+        elif os.name == "posix":
             subprocess.call(["xdg-open", path])
-        elif os.name == 'darwin':
+        elif os.name == "darwin":
             subprocess.call(["open", path])
         return True
     except OSError:
@@ -30,7 +30,7 @@ def open_path(path: str) -> bool:
 def get_dot_attr(obj, att_name) -> str:
     """
     Gets the value of the named dotted attribute in nested classes
-    a = get_dot_attr(x, 'y.z') is equivalent to a = x.y.z
+    a = get_dot_attr(x, "y.z") is equivalent to a = x.y.z
     Also caters for lists of classes
     :param
     obj: starting object to get attribute from
