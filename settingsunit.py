@@ -8,13 +8,13 @@
 import os.path as path
 import inspect
 from PyQt5.QtCore import (
-     QByteArray, QDate, QDateTime, QDir, QEvent, QPoint,
-     QRect, QRegularExpression, QSettings, QSize, QTime, QTimer, Qt, pyqtSlot as Slot)
+     QByteArray, QDate, QDateTime, QEvent, QPoint,
+     QRect, QRegularExpression, QSize, QTime, Qt, pyqtSlot as Slot)
 from PyQt5.QtGui import (QColor, QIcon, QIntValidator, QDoubleValidator, QRegularExpressionValidator, QValidator)
 from PyQt5.QtWidgets import (
-     QAbstractItemView, QCheckBox, QDialog, QDialogButtonBox, QVBoxLayout, QLineEdit,
+     QAbstractItemView, QCheckBox, QLineEdit,
      QHeaderView, QItemDelegate, QComboBox, QStyle, QSpinBox, QStyleOptionViewItem,
-     QTableWidgetItem, QTreeWidget, QTreeWidgetItem)
+     QTreeWidget, QTreeWidgetItem)
 from linaqa_types import (
      phantom2D_list,
      phantom3D_list,
