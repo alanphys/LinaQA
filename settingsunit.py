@@ -336,113 +336,6 @@ class TypeChecker:
         return type(original_value)(text)
 
 
-class Settings(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        buttons = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-        self.buttonBox = QDialogButtonBox(buttons, parent=self)
-
-        # Connect the signals to the dialog's slots
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
-
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.setObjectName("Layout")
-        self.layout.addWidget(self.buttonBox)
-        self.settings_tree = SettingsTree()
-        self.settings_tree.header().setSectionResizeMode(QHeaderView.ResizeToContents)
-        self.layout.addWidget(self.settings_tree)
-        self.setWindowTitle("Settings Editor")
-        self.resize(500, 600)
-        settings = QSettings()
-        self.set_settings_object(settings)
-        self.setLayout(self.layout)
-
-    def set_settings_object(self, settings):
-        settings.setFallbacksEnabled(False)
-        self.settings_tree.set_settings_object(settings)
-        nice_name = QDir.fromNativeSeparators(settings.fileName())
-        nice_name = nice_name.split('/')[-1]
-        if not settings.isWritable():
-            nice_name += " (read only)"
-        self.setWindowTitle(f"{nice_name} - Settings Editor")
-
-    def format(self):
-        if self.format_combo.currentIndex() == 0:
-            return QSettings.NativeFormat
-        else:
-            return QSettings.IniFormat
-
-    def scope(self):
-        if self.scope_cCombo.currentIndex() == 0:
-            return QSettings.UserScope
-        else:
-            return QSettings.SystemScope
-
-    def organization(self):
-        return self.organization_combo.currentText()
-
-    def application(self):
-        if self.application_combo.currentText() == "Any":
-            return ''
-
-        return self.application_combo.currentText()
-
-    def update_locations(self):
-        self.locations_table.setUpdatesEnabled(False)
-        self.locations_table.setRowCount(0)
-
-        for i in range(2):
-            if i == 0:
-                if self.scope() == QSettings.SystemScope:
-                    continue
-
-                actual_scope = QSettings.UserScope
-            else:
-                actual_scope = QSettings.SystemScope
-
-            for j in range(2):
-                if j == 0:
-                    if not self.application():
-                        continue
-
-                    actual_application = self.application()
-                else:
-                    actual_application = ''
-
-                settings = QSettings(self.format(), actual_scope,
-                                     self.organization(), actual_application)
-
-                row = self.locations_table.rowCount()
-                self.locations_table.setRowCount(row + 1)
-
-                item0 = QTableWidgetItem()
-                item0.setText(settings.fileName())
-
-                item1 = QTableWidgetItem()
-                disable = not (settings.childKeys() or settings.childGroups())
-
-                if row == 0:
-                    if settings.isWritable():
-                        item1.setText("Read-write")
-                        disable = False
-                    else:
-                        item1.setText("Read-only")
-                    self.button_box.button(QDialogButtonBox.Ok).setDisabled(disable)
-                else:
-                    item1.setText("Read-only fallback")
-
-                if disable:
-                    item0.setFlags(item0.flags() & ~Qt.ItemIsEnabled)
-                    item1.setFlags(item1.flags() & ~Qt.ItemIsEnabled)
-
-                self.locations_table.setItem(row, 0, item0)
-                self.locations_table.setItem(row, 1, item1)
-
-        self.locations_table.setUpdatesEnabled(True)
-
-
 class SettingsTree(QTreeWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -453,10 +346,9 @@ class SettingsTree(QTreeWidget):
         self.setHeaderLabels(("Setting", "Type", "Value"))
         self.header().setSectionResizeMode(0, QHeaderView.Stretch)
         self.header().setSectionResizeMode(2, QHeaderView.Stretch)
+        self.setAlternatingRowColors(True)
 
         self.settings = None
-        self.refresh_timer = QTimer()
-        self.refresh_timer.setInterval(2000)
         self.auto_refresh = False
 
         self.group_icon = QIcon()
@@ -468,38 +360,12 @@ class SettingsTree(QTreeWidget):
         self.key_icon = QIcon()
         self.key_icon.addPixmap(style.standardPixmap(QStyle.SP_FileIcon))
 
-        self.refresh_timer.timeout.connect(self.maybe_refresh)
-
     def set_settings_object(self, settings):
         self.settings = settings
         self.clear()
 
         if self.settings is not None:
             self.settings.setParent(self)
-            self.refresh()
-            if self.auto_refresh:
-                self.refresh_timer.start()
-        else:
-            self.refresh_timer.stop()
-
-    def sizeHint(self):
-        return QSize(800, 600)
-
-    @Slot(bool)
-    def set_auto_refresh(self, autoRefresh):
-        self.auto_refresh = autoRefresh
-
-        if self.settings is not None:
-            if self.auto_refresh:
-                self.maybe_refresh()
-                self.refresh_timer.start()
-            else:
-                self.refresh_timer.stop()
-
-    @Slot(bool)
-    def set_fallbacks_enabled(self, enabled):
-        if self.settings is not None:
-            self.settings.setFallbacksEnabled(enabled)
             self.refresh()
 
     @Slot()
@@ -518,7 +384,7 @@ class SettingsTree(QTreeWidget):
         except:
             pass
 
-        self.settings.sync()
+        # self.settings.sync()
         self.update_child_items(None)
 
         self.itemChanged.connect(self.update_setting)
@@ -538,7 +404,6 @@ class SettingsTree(QTreeWidget):
             key = ancestor.text(0) + '/' + key
             ancestor = ancestor.parent()
 
-        d = item.data(2, Qt.UserRole)
         self.settings.setValue(key, item.data(2, Qt.UserRole))
 
         if self.auto_refresh:

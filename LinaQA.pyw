@@ -47,7 +47,7 @@ from linaqa_types import (
     spatial_res_list)
 from aboutpackage import About
 from aboutpackage.aboutform import version
-from settingsunit import Settings, set_default_settings
+from settingsunit import set_default_settings
 from imageunit import Imager
 from decorators import show_wait_cursor, check_valid_image, catch_nm_type_error
 from misc_utils import (
@@ -192,6 +192,7 @@ class LinaQA(QMainWindow):
         self.ui.tabWidget.setTabVisible(2, False)
         self.ui.tabWidget.setTabVisible(3, False)
         self.ui.tabWidget.setTabVisible(4, False)
+        self.ui.tabWidget.setTabVisible(5, False)
         self.ui.action_Scale_LUT.setChecked(self.settings.value('PyDicom/Use rescale', False, type=bool))
         self.ui.action_Rx_Toolbar.setChecked(self.settings.value('Window/Show Rx Toolbar', True, type=bool))
         self.show_rx_toolbar()
@@ -432,9 +433,13 @@ class LinaQA(QMainWindow):
         webbrowser.open('https://pylinac.readthedocs.io/en/latest/')
 
     def show_settings(self):
-        settings = Settings()
-        settings.exec()
-        initialize_popups(self)
+        if self.ui.action_Settings.isChecked():
+            self.settings.setFallbacksEnabled(False)
+            self.ui.settings_tree.set_settings_object(self.settings)
+            self.ui.tabWidget.setTabVisible(5, True)
+            self.ui.tabWidget.setCurrentIndex(5)
+        else:
+            self.ui.tabWidget.setTabVisible(5, False)
 
     def show_rx_toolbar(self):
         self.ui.toolBar_Rx.setVisible(self.ui.action_Rx_Toolbar.isChecked())
@@ -525,6 +530,8 @@ class LinaQA(QMainWindow):
         if index != 1:
             self.ui.action_DICOM_tags.setChecked(False)
             self.show_dicom_toolbar()
+        if index != 5 and self.old_tab == 5:
+            update_popups(self)
         if self.imager:
             if (index == 0) and (self.imager is not None):
                 if self.old_tab == 3:

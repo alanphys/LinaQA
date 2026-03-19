@@ -37,7 +37,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
@@ -178,6 +178,41 @@
           <property name="placeholderText">
            <string>Enter notes here</string>
           </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_6">
+       <property name="toolTip">
+        <string>Modify settings</string>
+       </property>
+       <attribute name="title">
+        <string>Settings</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="SettingsTree" name="settings_tree">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="columnCount">
+           <number>3</number>
+          </property>
+          <column>
+           <property name="text">
+            <string>Settings</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Value</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>
@@ -567,6 +602,9 @@
    </property>
   </action>
   <action name="action_Settings">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="LinaQA.qrc">
      <normaloff>:/Icons/Icons/Settings.png</normaloff>:/Icons/Icons/Settings.png</iconset>
@@ -1078,6 +1116,11 @@
    <class>ColorStatusBar</class>
    <extends>QStatusBar</extends>
    <header>qt_subclasses</header>
+  </customwidget>
+  <customwidget>
+   <class>SettingsTree</class>
+   <extends>QTreeWidget</extends>
+   <header>settingsunit</header>
   </customwidget>
  </customwidgets>
  <resources>

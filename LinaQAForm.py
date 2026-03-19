@@ -108,6 +108,16 @@ class Ui_LinaQAForm(object):
         self.pte_notes.setObjectName("pte_notes")
         self.horizontalLayout_4.addWidget(self.pte_notes)
         self.tabWidget.addTab(self.tab_5, "")
+        self.tab_6 = QtWidgets.QWidget()
+        self.tab_6.setObjectName("tab_6")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.tab_6)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.settings_tree = SettingsTree(self.tab_6)
+        self.settings_tree.setAlternatingRowColors(True)
+        self.settings_tree.setColumnCount(3)
+        self.settings_tree.setObjectName("settings_tree")
+        self.verticalLayout_4.addWidget(self.settings_tree)
+        self.tabWidget.addTab(self.tab_6, "")
         self.verticalLayout.addWidget(self.tabWidget)
         LinaQAForm.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(LinaQAForm)
@@ -220,6 +230,7 @@ class Ui_LinaQAForm(object):
         self.action_Picket_Fence.setIcon(icon11)
         self.action_Picket_Fence.setObjectName("action_Picket_Fence")
         self.action_Settings = QtWidgets.QAction(LinaQAForm)
+        self.action_Settings.setCheckable(True)
         icon12 = QtGui.QIcon()
         icon12.addPixmap(QtGui.QPixmap(":/Icons/Icons/Settings.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_Settings.setIcon(icon12)
@@ -509,7 +520,7 @@ class Ui_LinaQAForm(object):
         self.toolBar_NM.addAction(self.action_SUV_Uptake)
 
         self.retranslateUi(LinaQAForm)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(5)
         self.action_Exit.triggered.connect(LinaQAForm.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(LinaQAForm)
 
@@ -525,6 +536,11 @@ class Ui_LinaQAForm(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("LinaQAForm", "Pixel Data"))
         self.pte_notes.setPlaceholderText(_translate("LinaQAForm", "Enter notes here"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("LinaQAForm", "Notes"))
+        self.tab_6.setToolTip(_translate("LinaQAForm", "Modify settings"))
+        self.settings_tree.headerItem().setText(0, _translate("LinaQAForm", "Settings"))
+        self.settings_tree.headerItem().setText(1, _translate("LinaQAForm", "Type"))
+        self.settings_tree.headerItem().setText(2, _translate("LinaQAForm", "Value"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("LinaQAForm", "Settings"))
         self.menu_File.setTitle(_translate("LinaQAForm", "&File"))
         self.menu_Image.setTitle(_translate("LinaQAForm", "&Image"))
         self.menu_Analyse.setTitle(_translate("LinaQAForm", "&Analyse"))
@@ -642,4 +658,5 @@ class Ui_LinaQAForm(object):
         self.action_SUV_Uptake.setText(_translate("LinaQAForm", "SUV Uptake"))
         self.action_SUV_Uptake.setToolTip(_translate("LinaQAForm", "Calculate SUV uptake. Long or right click to set parameters"))
 from qt_subclasses import ColorStatusBar
+from settingsunit import SettingsTree
 import LinaQA_rc
