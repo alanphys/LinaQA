@@ -744,50 +744,55 @@ class LinaQA(QMainWindow):
         proxy_index = self.ui.treeView.currentIndex()
         source_index = self.proxy_model.mapToSource(proxy_index)
         tag_parent = source_index
-        tag_group, _, _, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
-        if tag_group != "":                 # tag is leaf and we must select parent
-            tag_parent = source_index.parent()
-        tag_path = ""
-        while tag_parent.data(Qt.DisplayRole) is not None:
-            _, _, parent_lable, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
-            tag_path = parent_lable + "." + tag_path
-            tag_parent = tag_parent.parent()
-        tag_path = tag_path.replace(" ", "")
+        tag_text = tag_parent.data(Qt.DisplayRole)
+        if tag_text is not None:
+            tag_group, _, _, _, _ = text_to_tag(tag_text)
+            if tag_group != "":                 # tag is leaf and we must select parent
+                tag_parent = source_index.parent()
+            tag_path = ""
+            while tag_parent.data(Qt.DisplayRole) is not None:
+                _, _, parent_lable, _, _ = text_to_tag(tag_parent.data(Qt.DisplayRole))
+                tag_path = parent_lable + "." + tag_path
+                tag_parent = tag_parent.parent()
+            tag_path = tag_path.replace(" ", "")
 
-        ds = self.imager.datasets[self.imager.index]
+            ds = self.imager.datasets[self.imager.index]
 
-        # get new tag
-        input_dlg = QInputDialog(self)
-        input_dlg.setInputMode(QInputDialog.TextInput)
-        input_dlg.resize(500, 100)
-        input_dlg.setLabelText("Create new tag as: (Group, Element) Keyword VR: Value")
-        input_dlg.setTextValue("")
-        input_dlg.setWindowTitle("Insert DICOM tag")
-        ok = input_dlg.exec_()
-        tag_text = input_dlg.textValue()
+            # get new tag
+            input_dlg = QInputDialog(self)
+            input_dlg.setInputMode(QInputDialog.TextInput)
+            input_dlg.resize(500, 100)
+            input_dlg.setLabelText("Create new tag as: (Group, Element) Keyword VR: Value")
+            input_dlg.setTextValue("")
+            input_dlg.setWindowTitle("Insert DICOM tag")
+            ok = input_dlg.exec_()
+            tag_text = input_dlg.textValue()
 
-        if ok and tag_text != "":
-            tag_group, tag_element, tag_keyword, tag_vr, tag_value = text_to_tag(tag_text)
-            if tag_group == "0x0002":
-                tag_header = "file_meta."
-            else:
-                tag_header = ""
-            tag_path = (tag_header + tag_path.replace(" ", "") +
-                        tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "").replace("-", ""))
-            if tag_vr == "DS":
-                if tag_text[0] == "[":
-                    tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(",")
-            try:
-                set_dot_attr(ds, tag_path, tag_value)
-                self.show_tree()
-                self.is_changed = True
-                self.ui.statusbar.status_message("Inserted " + tag_path + " (" + tag_group + ", " + tag_element + ") "
-                                    + tag_keyword + " " + tag_vr + ":" + tag_value)
-            except AttributeError:
-                self.ui.statusbar.status_error("Could not insert " + tag_path + ".")
+            if ok and tag_text != "":
+                tag_group, tag_element, tag_keyword, tag_vr, tag_value = text_to_tag(tag_text)
+                if tag_group == "0x0002":
+                    tag_header = "file_meta."
+                else:
+                    tag_header = ""
+                tag_path = (tag_header + tag_path.replace(" ", "") +
+                            tag_keyword.replace(" ", "").replace("'s", "").replace("s'", "").replace("-", ""))
+                if tag_vr == "DS":
+                    if tag_text[0] == "[":
+                        tag_text = tag_text.translate({ord(i): None for i in "[]'"}).split(",")
+                try:
+                    set_dot_attr(ds, tag_path, tag_value)
+                    self.show_tree()
+                    self.is_changed = True
+                    self.ui.statusbar.status_message("Inserted " + tag_path + " (" + tag_group + ", " + tag_element + ") "
+                                        + tag_keyword + " " + tag_vr + ":" + tag_value)
+                except AttributeError:
+                    self.ui.statusbar.status_error("Could not insert " + tag_path + ".")
 
-            except TypeError:
-                self.ui.statusbar.status_error("You may not insert a tag as a sequence.")
+                except TypeError:
+                    self.ui.statusbar.status_error("You may not insert a tag as a sequence.")
+
+        else:
+            self.ui.statusbar.status_warn("No tag selected! Please select where tag must be inserted.")
 
     def edit_tag(self):
         # get current tag
