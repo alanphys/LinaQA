@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file layout"LinaQAForm.uilayout"
+# Form implementation generated from reading ui file 'LinaQAForm.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -160,16 +160,19 @@ class Ui_LinaQAForm(object):
         self.toolBar_Rx.setSizePolicy(sizePolicy)
         self.toolBar_Rx.setAllowedAreas(QtCore.Qt.AllToolBarAreas)
         self.toolBar_Rx.setIconSize(QtCore.QSize(32, 32))
-        self.toolBar_Rx.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        self.toolBar_Rx.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar_Rx.setObjectName("toolBar_Rx")
         LinaQAForm.addToolBar(QtCore.Qt.RightToolBarArea, self.toolBar_Rx)
         self.toolBar_Dx = QtWidgets.QToolBar(LinaQAForm)
+        self.toolBar_Dx.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar_Dx.setObjectName("toolBar_Dx")
         LinaQAForm.addToolBar(QtCore.Qt.RightToolBarArea, self.toolBar_Dx)
         self.toolBar_DCM = QtWidgets.QToolBar(LinaQAForm)
+        self.toolBar_DCM.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar_DCM.setObjectName("toolBar_DCM")
         LinaQAForm.addToolBar(QtCore.Qt.RightToolBarArea, self.toolBar_DCM)
         self.toolBar_NM = QtWidgets.QToolBar(LinaQAForm)
+        self.toolBar_NM.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar_NM.setObjectName("toolBar_NM")
         LinaQAForm.addToolBar(QtCore.Qt.RightToolBarArea, self.toolBar_NM)
         self.action_Open = QtWidgets.QAction(LinaQAForm)
@@ -566,6 +569,7 @@ class Ui_LinaQAForm(object):
         self.action_2DPhantoms.setText(_translate("LinaQAForm", "2D Phantoms"))
         self.action_2DPhantoms.setToolTip(_translate("LinaQAForm", "Analyse 2D Phantoms"))
         self.action_VMAT.setText(_translate("LinaQAForm", "VMAT"))
+        self.action_VMAT.setIconText(_translate("LinaQAForm", "       VMAT       "))
         self.action_VMAT.setToolTip(_translate("LinaQAForm", "Analyse VMAT parameters. Long or right click to select test."))
         self.action_Machine_Logs.setText(_translate("LinaQAForm", "Machine Logs"))
         self.action_Machine_Logs.setToolTip(_translate("LinaQAForm", "Analyse machine logs"))
@@ -574,6 +578,7 @@ class Ui_LinaQAForm(object):
         self.action_Winston_Lutz.setText(_translate("LinaQAForm", "Winston-Lutz"))
         self.action_Winston_Lutz.setToolTip(_translate("LinaQAForm", "Analyse Winston-Lutz images"))
         self.action_Picket_Fence.setText(_translate("LinaQAForm", "Picket Fence"))
+        self.action_Picket_Fence.setIconText(_translate("LinaQAForm", " Picket Fence "))
         self.action_Picket_Fence.setToolTip(_translate("LinaQAForm", "Analyse picket fence image. Long or right click to select MLC."))
         self.action_Settings.setText(_translate("LinaQAForm", "Settings"))
         self.action_Settings.setToolTip(_translate("LinaQAForm", "Set default values"))
@@ -626,6 +631,7 @@ class Ui_LinaQAForm(object):
         self.action_Sum_Image.setText(_translate("LinaQAForm", "Sum Image"))
         self.action_Sum_Image.setToolTip(_translate("LinaQAForm", "Sum images"))
         self.action_Scale_Image.setText(_translate("LinaQAForm", "Scale Image"))
+        self.action_Scale_Image.setIconText(_translate("LinaQAForm", "   Scale Image   "))
         self.action_Scale_Image.setToolTip(_translate("LinaQAForm", "Scale image maximum. Lon or right click to set scale factor."))
         self.action_NM_Toolbar.setText(_translate("LinaQAForm", "NM"))
         self.action_NM_Toolbar.setToolTip(_translate("LinaQAForm", "Show/hide nuclear medicine toolbar"))
@@ -636,16 +642,26 @@ class Ui_LinaQAForm(object):
         self.action_Ave_Image.setText(_translate("LinaQAForm", "Average Image"))
         self.action_Ave_Image.setToolTip(_translate("LinaQAForm", "Average images"))
         self.action_Tomo_Uni.setText(_translate("LinaQAForm", "Tomographic Uniformity"))
+        self.action_Tomo_Uni.setIconText(_translate("LinaQAForm", "Tomographic\n"
+"Uniformity"))
         self.action_Tomo_Uni.setToolTip(_translate("LinaQAForm", "Calculate tomographic uniformity. Long or right click to select frames."))
         self.action_Tomo_Res.setText(_translate("LinaQAForm", "Tomographic Resolution"))
+        self.action_Tomo_Res.setIconText(_translate("LinaQAForm", "Tomographic\n"
+"Resolution"))
         self.action_Tomo_Res.setToolTip(_translate("LinaQAForm", "Calculate tomographic resolution"))
         self.action_COR.setText(_translate("LinaQAForm", "COR"))
         self.action_COR.setToolTip(_translate("LinaQAForm", "Calculate centre of rotation"))
         self.action_Simple_Sens.setText(_translate("LinaQAForm", "Simple Sensitivity"))
+        self.action_Simple_Sens.setIconText(_translate("LinaQAForm", "Simple\n"
+"   Sensitivity   "))
         self.action_Simple_Sens.setToolTip(_translate("LinaQAForm", "Calculate simple sensitivity. Long or right click to set activity."))
-        self.action_Spatial_Res.setText(_translate("LinaQAForm", "Spacial Resolution"))
+        self.action_Spatial_Res.setText(_translate("LinaQAForm", "Spatial Resolution"))
+        self.action_Spatial_Res.setIconText(_translate("LinaQAForm", "Spatial\n"
+"   Resolution   "))
         self.action_Spatial_Res.setToolTip(_translate("LinaQAForm", "Calculate spatial resolution"))
         self.action_Tomo_Contrast.setText(_translate("LinaQAForm", "Tomographic Contrast"))
+        self.action_Tomo_Contrast.setIconText(_translate("LinaQAForm", "Tomographic\n"
+"Contrast"))
         self.action_Tomo_Contrast.setToolTip(_translate("LinaQAForm", "Calculate tomographic contrast"))
         self.action_LinaQAH.setText(_translate("LinaQAForm", "LinaQA documentation"))
         self.action_LinaQAH.setToolTip(_translate("LinaQAForm", "LinaQA Help"))
@@ -656,6 +672,7 @@ class Ui_LinaQAForm(object):
         self.action_Scale_LUT.setText(_translate("LinaQAForm", "Raw/LUT"))
         self.action_Scale_LUT.setToolTip(_translate("LinaQAForm", "Toggle between displaying raw pixel values or LUT values"))
         self.action_SUV_Uptake.setText(_translate("LinaQAForm", "SUV Uptake"))
+        self.action_SUV_Uptake.setIconText(_translate("LinaQAForm", "  SUV Uptake  "))
         self.action_SUV_Uptake.setToolTip(_translate("LinaQAForm", "Calculate SUV uptake. Long or right click to set parameters"))
 from qt_subclasses import ColorStatusBar
 from settingsunit import SettingsTree

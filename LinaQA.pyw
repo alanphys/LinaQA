@@ -106,6 +106,18 @@ class LinaQA(QMainWindow):
             self.move(self.settings.value("Window/Position"))
         set_default_settings(self.settings)
 
+        # set toolbar icon text
+        if self.settings.value("Window/Show icon text", True, type=bool):
+            self.ui.toolBar_Rx.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            self.ui.toolBar_NM.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            self.ui.toolBar_Dx.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            self.ui.toolBar_DCM.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        else:
+            self.ui.toolBar_Rx.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.ui.toolBar_NM.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.ui.toolBar_Dx.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.ui.toolBar_DCM.setToolButtonStyle(Qt.ToolButtonIconOnly)
+
         # create popups for tool buttons
         create_popups(self)
         initialize_popups(self)
@@ -182,7 +194,7 @@ class LinaQA(QMainWindow):
         self.ui.action_Clear_selection.triggered.connect(self.clearall_tags)
         self.ui.action_Expand_all.triggered.connect(self.expandall_tags)
         self.ui.action_Collapse_all.triggered.connect(self.collapseall_tags)
-        self.ui.tabWidget.tabCloseRequested.connect(lambda index: self.ui.tabWidget.setTabVisible(index, False))
+        self.ui.tabWidget.tabCloseRequested.connect(self.tab_close_request)
         self.ui.tabWidget.currentChanged.connect(self.tab_changed)
 
         # prepare ui
@@ -552,6 +564,16 @@ class LinaQA(QMainWindow):
             elif (index == 3) and (self.imager is not None):
                 self.edit_pixel_data()
         self.old_tab = index
+
+    def tab_close_request(self, index):
+        if index == 1:
+            self.ui.action_DICOM_tags.setChecked(False)
+            self.show_dicom_toolbar()
+        elif index == 5:
+            self.ui.action_Settings.setChecked(False)
+            self.ui.tabWidget.setTabVisible(index, False)
+        else:
+            self.ui.tabWidget.setTabVisible(index, False)
 
     def show_notes(self):
         if self.ui.action_Notes.isChecked():

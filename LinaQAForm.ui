@@ -395,7 +395,7 @@
     </size>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonIconOnly</enum>
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>RightToolBarArea</enum>
@@ -414,6 +414,9 @@
   <widget class="QToolBar" name="toolBar_Dx">
    <property name="windowTitle">
     <string>toolBar</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>RightToolBarArea</enum>
@@ -438,6 +441,9 @@
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
    <attribute name="toolBarArea">
     <enum>RightToolBarArea</enum>
    </attribute>
@@ -452,6 +458,9 @@
   <widget class="QToolBar" name="toolBar_NM">
    <property name="windowTitle">
     <string>toolBar</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>RightToolBarArea</enum>
@@ -549,6 +558,9 @@
    <property name="text">
     <string>VMAT</string>
    </property>
+   <property name="iconText">
+    <string>       VMAT       </string>
+   </property>
    <property name="toolTip">
     <string>Analyse VMAT parameters. Long or right click to select test.</string>
    </property>
@@ -596,6 +608,9 @@
    </property>
    <property name="text">
     <string>Picket Fence</string>
+   </property>
+   <property name="iconText">
+    <string> Picket Fence </string>
    </property>
    <property name="toolTip">
     <string>Analyse picket fence image. Long or right click to select MLC.</string>
@@ -924,6 +939,9 @@
    <property name="text">
     <string>Scale Image</string>
    </property>
+   <property name="iconText">
+    <string>   Scale Image   </string>
+   </property>
    <property name="toolTip">
     <string>Scale image maximum. Lon or right click to set scale factor.</string>
    </property>
@@ -987,6 +1005,10 @@
    <property name="text">
     <string>Tomographic Uniformity</string>
    </property>
+   <property name="iconText">
+    <string>Tomographic
+Uniformity</string>
+   </property>
    <property name="toolTip">
     <string>Calculate tomographic uniformity. Long or right click to select frames.</string>
    </property>
@@ -998,6 +1020,10 @@
    </property>
    <property name="text">
     <string>Tomographic Resolution</string>
+   </property>
+   <property name="iconText">
+    <string>Tomographic
+Resolution</string>
    </property>
    <property name="toolTip">
     <string>Calculate tomographic resolution</string>
@@ -1023,6 +1049,10 @@
    <property name="text">
     <string>Simple Sensitivity</string>
    </property>
+   <property name="iconText">
+    <string>Simple
+   Sensitivity   </string>
+   </property>
    <property name="toolTip">
     <string>Calculate simple sensitivity. Long or right click to set activity.</string>
    </property>
@@ -1033,7 +1063,11 @@
      <normaloff>:/Icons/Icons/SpatialRes.png</normaloff>:/Icons/Icons/SpatialRes.png</iconset>
    </property>
    <property name="text">
-    <string>Spacial Resolution</string>
+    <string>Spatial Resolution</string>
+   </property>
+   <property name="iconText">
+    <string>Spatial
+   Resolution   </string>
    </property>
    <property name="toolTip">
     <string>Calculate spatial resolution</string>
@@ -1046,6 +1080,10 @@
    </property>
    <property name="text">
     <string>Tomographic Contrast</string>
+   </property>
+   <property name="iconText">
+    <string>Tomographic
+Contrast</string>
    </property>
    <property name="toolTip">
     <string>Calculate tomographic contrast</string>
@@ -1105,6 +1143,9 @@
    </property>
    <property name="text">
     <string>SUV Uptake</string>
+   </property>
+   <property name="iconText">
+    <string>  SUV Uptake  </string>
    </property>
    <property name="toolTip">
     <string>Calculate SUV uptake. Long or right click to set parameters</string>

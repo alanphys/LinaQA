@@ -143,6 +143,8 @@ def set_default_settings(settings):
         settings.setValue("Show NM Toolbar", "False")
     if not settings.contains("Show DCM Toolbar"):
         settings.setValue("Show DCM Toolbar", "False")
+    if not settings.contains("Show icon text"):
+        settings.setValue("Show icon text", "True")
     settings.endGroup()
 
     settings.beginGroup("Tomographic Uniformity")

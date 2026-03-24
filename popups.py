@@ -16,11 +16,11 @@ from linaqa_types import (
     mlc_list)
 from qt_subclasses import MyDoubleSpinBox, PopupToolbar, LongPressToolButton
 
-from PyQt5.QtWidgets import QComboBox, QSpinBox, QTimeEdit
+from PyQt5.QtWidgets import QToolBar, QAction, QComboBox, QSpinBox, QTimeEdit
 from PyQt5.QtCore import QPoint, QTime
 
 
-def replace_action_with_long_press(toolbar, action, popup_widget):
+def replace_action_with_long_press(toolbar: QToolBar, action: QAction, popup_widget: PopupToolbar):
     """
     Replace a toolbar action with a LongPressToolButton
 
@@ -36,6 +36,8 @@ def replace_action_with_long_press(toolbar, action, popup_widget):
     button = LongPressToolButton()
     button.setDefaultAction(action)
     button.set_popup_widget(popup_widget)
+    button.setText(action.iconText())
+    button.setToolButtonStyle(toolbar.toolButtonStyle())
 
     # Replace the action with our custom button
     toolbar.insertWidget(action, button)
