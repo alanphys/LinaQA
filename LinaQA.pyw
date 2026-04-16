@@ -36,7 +36,7 @@ from PyQt5.QtGui import (
      QMouseEvent,
      QStandardItemModel,
      QStandardItem,
-     QPalette)
+     QCursor)
 from PyQt5.QtCore import Qt, QSettings, QSortFilterProxyModel
 import matplotlib.pyplot as plt
 import webbrowser
@@ -594,10 +594,14 @@ class LinaQA(QMainWindow):
             filename = QFileDialog.getSaveFileName(self, "File exists, save file as:", filename, "PDF files (*.pdf)")[0]
         if len(filename) > 0:
             notes = self.ui.pte_notes.toPlainText().split("\n") if self.ui.pte_notes.toPlainText() != "" else None
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.processEvents()
             test.publish_pdf(filename,
                              notes=notes,
                              metadata=self.settings.value("General/Metadata"),
                              logo=self.settings.value("General/Logo"))
+            QApplication.restoreOverrideCursor()
+            QApplication.processEvents()
             if open_path(filename):
                 self.ui.statusbar.status_message("Results displayed in PDF")
             else:
