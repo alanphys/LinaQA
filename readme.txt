@@ -10,7 +10,7 @@ Please read the file Licence.txt. This means that if as a result of using this p
 3) System Requirements
 Currently tested on
 * Fedora 42/KDE 6.05/QT 5.15
-* Window 10/Miniconda3
+* Windows 10/Miniconda3
 Windows users will need to install a python stack (such as anaconda) and PyQT5/QT5.
 
 4) Dependencies
@@ -75,7 +75,7 @@ Open a file either from the menu or toolbar. Drag and drop from your favourite f
 
 Open the reference image if needed.
 
-Select the appropriate MLC, phantom or test if necessary. Defaults can be set in "Settings"
+Select the appropriate MLC, phantom or test if necessary. Defaults can be set in "Settings". Some settings can be changed on the fly by long press or right click on the respective Test button.
 
 Click the relevant Test button.
 
@@ -85,7 +85,7 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
 
 Current
-Documentation added. Error handling improved. Flip image left-right and up-down added. Toggable image display between raw pixels and real world value map, e.g. dose for EPID or activity concentration for NM/PET added. Quick set popup menus added to change parameters and analyses on the fly. DRCS added to VMAT analysis. SUV uptake analysis (EARL) added. Settings moved to Tab interface.
+Documentation added. Error handling improved. Flip image left-right and up-down added. Toggable image display between raw pixels and real world value map, e.g. dose for EPID or activity concentration for NM/PET added. Quick set popup menus added to change parameters and analyses on the fly. DRCS added to VMAT analysis. SUV uptake analysis (EARL) added. Settings moved to Tab interface. Setting added to toggle toolbar icon text on/off.
 
 Version 0.07
 Image sum from a set of images added. Image rescaling added. Nuclear medicine toolbar added. Toolbars can be made persistent in the settings. Implemented Maximum Count Rate, Simple Sensitivity, Planar Uniformity, Planar Spatial Resolution, Tomographic Uniformity, Tomographic Resolution, Tomographic Contrast and Centre of Rotation analysis. Added handling of multiframe images. Settings unit has been overhauled.

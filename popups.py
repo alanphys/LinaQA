@@ -13,7 +13,8 @@ from linaqa_types import (
     vmat_list,
     phantom2D_list,
     spatial_res_list,
-    mlc_list)
+    mlc_list,
+    mean_area_def)
 from qt_subclasses import MyDoubleSpinBox, PopupToolbar, LongPressToolButton
 
 from PyQt5.QtWidgets import QToolBar, QAction, QComboBox, QSpinBox, QTimeEdit
@@ -286,6 +287,10 @@ def create_suv_uptake_popup(form):
     form.ui.teSeriesTime.setDisplayFormat("hh:mm:ss")
     form.ui.earl_popup.add_hcontrol("Acquisition time:", form.ui.teSeriesTime)
 
+    form.ui.cbMeanDef = QComboBox()
+    form.ui.earl_popup.add_hcontrol("Mean area def:", form.ui.cbMeanDef)
+    form.ui.cbMeanDef.addItems(mean_area_def)
+
     button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_SUV_Uptake, form.ui.earl_popup)
     # button.set_popup_initializer(lambda: initialize_suv_uptake_popup(form))
 
@@ -333,3 +338,11 @@ def update_suv_uptake_popup(form):
             form.ui.teSeriesTime.setTime(QTime.fromString(series_time.split(".")[0], "HHmmss"))
         except KeyError:
             form.ui.statusbar.status_error("Missing DICOM tag(s)")
+
+        mean_def = form.settings.value("SUV Uptake/Mean area", "Physical vol", type=str)
+        index = form.ui.cbMeanDef.findText(mean_def)
+        if index >= 0:
+            form.ui.cbMeanDef.setCurrentIndex(index)
+        else:
+            raise Exception("Invalid setting in SUV Uptake/Mean area")
+

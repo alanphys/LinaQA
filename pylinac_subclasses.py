@@ -33,6 +33,7 @@ from pydicom import Dataset, dcmread
 # workaround I have at the moment.
 from pylinac.core.image import DicomImage, NMImageStack, _rescale_dicom_values
 from pylinac.core.geometry import Circle, direction_to_coords
+from pylinac.nuclear import sample_sphere, create_sphere_mask
 import functools
 
 
@@ -805,6 +806,40 @@ class SUVTomoROI(TomographicROI):
         return float(np.nanmax(self.sphere_array))
 
     @property
+    def peak_value(self) -> float:
+        """ Strictly speaking this should be a circular window. But the window size will be only 2 or 3 pixels
+        and to make this round is difficult."""
+        peak_sphere_radius = 6.20
+        window_size = int(peak_sphere_radius * 2 / self.pixel_spacing)          # radius of 10cc sphere is 6.2mm
+        window_centre = int(peak_sphere_radius / self.pixel_spacing)
+        # sample 10 mm beyond sphere radius
+        ext_sphere_array = sample_sphere(self.array3d,
+                                         col=self.x, row=self.y, zed=self.z,
+                                         radius=self.radius + window_size)
+        windows = sliding_window_view(ext_sphere_array, (window_size, window_size, window_size))
+        # make round, include the pixel if half the pixel is within the sphere radius.
+        mask = create_sphere_mask((window_size, window_size, window_size),
+                                  col=window_centre, row=window_centre, zed=window_centre,
+                                  radius=window_centre + 0.5)
+        windows_masked = windows.copy()
+        windows_masked[..., ~mask] = np.nan
+        window_means = np.nanmean(windows_masked, axis=(-1, -2, -3))
+        return np.nanmax(window_means)
+
+    @property
+    def mean_50_value(self) -> float:
+        peak_sphere_radius = 6.20
+        window_size = int(peak_sphere_radius * 2 / self.pixel_spacing)          # radius of 10cc sphere is 6.2mm
+        # sample 10 mm beyond sphere radius
+        ext_sphere_array = sample_sphere(self.array3d,
+                                         col=self.x, row=self.y, zed=self.z,
+                                         radius=self.radius + window_size)
+        # threshold to 50%
+        threshold = self.max_value * 0.50
+        ext_sphere_array[ext_sphere_array <= threshold] = np.nan
+        return np.nanmean(ext_sphere_array)
+
+    @property
     def mean_contrast(self) -> float:
         return michelson(np.asarray([self.mean_value, self.uniformity_baseline]))
 
@@ -817,21 +852,26 @@ class SUVTomoROI(TomographicROI):
         return self.mean_value / self.sphere_dose_vol
 
     @property
+    def mean_50_recovery_coeff(self) -> float:
+        return self.mean_50_value / self.sphere_dose_vol
+
+    @property
     def max_recovery_coeff(self) -> float:
         return self.max_value / self.sphere_dose_vol
 
     @property
     def peak_recovery_coeff(self):
-        """ Strictly speaking this should be a circular window. But the window size will be only 2 or 3 pixels
-        and to make this round is difficult."""
-        window_size = int(10 / self.pixel_spacing)
-        windows = sliding_window_view(self.sphere_array[0], (window_size, window_size, window_size))
-        window_means = np.nanmean(windows, axis=(-1, -2, -3))
-        return np.nanmax(window_means) / self.sphere_dose_vol
+        return self.peak_value / self.sphere_dose_vol
 
     @property
     def corrected_mean_recovery_coeff(self) -> float:
         scan = (self.mean_value - self.uniformity_baseline) / self.uniformity_baseline
+        measured = (self.sphere_dose_vol - self.backgnd_dose_vol) / self.backgnd_dose_vol
+        return scan / measured
+
+    @property
+    def corrected_50_mean_recovery_coeff(self) -> float:
+        scan = (self.mean_50_value - self.uniformity_baseline) / self.uniformity_baseline
         measured = (self.sphere_dose_vol - self.backgnd_dose_vol) / self.backgnd_dose_vol
         return scan / measured
 
@@ -842,14 +882,10 @@ class SUVTomoROI(TomographicROI):
         return scan / measured
 
     @property
-    def corrected_peak_recovery_coeff(self):
+    def corrected_peak_recovery_coeff(self) -> float:
         """ Strictly speaking this should be a circular window. But the window size will be only 2 or 3 pixels
         and to make this round is difficult."""
-        window_size = int(10 / self.pixel_spacing)
-        windows = sliding_window_view(self.sphere_array[0], (window_size, window_size, window_size))
-        window_means = np.nanmean(windows, axis=(-1, -2, -3))
-        max_mean = float(np.nanmax(window_means))
-        scan = (max_mean - self.uniformity_baseline) / self.uniformity_baseline
+        scan = (self.peak_value - self.uniformity_baseline) / self.uniformity_baseline
         measured = (self.sphere_dose_vol - self.backgnd_dose_vol) / self.backgnd_dose_vol
         return scan / measured
 
@@ -869,6 +905,8 @@ class SUVUptake:
         self.rois = None
         self.sphere_dose_vol = 0
         self.background_dose_vol = 0
+        self.use_50_vol = False
+        self.analyzed = False
 
     @cached_property
     def sphere_slice_index(self):
@@ -923,7 +961,8 @@ class SUVUptake:
         sphere_vol: int = 1000,
         sphere_dose: float | None = None,
         sphere_time: QTime = QTime.fromString("12:00:00", "hh:mm:ss"),
-        measurement_time: QTime | None = None
+        measurement_time: QTime | None = None,
+        use_50_vol: bool = False
     ) -> None:
         """Analyze the image to determine the contrast.
 
@@ -951,7 +990,10 @@ class SUVUptake:
             Time stock dose was measured
         measurement_time: QTime
             Time the scan series was done. If None taken from series metadata.
+        use_50_vol: bool
+            Use sphere volume thresholded to 50% of peak value if True, otherwise use physical sphere volume.
         """
+        self.use_50_vol = use_50_vol
         if len(sphere_diameters_mm) != len(sphere_angles):
             raise ValueError("The number of sphere diameters and angles must be the same.")
 
@@ -1033,27 +1075,33 @@ class SUVUptake:
             )
             rois[str(idx + 1)] = roi
         self.rois = rois
+        self.analyzed = True
 
     def results(self) -> str:
         """Return a string representation of the results."""
+        if not self.analyzed:
+            raise RuntimeError("The image must be analyzed first. Use .analyze().")
         s = f"Summary statistics for {self.path.name}\n\n"
         s += f"Background baseline: Mean: {self.backgnd['mean']:.1f}; Standard Deviation: {self.backgnd['stddev']:.1f}\n\n"
         for idx, roi in self.rois.items():
-            s += (f"Sphere {idx}: X={roi.x:.2f}, Y={roi.y:.2f}, Z={roi.z:.2f} Mean: {roi.mean_value:.2f}; " +
-                  f"Maximum: {roi.max_value:.2f}\n")
+            s += f"Sphere {idx}: X={roi.x:.2f}, Y={roi.y:.2f}, Z={roi.z:.2f} "
+            s += f"Mean: {roi.mean_50_value if self.use_50_vol else roi.mean_value:.2f}; "
+            s += f"Maximum: {roi.max_value:.2f}; Peak: {roi.peak_value:.2f}\n"
         s += f"\nTomographic Contrast results for {self.path.name}\n\n"
         for idx, roi in self.rois.items():
             s += f"Sphere {idx}: Mean Contrast: {roi.mean_contrast:.2f}; Max Contrast: {roi.max_hot_contrast:.2f}\n"
         s += f"\nRecovery coefficient results for {self.path.name}\n\n"
         for idx, roi in self.rois.items():
-            s += f"Sphere {idx}: Mean {roi.mean_recovery_coeff:.2f}; "
+            s += f"Sphere {idx}: Mean {roi.mean_50_recovery_coeff if self.use_50_vol else roi.mean_recovery_coeff:.2f}; "
             s += f"Max {roi.max_recovery_coeff:.2f}; "
             s += f"Peak {roi.peak_recovery_coeff:.2f}\n"
         s += f"\nCorrected recovery coefficient results for {self.path.name}\n\n"
         for idx, roi in self.rois.items():
-            s += f"Sphere {idx}: Mean {roi.corrected_mean_recovery_coeff:.2f}; "
+            s += f"Sphere {idx}: Mean {roi.corrected_50_mean_recovery_coeff if self.use_50_vol else roi.corrected_mean_recovery_coeff:.2f}; "
             s += f"Max {roi.corrected_max_recovery_coeff:.2f}; "
             s += f"Peak {roi.corrected_peak_recovery_coeff:.2f}\n"
+        s += f"\nMean area definition: "
+        s += f"50% isodose contour" if self.use_50_vol else f"Physical volume"
         return s
 
     def plot(self, show: bool = True) -> (list[Figure], list[Axes]):

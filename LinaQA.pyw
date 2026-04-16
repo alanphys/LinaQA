@@ -1346,6 +1346,7 @@ class LinaQA(QMainWindow):
         stock_res = self.ui.sbStockRes.value()
         stock_res_time = self.ui.teStockResTime.time()
         scan_time = self.ui.teSeriesTime.time()
+        use_50_area = self.ui.cbMeanDef.currentText() == "50% isodose"
 
         # correct for residuals
         # TODO: account for decay for residual
@@ -1361,7 +1362,8 @@ class LinaQA(QMainWindow):
             sphere_vol=stock_vol,
             sphere_dose=stock_dose,
             sphere_time=stock_time,
-            measurement_time=scan_time
+            measurement_time=scan_time,
+            use_50_vol=use_50_area
         )
         self.show_results(su)
 

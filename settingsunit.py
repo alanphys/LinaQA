@@ -21,7 +21,8 @@ from linaqa_types import (
      vmat_list,
      spatial_res_list,
      mlc_list,
-     nuclide_list)
+     nuclide_list,
+     mean_area_def)
 from qt_subclasses import MyDoubleSpinBox
 
 sys_path = path.dirname(path.realpath(inspect.getframeinfo(inspect.currentframe()).filename))
@@ -216,6 +217,8 @@ def set_default_settings(settings):
         settings.setValue("Stock vol", "1000")
     if not settings.contains("Stock dose"):
         settings.setValue("Stock dose", "20")
+    if not settings.contains("Mean area"):
+        settings.setValue("Mean area", "Physical vol")
     settings.endGroup()
 
 
@@ -544,7 +547,7 @@ class VariantDelegate(QItemDelegate):
         elif isinstance(original_value, float):
             editor = MyDoubleSpinBox(parent)
             editor.setRange(-1000, 1000)
-        elif isinstance(original_value, str) and key in ["2D Type", "3D Type", "MLC Type", "VMAT test", "Nuclide", "Resolution test"]:
+        elif isinstance(original_value, str) and key in ["2D Type", "3D Type", "MLC Type", "VMAT test", "Nuclide", "Resolution test", "Mean area"]:
             editor = QComboBox(parent)
             editor.setFrame(False)
             key = index.model().data(index.sibling(index.row(), 0))
@@ -560,6 +563,8 @@ class VariantDelegate(QItemDelegate):
                 editor.addItems(nuclide_list)
             elif key == "Resolution test":
                 editor.addItems(spatial_res_list)
+            elif key == "Mean area":
+                editor.addItems(mean_area_def)
         else:
             editor = QLineEdit(parent)
             editor.setFrame(False)

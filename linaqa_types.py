@@ -28,6 +28,8 @@ mlc_list = [mlc.value.get("name") for mlc in MLC]
 
 nuclide_list = [str(name) for name, value in vars(Nuclide).items() if not name.startswith("__")]
 
+mean_area_def = ["Physical vol", "50% isodose"]
+
 # colours for status bar messages
 faint_red = "#ff7979"
 faint_yellow = "#fffccf"
