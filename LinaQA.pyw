@@ -1325,8 +1325,8 @@ class LinaQA(QMainWindow):
             ufov_ratio=self.settings.value("Tomographic Contrast/UFOV ratio", 0.8, type=float))
         self.show_results(tc)
 
-#    @check_valid_image
-#    @catch_nm_type_error
+    @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def suv_uptake(self):
         su = pylinac_subclasses.SUVUptake(self.imager.datasets)
