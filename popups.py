@@ -72,7 +72,7 @@ def initialize_popups(form):
 
 
 def update_popups(form):
-    if form.imager.datasets[0].Modality == "PT":
+    if (form.imager is not None) and hasattr(form.imager, "datasets") and (form.imager.datasets[0].Modality == "PT"):
         update_suv_uptake_popup(form)
 
 
