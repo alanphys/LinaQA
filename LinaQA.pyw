@@ -16,6 +16,7 @@ import inspect
 import os.path as osp
 import os
 import io
+import math
 from pylinac.core.io import TemporaryZipDirectory
 from platform import system
 from PyQt5.QtWidgets import (
@@ -1352,10 +1353,14 @@ class LinaQA(QMainWindow):
         scan_time = self.ui.teSeriesTime.time()
         use_50_area = self.ui.cbMeanDef.currentText() == "50% isodose"
 
-        # correct for residuals
-        # TODO: account for decay for residual
-        backgnd_dose -= backgnd_res
-        stock_dose -= stock_res
+        # correct for residual activity
+        dataset = self.imager.datasets[0]
+        seq = dataset[0x0054, 0x0016][0]            # Radiopharmaceutical Information Sequence
+        half_life = seq[0x0018, 0x1075].value        # Radionuclide half life
+        backgnd_res_decay_time = backgnd_time.secsTo(backgnd_res_time)
+        stock_res_decay_time = stock_time.secsTo(stock_res_time)
+        backgnd_dose -= backgnd_res * math.exp(-0.693147181 * backgnd_res_decay_time / half_life)
+        stock_dose -= stock_res * math.exp(-0.693147181 * stock_res_decay_time / half_life)
 
         su.analyze(
             sphere_diameters_mm=sphere_diam,
