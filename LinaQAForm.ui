@@ -289,10 +289,17 @@
      <addaction name="action_Tomo_Res"/>
      <addaction name="action_Tomo_Contrast"/>
      <addaction name="action_COR"/>
+     <addaction name="action_SUV_Uptake"/>
+    </widget>
+    <widget class="QMenu" name="menuType_Here">
+     <property name="title">
+      <string>Type Here</string>
+     </property>
     </widget>
     <addaction name="menuRadiotherapy"/>
     <addaction name="menuRadiology"/>
     <addaction name="menuNuclear_Medicine"/>
+    <addaction name="menuType_Here"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
