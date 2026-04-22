@@ -6,7 +6,7 @@
 Analysis Tool Bars
 ==================
 
-The Analysis Toolbars allow the relevant quality control analysis, image or file operations to be selected. Due to the large number of available operations they have been grouped according to their application as shown below. Certain analyses require the selection of the correct phantom or test. More detail is given for the relevant analysis. Default phantoms or test types can be set in the :ref:`settings` module.
+The Analysis Toolbars allow the relevant quality control analysis, image or file operations to be selected. Due to the large number of available operations they have been grouped according to their application as shown below. Certain analyses require the selection of the correct phantom or test. More detail is given for the relevant analysis. Default phantoms or test types can be set in the :ref:`settings` module. Certain analysis buttons have a down arrow |pop| in the lower right corner. This indicates that a popup menu is available to change phantom and parameter settings on the fly. The popup menu can be accessed by long or right clicking the relevant analysis button.
 
 
 *  |rx| :ref:`rxtoolbar`
@@ -31,4 +31,6 @@ The Analysis Toolbars allow the relevant quality control analysis, image or file
 .. |nm| image:: _static/GammaCamera.png
 
 .. |dcm| image:: _static/DCMtags.png
+
+.. |pop| image:: _static/Popup.png
 
