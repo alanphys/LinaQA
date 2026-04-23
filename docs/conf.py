@@ -37,3 +37,7 @@ latex_documents = [
     ('index', 'LinaQAUserManual.tex', u'LinaQA Documentation',
      u'AC Chamberlain', 'manual'),
 ]
+# In your conf.py file
+latex_elements = {
+    'pointsize': '12pt',  # Options: '10pt' (default), '11pt', or '12pt'
+}
