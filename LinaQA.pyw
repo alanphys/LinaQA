@@ -434,7 +434,8 @@ class LinaQA(QMainWindow):
     @staticmethod
     def linaqa_help():
         rel_path = "html/index.html"
-        abs_path = osp.abspath(rel_path)
+        path = os.path.join(os.path.dirname(__file__), rel_path)
+        abs_path = osp.abspath(path)
         webbrowser.open(f"file://{abs_path}")
 
     @staticmethod
