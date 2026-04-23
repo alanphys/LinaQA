@@ -7,7 +7,7 @@
 3D Phantom Analysis
 ===================
 
-The 'Analyse 3D phantoms' provides methods to analyse three dimensional image quality phantoms such as the Catphan series, QuartDVT, ACR, etc. The analysis can be opened by clicking the |cp| button on the :ref:`rxtoolbar` or by selecting 'Radiotherapy, 3D phantoms' from the :ref:`analysemenu`. The 3D phantom to be analysed can be selected from the list box underneath the |cp| button. The default phantom can be specified in :ref:`3Dphantomsettings` settings. Phantoms that are currently implemented are:
+The 'Analyse 3D phantoms' provides methods to analyse three dimensional image quality phantoms such as the Catphan series, QuartDVT, ACR, etc. The analysis can be opened by clicking the |cp| button on the :ref:`rxtoolbar` or by selecting 'Radiotherapy, 3D phantoms' from the :ref:`analysemenu`. The 3D phantom to be analysed can be selected from a pop up window opened by a mouse long or right click on the |cp| button. The default phantom can be specified in :ref:`3Dphantomsettings` settings. Phantoms that are currently implemented are:
 
 *  |cp| :ref:`catphan`, 503, 504, 600, 604 and 700
 *  |qt| :ref:`quart`

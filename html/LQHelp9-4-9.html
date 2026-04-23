@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Picket Fence &#8212; LinaQA 1.00 documentation</title>
+    <title>SUV Uptake Analysis &#8212; LinaQA 1.00 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css?v=279e0f84" />
     <script src="_static/documentation_options.js?v=da1d7f10"></script>
@@ -13,8 +13,8 @@
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="SUV Uptake" href="LQHelp11-15.html" />
-    <link rel="prev" title="Gamma" href="LQHelp11-5.html" /> 
+    <link rel="next" title="DICOM Tool Bar" href="LQHelp9-5.html" />
+    <link rel="prev" title="Tomographic Contrast Analysis" href="LQHelp9-4-8.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
@@ -23,14 +23,15 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="LQHelp11-15.html" title="SUV Uptake"
+          <a href="LQHelp9-5.html" title="DICOM Tool Bar"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="LQHelp11-5.html" title="Gamma"
+          <a href="LQHelp9-4-8.html" title="Tomographic Contrast Analysis"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">LinaQA 1.00 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="LQHelp11.html" accesskey="U">Settings</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Picket Fence</a></li> 
+          <li class="nav-item nav-item-1"><a href="LQHelp10.html" >Analysis Tool Bars</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="LQHelp9-4.html" accesskey="U">Nuclear Medicine Tool Bar</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">SUV Uptake Analysis</a></li> 
       </ul>
     </div>  
 
@@ -39,18 +40,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="picket-fence">
-<span id="picketfencesettings"></span><span id="index-0"></span><h1>Picket Fence<a class="headerlink" href="#picket-fence" title="Link to this heading">¶</a></h1>
-<p>These contain customisable options for the <a class="reference internal" href="LQHelp9-2-2.html#picketfence"><span class="std std-ref">Picket Fence Analysis</span></a>. Available settings are:</p>
-<ul class="simple">
-<li><p><strong>Apply median filter</strong>: If true applies a median filter of size 3.</p></li>
-<li><p><strong>Leaf Action</strong>: Defines an action level in mm for leaf pair deviation. Must be less than <strong>Leaf Tolerance</strong>.</p></li>
-<li><p><strong>Leaf Tolerance</strong>: The tolerance of difference in mm between an MLC pair position and the picket fit line.</p></li>
-<li><p><strong>MLC Type</strong>: Sets the default Multi-Leaf Collimator (MLC) the image was acquired from. Select from the list provided.</p></li>
-<li><p><strong>Number of pickets</strong>: The number of pickets in the image.</p></li>
-</ul>
-<p><img alt="Note" src="_images/Note.png" /> Not all settings have been implemented.</p>
-<p><img alt="Hint" src="_images/Hint.png" /> <a class="reference internal" href="LQHelp8-3-2.html#invert"><span class="std std-ref">Inverting</span></a> the image sets the invert flag.</p>
+  <section id="suv-uptake-analysis">
+<span id="suvuptake"></span><span id="index-0"></span><h1>SUV Uptake Analysis<a class="headerlink" href="#suv-uptake-analysis" title="Link to this heading">¶</a></h1>
+<p>Calculates the contrast ratios and SUV Uptake of different size spheres in a SPECT or PET image. The analysis can be opened by clicking the <img alt="suv" src="_images/EARLContrast.png" /> button on the <a class="reference internal" href="LQHelp9-4.html#nmtoolbar"><span class="std std-ref">Nuclear Medicine Tool Bar</span></a> or by selecting ‘SUV Uptake’ from the <a class="reference internal" href="LQHelp8-4-3.html#nucmedmenu"><span class="std std-ref">Nuclear Medicine</span></a> analysis menu. Currently works with the IEC phantom only.</p>
+<p>Available settings can be set in <a class="reference internal" href="LQHelp11-15.html#suvuptakesettings"><span class="std std-ref">SUV Uptake</span></a> settings. Dose measurement, times and other parameters can be changed on the fly by a mouse long or right click on the <img alt="suv" src="_images/EARLContrast.png" /> button.</p>
+<p>This module is specific to LinaQA.</p>
 </section>
 
 
@@ -65,18 +59,18 @@
             </a></p>
   <div>
     <h4>Previous topic</h4>
-    <p class="topless"><a href="LQHelp11-5.html"
-                          title="previous chapter">Gamma</a></p>
+    <p class="topless"><a href="LQHelp9-4-8.html"
+                          title="previous chapter">Tomographic Contrast Analysis</a></p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="LQHelp11-15.html"
-                          title="next chapter">SUV Uptake</a></p>
+    <p class="topless"><a href="LQHelp9-5.html"
+                          title="next chapter">DICOM Tool Bar</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/LQHelp11-6.rst.txt"
+      <li><a href="_sources/LQHelp9-4-9.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -101,14 +95,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="LQHelp11-15.html" title="SUV Uptake"
+          <a href="LQHelp9-5.html" title="DICOM Tool Bar"
              >next</a> |</li>
         <li class="right" >
-          <a href="LQHelp11-5.html" title="Gamma"
+          <a href="LQHelp9-4-8.html" title="Tomographic Contrast Analysis"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">LinaQA 1.00 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="LQHelp11.html" >Settings</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Picket Fence</a></li> 
+          <li class="nav-item nav-item-1"><a href="LQHelp10.html" >Analysis Tool Bars</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="LQHelp9-4.html" >Nuclear Medicine Tool Bar</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">SUV Uptake Analysis</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

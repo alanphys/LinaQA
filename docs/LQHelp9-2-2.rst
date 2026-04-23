@@ -7,7 +7,7 @@
 Picket Fence Analysis
 =====================
 
-Analyse a picket fence Multi-Leaf Collimator (MLC) test pattern. The analysis can be opened by clicking the |pf| button on the :ref:`rxtoolbar` or by selecting 'Radiotherapy, Picket Fence' from the :ref:`analysemenu`. The MLC type can be selected from the list box underneath the |pf| button. The default MLC can be specified in :ref:`picketfencesettings` settings. MLC's that are currently implemented are:
+Analyse a picket fence Multi-Leaf Collimator (MLC) test pattern. The analysis can be opened by clicking the |pf| button on the :ref:`rxtoolbar` or by selecting 'Radiotherapy, Picket Fence' from the :ref:`analysemenu`. The MLC type can be selected from a pop up window opened by a mouse long or right click on the |pf| button. The default MLC can be specified in :ref:`picketfencesettings` settings. MLC's that are currently implemented are:
 
 *  Varian Millenium 120 leaf
 *  Varian HD Millenium 120 leaf

@@ -26,6 +26,7 @@ Analysis settings
    LQHelp11-4.rst
    LQHelp11-5.rst
    LQHelp11-6.rst
+   LQHelp11-15.rst
    LQHelp11-8.rst
    LQHelp11-9.rst
    LQHelp11-10.rst

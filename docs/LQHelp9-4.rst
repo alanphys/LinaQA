@@ -17,6 +17,7 @@ The Nuclear Medicine tool bar provides methods to analyse DICOM images from stat
 *  |tr| :ref:`tomores`
 *  |cor| :ref:`centreofrotation`
 *  |tc| :ref:`tomocontrast`
+*  |suv| :ref:`suvuptake`
 
 .. toctree::
    :maxdepth: 1
@@ -30,6 +31,7 @@ The Nuclear Medicine tool bar provides methods to analyse DICOM images from stat
    LQHelp9-4-6.rst
    LQHelp9-4-7.rst
    LQHelp9-4-8.rst
+   LQHelp9-4-9.rst
 
 
 .. |mcr| image:: _static/MaxCount.png
@@ -47,3 +49,5 @@ The Nuclear Medicine tool bar provides methods to analyse DICOM images from stat
 .. |cor| image:: _static/COR.png
 
 .. |tc| image:: _static/TomoContrast.png
+
+.. |suv| image:: _static/EARLContrast.png

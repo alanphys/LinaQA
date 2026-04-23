@@ -7,7 +7,7 @@
 Radiology Tool Bar
 ==================
 
-The Radiology tool bar provides methods to analyse DICOM images from diagnostic radiology modalities such as CT, Fluoroscopy and X-ray. The analysis is done via `Pylinac <https://pylinac.readthedocs.io/en/latest/>`_ and results are returned as a PDF report. No checking is done by the tests to see if the images are suitable. For trouble shooting please see the `Pylinac documentation <https://pylinac.readthedocs.io/en/latest/>`_.
+The Radiology tool bar provides methods to analyse and process DICOM images from diagnostic radiology modalities such as CT, Fluoroscopy and X-ray. The analysis is done via `Pylinac <https://pylinac.readthedocs.io/en/latest/>`_ and results are returned as a PDF report. No checking is done by the tests to see if the images are suitable. For trouble shooting please see the `Pylinac documentation <https://pylinac.readthedocs.io/en/latest/>`_.
 
 *  |aw| :ref:`autowindow`
 *  |iv| :ref:`invert`

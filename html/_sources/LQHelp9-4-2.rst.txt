@@ -9,7 +9,7 @@ Simple Sensitivity Analysis
 
 Calculates the planar sensitivity of each collimator in counts per second per becquerel of a Gamma Camera image. To use a background image open it as the reference image. The analysis can be opened by clicking the |ss| button on the :ref:`nmtoolbar` or by selecting 'Simple Sensitivity' from the :ref:`nucmedmenu` analysis menu.
 
-The 'Activity' and 'Nuclide' can be set in the 'Simple Sensitivity' group in :ref:`simplesenssettings`.
+The 'Activity' and 'Nuclide' can be set in the 'Simple Sensitivity' group in :ref:`simplesenssettings` settings. The activity can be modified on the fly by a long or right mouse click on the |ss| button.
 
 Please see `Simple Sensitivity <https://pylinac.readthedocs.io/en/latest/nuclear.html#simple-sensitivity>`_ in the `Pylinac documentation <https://pylinac.readthedocs.io/en/latest/>`_ for more information.
 

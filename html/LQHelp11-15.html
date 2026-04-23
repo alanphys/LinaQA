@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Picket Fence &#8212; LinaQA 1.00 documentation</title>
+    <title>SUV Uptake &#8212; LinaQA 1.00 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css?v=279e0f84" />
     <script src="_static/documentation_options.js?v=da1d7f10"></script>
@@ -13,8 +13,8 @@
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="SUV Uptake" href="LQHelp11-15.html" />
-    <link rel="prev" title="Gamma" href="LQHelp11-5.html" /> 
+    <link rel="next" title="Simple Sensitivity" href="LQHelp11-8.html" />
+    <link rel="prev" title="Picket Fence" href="LQHelp11-6.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
@@ -23,14 +23,14 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="LQHelp11-15.html" title="SUV Uptake"
+          <a href="LQHelp11-8.html" title="Simple Sensitivity"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="LQHelp11-5.html" title="Gamma"
+          <a href="LQHelp11-6.html" title="Picket Fence"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">LinaQA 1.00 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="LQHelp11.html" accesskey="U">Settings</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Picket Fence</a></li> 
+        <li class="nav-item nav-item-this"><a href="">SUV Uptake</a></li> 
       </ul>
     </div>  
 
@@ -39,18 +39,20 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="picket-fence">
-<span id="picketfencesettings"></span><span id="index-0"></span><h1>Picket Fence<a class="headerlink" href="#picket-fence" title="Link to this heading">¶</a></h1>
-<p>These contain customisable options for the <a class="reference internal" href="LQHelp9-2-2.html#picketfence"><span class="std std-ref">Picket Fence Analysis</span></a>. Available settings are:</p>
+  <section id="suv-uptake">
+<span id="suvuptakesettings"></span><span id="index-0"></span><h1>SUV Uptake<a class="headerlink" href="#suv-uptake" title="Link to this heading">¶</a></h1>
+<p>These contain customisable options for the <a class="reference internal" href="LQHelp9-4-9.html#suvuptake"><span class="std std-ref">SUV Uptake Analysis</span></a>. Available settings are:</p>
 <ul class="simple">
-<li><p><strong>Apply median filter</strong>: If true applies a median filter of size 3.</p></li>
-<li><p><strong>Leaf Action</strong>: Defines an action level in mm for leaf pair deviation. Must be less than <strong>Leaf Tolerance</strong>.</p></li>
-<li><p><strong>Leaf Tolerance</strong>: The tolerance of difference in mm between an MLC pair position and the picket fit line.</p></li>
-<li><p><strong>MLC Type</strong>: Sets the default Multi-Leaf Collimator (MLC) the image was acquired from. Select from the list provided.</p></li>
-<li><p><strong>Number of pickets</strong>: The number of pickets in the image.</p></li>
+<li><p><strong>Background dose</strong>: Activity in Mega Bequerels (MBq) injected into background vol. If None it will be taken from sphere_dose.</p></li>
+<li><p><strong>Background vol</strong>: Volume of phantom background compartment (phantom vol - inserts vol)</p></li>
+<li><p><strong>Mean area</strong>: Choose between physical sphere volume or 50% isodose volume to calculate the SUV mean.</p></li>
+<li><p><strong>Search Slices</strong>: Number of image slices to search from sphere starting points</p></li>
+<li><p><strong>Search window px</strong>: Number of pixels to search from sphere starting points</p></li>
+<li><p><strong>Sphere angles</strong>: Comma delimited list of sphere angles starting at horizontal right and going counterclockwise.</p></li>
+<li><p><strong>Sphere diameters mm</strong>: Comma delimited list of sphere diameters in mm corresponding to the <strong>sphere angles</strong></p></li>
+<li><p><strong>Stock dose</strong>: Activity in MBq injected into stock solution. If None it will be taken from series metadata.</p></li>
+<li><p><strong>Stock vol</strong>: Volume of stock solution mixed before injection into spheres</p></li>
 </ul>
-<p><img alt="Note" src="_images/Note.png" /> Not all settings have been implemented.</p>
-<p><img alt="Hint" src="_images/Hint.png" /> <a class="reference internal" href="LQHelp8-3-2.html#invert"><span class="std std-ref">Inverting</span></a> the image sets the invert flag.</p>
 </section>
 
 
@@ -65,18 +67,18 @@
             </a></p>
   <div>
     <h4>Previous topic</h4>
-    <p class="topless"><a href="LQHelp11-5.html"
-                          title="previous chapter">Gamma</a></p>
+    <p class="topless"><a href="LQHelp11-6.html"
+                          title="previous chapter">Picket Fence</a></p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="LQHelp11-15.html"
-                          title="next chapter">SUV Uptake</a></p>
+    <p class="topless"><a href="LQHelp11-8.html"
+                          title="next chapter">Simple Sensitivity</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/LQHelp11-6.rst.txt"
+      <li><a href="_sources/LQHelp11-15.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -101,14 +103,14 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="LQHelp11-15.html" title="SUV Uptake"
+          <a href="LQHelp11-8.html" title="Simple Sensitivity"
              >next</a> |</li>
         <li class="right" >
-          <a href="LQHelp11-5.html" title="Gamma"
+          <a href="LQHelp11-6.html" title="Picket Fence"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">LinaQA 1.00 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="LQHelp11.html" >Settings</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Picket Fence</a></li> 
+        <li class="nav-item nav-item-this"><a href="">SUV Uptake</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
