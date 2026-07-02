@@ -8,13 +8,11 @@ Type definitions for LinaQA
 # SPDX-License-Identifier: Licence.txt:
 
 import inspect
-from PyQt5.QtWidgets import QDoubleSpinBox
-from PyQt5.QtCore import QSettings
 from pylinac.picketfence import MLC
 from pylinac.nuclear import Nuclide
 from pylinac import planar_imaging
 
-supported_modalities = ["RTIMAGE", "RTDOSE", "CT", "NM", "PT", "MR", "OT", "XA"]
+supported_modalities = ["RTIMAGE", "RTDOSE", "CT", "NM", "PT", "MR", "OT", "XA", "SR"]
 # TODO pull these directly from class def
 phantom3D_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "CatPhan700", "QuartDVT", "ACR CT", "ACR MRI"]
 

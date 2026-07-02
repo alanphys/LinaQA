@@ -61,6 +61,7 @@ from misc_utils import (
     datasets_to_stream)
 from popups import create_popups, initialize_popups, update_popups
 import pylinac_subclasses
+from import_routines import read_dicom
 from tablemodel import TableModel
 
 import pydicom
@@ -232,69 +233,54 @@ class LinaQA(QMainWindow):
                 event.ignore()
 
     def open_image(self, filenames, force_read: bool = False):
+        """Open multiple files from a list of file names. Images must be of the same type, modality and size. Only
+        single multi-frame image files and non-image files are opened"""
+        del self.imager
+        self.imager = None
         num_total = len(filenames)
         num_bad = 0
-        first_modality = ""
-        frames = 0
+        num_ok = 0
         sorted_method = "None"
-
-        # Clear non-dicom files
         datasets = []
-        # we have to treat the first file separately to get the image modality
-        try:
-            ds = pydicom.dcmread(filenames[0], force=force_read)
-            if "TransferSyntaxUID" not in ds.file_meta:
-                ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-            if "SpacingBetweenSlices" not in ds:
-                ds.SpacingBetweenSlices = ds.SliceThickness if "SliceThickness" in ds else 1
-            if "Modality" in ds:
-                first_modality = ds.Modality
-            frames = ds.NumberOfFrames if "NumberOfFrames" in ds else 1
-            if ds.file_meta.TransferSyntaxUID.is_compressed:
-                ds.decompress()
-            datasets.append(ds)
-        except pydicom.errors.InvalidDicomError:
-            num_bad += 1
-            filenames.remove(filenames[0])
-        num_ok = 1
+        prev_ds = None
 
-        # continue reading if first image is a single frame image
-        if frames <= 1 < num_total:
-            for file in filenames[1:]:
-                try:
-                    ds = pydicom.dcmread(file, force=force_read)
-                    if "TransferSyntaxUID" not in ds.file_meta:
-                        ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-                    if "SpacingBetweenSlices" not in ds:
-                        ds.SpacingBetweenSlices = ds.SliceThickness if hasattr(ds, "SliceThickness") else 1
-                    modality = ds.Modality
-                    frames = ds.NumberOfFrames if "NumberOfFrames" in ds else 1
-                    # cannot mix modalities or multi frame images
-                    if (modality != first_modality) or (frames > 1) or not hasattr(ds, "PixelData"):
-                        raise pydicom.errors.InvalidDicomError
-                    if ds.file_meta.TransferSyntaxUID.is_compressed:
-                        ds.decompress()
+        for file in filenames:
+            try:
+                ds, stop = read_dicom(file, force_read)
+                # may want to extend this check to make sure images are all of the same type and size
+                if prev_ds is None:
                     datasets.append(ds)
                     num_ok += 1
-
-                except pydicom.errors.InvalidDicomError:
+                elif ds.Modality == prev_ds.Modality:
+                    datasets.append(ds)
+                    num_ok += 1
+                else:
                     filenames.remove(file)
+                    num_bad += 1
+                prev_ds = ds
+                if stop:
+                    break
 
-            # Try to sort based on instance number then SOPInstanceUID
-            sorted_method = "filenames"
+            except pydicom.errors.InvalidDicomError:
+                filenames.remove(file)
+                num_bad += 1
+
+        # Try to sort based on instance number then SOPInstanceUID
+        sorted_method = "filenames"
+        try:
+            order = sorted(range(len(datasets)), key=lambda i: datasets[i].InstanceNumber)
+            datasets = [datasets[i] for i in order]
+            filenames = [filenames[i] for i in order]
+            sorted_method = "instance number"
+        except (TypeError, AttributeError):
             try:
-                order = sorted(range(len(datasets)), key=lambda i: datasets[i].InstanceNumber)
+                order = sorted(range(len(datasets)), key=lambda i: datasets[i].SOPInstanceUID)
                 datasets = [datasets[i] for i in order]
                 filenames = [filenames[i] for i in order]
-                sorted_method = "instance number"
+                sorted_method = "SOP instance UID"
             except (TypeError, AttributeError):
-                try:
-                    order = sorted(range(len(datasets)), key=lambda i: datasets[i].SOPInstanceUID)
-                    datasets = [datasets[i] for i in order]
-                    filenames = [filenames[i] for i in order]
-                    sorted_method = "SOP instance UID"
-                except (TypeError, AttributeError):
-                    pass
+                pass
+
         self.imager = Imager(datasets, self.ui.action_Scale_LUT.isChecked())
         self.filenames = filenames
         num_bad = num_total - num_ok
@@ -305,8 +291,6 @@ class LinaQA(QMainWindow):
 
     def open_file(self):
         # remove any previous images
-        del self.imager
-        self.imager = None
         self.ui.qlImage.clear()
         # is the filename a directory or archive
         if len(self.filenames) == 1:

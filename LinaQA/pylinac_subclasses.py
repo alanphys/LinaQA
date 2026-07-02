@@ -110,7 +110,6 @@ from pylinac.core import pdf
 from pylinac.core.contrast import michelson
 
 
-
 class LinaQAMaxCountRate(MaxCountRate):
     _model = "Maximum Count Rate"
 
