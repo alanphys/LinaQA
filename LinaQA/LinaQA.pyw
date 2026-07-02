@@ -61,7 +61,7 @@ from misc_utils import (
     datasets_to_stream)
 from popups import create_popups, initialize_popups, update_popups
 import pylinac_subclasses
-from import_routines import read_dicom
+from import_routines import read_dicom, is_similar_image
 from tablemodel import TableModel
 
 import pydicom
@@ -251,7 +251,7 @@ class LinaQA(QMainWindow):
                 if prev_ds is None:
                     datasets.append(ds)
                     num_ok += 1
-                elif ds.Modality == prev_ds.Modality:
+                elif is_similar_image(ds, prev_ds):
                     datasets.append(ds)
                     num_ok += 1
                 else:

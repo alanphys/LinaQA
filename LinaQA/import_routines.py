@@ -12,6 +12,12 @@ from pydicom import Dataset, dcmread, uid, errors
 from linaqa_types import supported_modalities
 
 
+def is_similar_image(current, previous: Dataset) -> bool:
+    return (current.Modality == previous.Modality and
+            current.Rows == previous.Rows and
+            current.Columns == previous.Columns)
+
+
 def read_dicom(filename, force_read: bool = False) -> tuple[Dataset, bool]:
     stop_reading = False
     ds = dcmread(filename, force=force_read)
