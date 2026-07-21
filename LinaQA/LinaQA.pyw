@@ -44,7 +44,7 @@ import webbrowser
 
 from LinaQAForm import Ui_LinaQAForm
 from linaqa_types import (
-    supported_modalities,
+    supported_file_ext,
     spatial_res_list)
 from aboutpackage import About
 from aboutpackage.aboutform import version
@@ -243,8 +243,11 @@ class LinaQA(QMainWindow):
         prev_ds = None
 
         # select file reader according to extension, default to DICOM
-        file_reader = read_dicom
         ext = osp.splitext(filenames[0])[1].lower()
+        # workaround to ignore binary log files
+        if ext not in supported_file_ext:
+            return
+        file_reader = read_dicom
         if ext == ".xim":
             file_reader = read_xim
 
@@ -314,7 +317,6 @@ class LinaQA(QMainWindow):
         # remove files that do not have the same extension as the first file
         ext = osp.splitext(self.filenames[0])[1]
         self.filenames = [f for f in self.filenames if osp.splitext(f)[1] == ext]
-
         self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
         force_open = self.settings.value("PyDicom/Force", False, type=bool)
         self.open_image(self.filenames, force_open)
@@ -325,17 +327,13 @@ class LinaQA(QMainWindow):
             self.edit_pixel_data()
             update_popups(self)
         # else show DICOM tags
-        else:
+        elif self.imager is not None:
             self.ui.tabWidget.setTabVisible(0, False)
             self.ui.action_DICOM_tags.setChecked(True)
             self.tab_changed(1)
-        # else:
-        #    the_image = QPixmap(self.filenames[0])
-        #    if the_image.isNull():
-        #        self.ui.statusbar.status_error("File is not a valid image file!")
-        #    else:
-        #        self.ui.qlImage.setPixmap(the_image)
-        #        self.ui.qlImage.setScaledContents(True)
+        # else probably a trajectory log file, do nothing but retain the filename
+        else:
+            self.ui.statusbar.status_error("File is not a valid image or DICOM file!")
 
     def choose_file(self):
         # set up ui

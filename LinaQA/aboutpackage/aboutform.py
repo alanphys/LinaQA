@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QDialog
 import os
 from pathlib import Path
 
-version = "0.08.617"  # previous git commit 654d13f0
+version = "0.08.622"  # previous git commit 779b8ff5
 
 
 class About(QDialog):

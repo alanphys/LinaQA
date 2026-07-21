@@ -44,7 +44,7 @@ def read_dicom(filename: str, force_read: bool=False) -> tuple[Dataset, bool]:
 
 def read_xim(filename: str, args):
     """Read one XIM file"""
-    # TODO may need to add additional DICOM tags here. Pylinac's conversion is sketchy.
+    # may need to add additional DICOM tags here. Pylinac's conversion is sketchy.
     stop_reading = False
     xim = XIM(filename)
     ds = xim.as_dicom()
