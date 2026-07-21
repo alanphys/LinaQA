@@ -282,7 +282,7 @@ class LinaQA(QMainWindow):
             except (TypeError, AttributeError):
                 pass
 
-        self.imager = Imager(datasets, self.ui.action_Scale_LUT.isChecked())
+        self.imager = Imager(datasets, self.ui.action_Scale_LUT.isChecked()) if datasets else None
         self.filenames = filenames
         num_bad = num_total - num_ok
         if num_bad == 0:
@@ -318,25 +318,24 @@ class LinaQA(QMainWindow):
         # is the file a DICOM file?
         self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
         force_open = self.settings.value("PyDicom/Force", False, type=bool)
-        if pydicom.misc.is_dicom(self.filenames[0]) or force_open:
-            self.open_image(self.filenames, force_open)
+        # if pydicom.misc.is_dicom(self.filenames[0]) or force_open:
+        self.open_image(self.filenames, force_open)
             # does the file have a recognised image format?
-            if ((self.imager.datasets[0].Modality in supported_modalities)
-                    and hasattr(self.imager.datasets[0], "PixelData")):
-                self.tab_changed(0)
-                self.edit_pixel_data()
-                update_popups(self)
-            else:
-                self.ui.tabWidget.setTabVisible(0, False)
-                self.ui.action_DICOM_tags.setChecked(True)
-                self.tab_changed(1)
+        if self.imager is not None and hasattr(self.imager.datasets[0], "PixelData"):
+            self.tab_changed(0)
+            self.edit_pixel_data()
+            update_popups(self)
         else:
-            the_image = QPixmap(self.filenames[0])
-            if the_image.isNull():
-                self.ui.statusbar.status_error("File is not a valid image file!")
-            else:
-                self.ui.qlImage.setPixmap(the_image)
-                self.ui.qlImage.setScaledContents(True)
+            self.ui.tabWidget.setTabVisible(0, False)
+            self.ui.action_DICOM_tags.setChecked(True)
+            self.tab_changed(1)
+        # else:
+        #    the_image = QPixmap(self.filenames[0])
+        #    if the_image.isNull():
+        #        self.ui.statusbar.status_error("File is not a valid image file!")
+        #    else:
+        #        self.ui.qlImage.setPixmap(the_image)
+        #        self.ui.qlImage.setScaledContents(True)
 
     def choose_file(self):
         # set up ui

@@ -12,7 +12,7 @@ from pylinac.picketfence import MLC
 from pylinac.nuclear import Nuclide
 from pylinac import planar_imaging
 
-supported_modalities = ["RTIMAGE", "RTDOSE", "CT", "NM", "PT", "MR", "OT", "XA", "SR"]
+supported_modalities = ["RTIMAGE", "RTDOSE", "RTPLAN", "CT", "NM", "PT", "MR", "OT", "XA", "SR"]
 # TODO pull these directly from class def
 phantom3D_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "CatPhan700", "QuartDVT", "ACR CT", "ACR MRI"]
 
