@@ -113,6 +113,9 @@ class Imager:
     def get_image(self, index):
         # int32 true values (HU or brightness units)
         img = self.values[:, :, index]
+        # check if we are dealing with a single multiframe dataset
+        if len(self.datasets) == 1:
+            index = 0
         if (self.rescale and hasattr(self.datasets[index], 'RescaleIntercept')
            and hasattr(self.datasets[index], 'RescaleSlope')):
             intercept = float(self.datasets[index].RescaleIntercept)
@@ -146,10 +149,11 @@ class Imager:
     def auto_window(self):
         win_max = np.max(self.values)
         win_min = np.min(self.values)
-        if (self.rescale and hasattr(self.datasets[self.index], 'RescaleIntercept')
-                and hasattr(self.datasets[self.index], 'RescaleSlope')):
-            intercept = float(self.datasets[self.index].RescaleIntercept)
-            slope = float(self.datasets[self.index].RescaleSlope)
+        index = 0 if len(self.datasets) == 1 else self.index
+        if (self.rescale and hasattr(self.datasets[index], 'RescaleIntercept')
+                and hasattr(self.datasets[index], 'RescaleSlope')):
+            intercept = float(self.datasets[index].RescaleIntercept)
+            slope = float(self.datasets[index].RescaleSlope)
             win_max = win_max * slope + intercept
             win_min = win_min * slope + intercept
         self._window_width = win_max-win_min
