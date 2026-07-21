@@ -61,7 +61,7 @@ from misc_utils import (
     datasets_to_stream)
 from popups import create_popups, initialize_popups, update_popups
 import pylinac_subclasses
-from import_routines import is_similar_image, read_dicom, read_xim
+from import_routines import is_similar_image, read_dicom, read_xim, read_tiff
 from tablemodel import TableModel
 
 import pydicom
@@ -250,6 +250,8 @@ class LinaQA(QMainWindow):
         file_reader = read_dicom
         if ext == ".xim":
             file_reader = read_xim
+        elif ext in [".jpg", "jpeg", "tif", "tiff", "png"]:
+            file_reader = read_tiff
 
         for file in filenames:
             try:

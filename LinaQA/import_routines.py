@@ -8,10 +8,13 @@ Data file import routines
 # copyright: AC Chamberlain (c) 2023-2026
 # SPDX-License-Identifier: Licence.txt:
 
+from PyQt5.QtCore import QSettings
 from pydicom import Dataset, dcmread, uid, errors
-from pylinac.core.image import XIM
+from pylinac.core.image import XIM, load
 from linaqa_types import supported_modalities
 
+
+settings = QSettings()
 
 def is_similar_image(current, previous: Dataset) -> bool:
     return (current.Modality == previous.Modality and
@@ -48,4 +51,18 @@ def read_xim(filename: str, args):
     stop_reading = False
     xim = XIM(filename)
     ds = xim.as_dicom()
+    return ds, stop_reading
+
+
+def read_tiff(filename: str, args):
+    """Read one image file"""
+    # may need to add additional DICOM tags here. Pylinac's conversion is sketchy.
+    stop_reading = False
+    tiff = load(filename)
+    tiff.sid = settings.value("Star shot/SID", 1000, type=int)
+    # modify to pull gantry, coll and couch from file name?
+    ds = tiff.as_dicom(gantry=0, coll=0, couch=0)
+    default_dpi = settings.value("Star shot/DPI", 75, type=int)
+    dpi = tiff.dpi if tiff.dpi else default_dpi
+    ds.ImagePlanePixelSpacing = [25.4 / dpi, 25.4 / dpi]
     return ds, stop_reading
