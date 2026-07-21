@@ -244,8 +244,8 @@ class LinaQA(QMainWindow):
 
         # select file reader according to extension, default to DICOM
         file_reader = read_dicom
-        ext = osp.splitext(filenames[0])
-        if ext == "xim":
+        ext = osp.splitext(filenames[0])[1].lower()
+        if ext == ".xim":
             file_reader = read_xim
 
         for file in filenames:
@@ -300,10 +300,10 @@ class LinaQA(QMainWindow):
             if os.path.isdir(self.filenames[0]):
                 # get list of files in directory
                 dir_path = osp.realpath(self.filenames[0])
-                # self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
-                #                   if os.path.isfile(os.path.join(dir_path, file_name))]
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
-                                  if osp.splitext(file_name)[1] in [".dcm", ".DCM", ".ima", ".IMA", ".2"]]
+                                  if os.path.isfile(os.path.join(dir_path, file_name))]
+                # self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
+                #                  if osp.splitext(file_name)[1] in [".dcm", ".DCM", ".ima", ".IMA", ".2"]]
             # check if file is archive
             elif osp.splitext(self.filenames[0])[1] == ".zip":
                 self.zip_dir = TemporaryZipDirectory(self.filenames[0], delete=False)
@@ -315,16 +315,16 @@ class LinaQA(QMainWindow):
         ext = osp.splitext(self.filenames[0])[1]
         self.filenames = [f for f in self.filenames if osp.splitext(f)[1] == ext]
 
-        # is the file a DICOM file?
         self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
         force_open = self.settings.value("PyDicom/Force", False, type=bool)
-        # if pydicom.misc.is_dicom(self.filenames[0]) or force_open:
         self.open_image(self.filenames, force_open)
-            # does the file have a recognised image format?
+
+        # does the file have a recognised image format?
         if self.imager is not None and hasattr(self.imager.datasets[0], "PixelData"):
             self.tab_changed(0)
             self.edit_pixel_data()
             update_popups(self)
+        # else show DICOM tags
         else:
             self.ui.tabWidget.setTabVisible(0, False)
             self.ui.action_DICOM_tags.setChecked(True)

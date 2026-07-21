@@ -9,6 +9,7 @@ Data file import routines
 # SPDX-License-Identifier: Licence.txt:
 
 from pydicom import Dataset, dcmread, uid, errors
+from pylinac.core.image import XIM
 from linaqa_types import supported_modalities
 
 
@@ -18,7 +19,8 @@ def is_similar_image(current, previous: Dataset) -> bool:
             current.Columns == previous.Columns)
 
 
-def read_dicom(filename, force_read: bool = False) -> tuple[Dataset, bool]:
+def read_dicom(filename: str, force_read: bool=False) -> tuple[Dataset, bool]:
+    """Read one DICOM file. Set stop flag if a multiframe image file or not a DICOM image file ."""
     stop_reading = False
     ds = dcmread(filename, force=force_read)
     if ds.Modality not in supported_modalities:
@@ -30,11 +32,20 @@ def read_dicom(filename, force_read: bool = False) -> tuple[Dataset, bool]:
     if "NumberOfFrames" not in ds:
         ds.NumberOfFrames = 1
     # conditions to stop reading
-    if ds.NumberOfFrames > 1:                # file is multi-frame image
+    if ds.NumberOfFrames > 1:                    # file is multi-frame image
         stop_reading = True
     if not hasattr(ds, "PixelData"):             # file is not image
         stop_reading = True
     # uncompress image if it is compressed
     if ds.file_meta.TransferSyntaxUID.is_compressed:
         ds.decompress()
+    return ds, stop_reading
+
+
+def read_xim(filename: str, args):
+    """Read one XIM file"""
+    # TODO may need to add additional DICOM tags here. Pylinac's conversion is sketchy.
+    stop_reading = False
+    xim = XIM(filename)
+    ds = xim.as_dicom()
     return ds, stop_reading
