@@ -61,7 +61,7 @@ from misc_utils import (
     datasets_to_stream)
 from popups import create_popups, initialize_popups, update_popups
 import pylinac_subclasses
-from import_routines import read_dicom, is_similar_image
+from import_routines import is_similar_image, read_dicom, read_xim
 from tablemodel import TableModel
 
 import pydicom
@@ -235,8 +235,6 @@ class LinaQA(QMainWindow):
     def open_image(self, filenames, force_read: bool = False):
         """Open multiple files from a list of file names. Images must be of the same type, modality and size. Only
         single multi-frame image files and non-image files are opened"""
-        del self.imager
-        self.imager = None
         num_total = len(filenames)
         num_bad = 0
         num_ok = 0
@@ -244,14 +242,17 @@ class LinaQA(QMainWindow):
         datasets = []
         prev_ds = None
 
+        # select file reader according to extension, default to DICOM
+        file_reader = read_dicom
+        ext = osp.splitext(filenames[0])
+        if ext == "xim":
+            file_reader = read_xim
+
         for file in filenames:
             try:
-                ds, stop = read_dicom(file, force_read)
+                ds, stop = file_reader(file, force_read)
                 # may want to extend this check to make sure images are all of the same type and size
-                if prev_ds is None:
-                    datasets.append(ds)
-                    num_ok += 1
-                elif is_similar_image(ds, prev_ds):
+                if prev_ds is None or is_similar_image(ds, prev_ds):
                     datasets.append(ds)
                     num_ok += 1
                 else:
@@ -291,6 +292,8 @@ class LinaQA(QMainWindow):
 
     def open_file(self):
         # remove any previous images
+        del self.imager
+        self.imager = None
         self.ui.qlImage.clear()
         # is the filename a directory or archive
         if len(self.filenames) == 1:
@@ -307,6 +310,11 @@ class LinaQA(QMainWindow):
                 dir_path = self.zip_dir.name
                 self.filenames = [os.path.join(dir_path, file_name) for file_name in os.listdir(dir_path)
                                   if os.path.isfile(os.path.join(dir_path, file_name))]
+
+        # remove files that do not have the same extension as the first file
+        ext = osp.splitext(self.filenames[0])[1]
+        self.filenames = [f for f in self.filenames if osp.splitext(f)[1] == ext]
+
         # is the file a DICOM file?
         self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
         force_open = self.settings.value("PyDicom/Force", False, type=bool)
@@ -344,14 +352,16 @@ class LinaQA(QMainWindow):
         if ostype == "Windows":
             file_filter = ("DICOM files (*.dcm *.2 *.img *.ima);;"
                            "ZIP files (*.zip);;"
+                           "XIM files (*.xim);;"
                            "Machine log files (*.bin *.txt);;"
                            "All files (*.*)")
         else:
             file_filter = ("DICOM files (*.dcm *.2 *.img *.ima);;"
                            "ZIP files (*.zip);;"
+                           "XIM files (*.xim);;"
                            "Machine log files (*.bin *.txt);;"
                            "All files (*)")
-        self.filenames = QFileDialog.getOpenFileNames(self, "Open DICOM file", dirpath, file_filter)[0]
+        self.filenames = QFileDialog.getOpenFileNames(self, "Open file", dirpath, file_filter)[0]
         if len(self.filenames) > 0:
             self.open_file()
 
