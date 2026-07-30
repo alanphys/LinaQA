@@ -17,7 +17,16 @@ supported_modalities = ["RTIMAGE", "RTDOSE", "RTPLAN", "CT", "NM", "PT", "MR", "
 supported_file_ext = [".dcm", ".ima", ".2", ".xim", ".jpg", ".jpeg", "tif", "tiff", "png"]
 
 # TODO pull these directly from class def
-phantom3D_list = ["CatPhan503", "CatPhan504", "CatPhan600", "CatPhan604", "CatPhan700", "QuartDVT", "ACR CT", "ACR MRI"]
+phantom3D_list = [
+    "CatPhan503",
+    "CatPhan504",
+    "CatPhan600",
+    "CatPhan604",
+    "CatPhan700",
+    "QuartDVT",
+    "ACR CT",
+    "ACR MRI",
+    "GE Helios"]
 
 vmat_list = ["DRGS", "DRMLC", "DRCS"]
 

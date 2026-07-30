@@ -611,6 +611,8 @@ class LinaQA(QMainWindow):
             self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/ACRPhantoms.png"))
         elif cb_text.find("Quart") >= 0:
             self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/Quart.png"))
+        elif cb_text.find("Helios") >= 0:
+            self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/GEHelios.png"))
         else:
             self.ui.action_CatPhan.setIcon(QIcon(":/Icons/Icons/Catphan.png"))
 
@@ -922,6 +924,8 @@ class LinaQA(QMainWindow):
         elif self.ui.cbCatPhan.currentText() == "ACR CT":
             cat = ACRCT(streams)
         elif self.ui.cbCatPhan.currentText() == "ACR MRI":
+            cat = ACRMRILarge(streams)
+        elif self.ui.cbCatPhan.currentText() == "GE Helios":
             cat = ACRMRILarge(streams)
         else:
             cat = getattr(ct, self.ui.cbCatPhan.currentText())(streams)
