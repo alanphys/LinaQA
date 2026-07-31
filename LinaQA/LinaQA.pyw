@@ -17,7 +17,6 @@ import os.path as osp
 import os
 import io
 import math
-from pylinac.core.io import TemporaryZipDirectory
 from platform import system
 from PyQt5.QtWidgets import (
      QApplication,
@@ -65,6 +64,7 @@ from import_routines import is_similar_image, read_dicom, read_xim, read_tiff
 from tablemodel import TableModel
 
 import pydicom
+from pylinac.core.io import TemporaryZipDirectory
 from pylinac.core import pdf
 from pylinac.core.image import DicomImageStack
 from pylinac import (
