@@ -16,6 +16,10 @@ import inspect
 import os.path as osp
 import os
 import io
+
+base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+sys.path.insert(0, os.path.join(base_dir, 'PylinaQA'))
+
 import math
 from platform import system
 from PyQt5.QtWidgets import (
