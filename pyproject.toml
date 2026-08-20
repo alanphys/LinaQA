@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "LinaQA"
+version = "0.8.0"
+description = "A GUI frontend for pylinac and pydicom for medical physics quality assurance"
+readme = "readme.txt"
+license = { file = "licence.txt" }
+requires-python = ">=3.8"
+authors = [
+    { name = "AC Chamberlain" }
+]
+keywords = [
+    "medical-physics",
+    "radiotherapy",
+    "nuclear-medicine",
+    "diagnostic-radiology",
+    "dicom",
+    "quality-assurance",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    # LinaQA direct dependencies
+    "PyQt5",
+    # pylinac is included as a git submodule (alanphys/pylinac fork)
+    "pylinac @ file://localhost/${PROJECT_ROOT}/LinaQA/PylinaQA",
+    # and is not installed as a package. Its dependencies are listed below.
+    # pylinac dependencies (based on pylinac 3.35)
+    "pydicom>=3.0.1",
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "Pillow",
+    "scikit-image",
+    "py-linq",
+    "tabulate",
+    "pydantic>=2",
+    "argue",
+]
+
+[project.optional-dependencies]
+compressed = [
+    # Optional DICOM decompression support
+    "pylibjpeg",
+    "pylibjpeg-libjpeg",
+    # GDCM must be installed separately via conda:
+    # conda install -c conda-forge gdcm
+]
+
+[project.urls]
+Homepage = "https://github.com/alanphys/LinaQA"
+Documentation = "https://linaqadocs.readthedocs.io"
+"Pylinac Fork" = "https://github.com/alanphys/pylinac"
+
+[project.scripts]
+linaqa = "LinaQA.main:main"
+
+[tool.setuptools.packages.find]
+where = [".", "LinaQA/PylinaQA/pylinac"]
+include = ["LinaQA*"]
+
+[tool.setuptools.package-data]
+LinaQA = ["**/*.py"]

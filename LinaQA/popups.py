@@ -337,7 +337,7 @@ def update_suv_uptake_popup(form):
             series_time = ds[0x0008, 0x0031].value
             form.ui.teSeriesTime.setTime(QTime.fromString(series_time.split(".")[0], "HHmmss"))
         except KeyError:
-            form.ui.statusbar.status_error("Missing DICOM tag(s)")
+            form.ui.statusbar.status_warn("Missing DICOM tag(s)")
 
         mean_def = form.settings.value("SUV Uptake/Mean area", "Physical vol", type=str)
         index = form.ui.cbMeanDef.findText(mean_def)

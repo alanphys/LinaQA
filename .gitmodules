@@ -1,0 +1,3 @@
+[submodule "LinaQA/PylinaQA"]
+	path = LinaQA/PylinaQA
+	url = https://github.com/alanphys/PylinaQA.git

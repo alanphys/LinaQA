@@ -93,6 +93,9 @@ Non image files such as machine logs (BIN) currently will not be displayed, but 
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
 
 Current
+Pylinac has been incorporated as a submodule PylinaQA.
+
+Version 0.08
 Documentation added. Error handling improved. Flip image left-right and up-down added. Toggable image display between raw pixels and real world value map, e.g. dose for EPID or activity concentration for NM/PET added. Quick set popup menus added to change parameters and analyses on the fly. DRCS added to VMAT analysis. SUV uptake analysis (EARL) added. Settings moved to Tab interface. Setting added to toggle toolbar icon text on/off. Script files added to automatically invoke python and start LinaQA. XIM image handling added. Raster images converted to DICOM on import. GE Helios Daily analysis added.
 
 Version 0.07
