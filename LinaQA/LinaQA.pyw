@@ -254,7 +254,7 @@ class LinaQA(QMainWindow):
         file_reader = read_dicom
         if ext == ".xim":
             file_reader = read_xim
-        elif ext in [".jpg", "jpeg", "tif", "tiff", "png"]:
+        elif ext in [".jpg", ".jpeg", ".tif", ".tiff", ".png"]:
             file_reader = read_tiff
 
         for file in filenames:

@@ -14,7 +14,7 @@ from pylinac import planar_imaging
 
 supported_modalities = ["RTIMAGE", "RTDOSE", "RTPLAN", "CT", "NM", "PT", "MR", "OT", "XA", "SR"]
 
-supported_file_ext = [".dcm", ".ima", ".2", ".xim", ".jpg", ".jpeg", "tif", "tiff", "png"]
+supported_file_ext = [".dcm", ".ima", ".2", ".xim", ".jpg", ".jpeg", ".tif", ".tiff", ".png", ""]
 
 # TODO pull these directly from class def
 phantom3D_list = [

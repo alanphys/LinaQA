@@ -114,6 +114,7 @@ class LinaQAMaxCountRate(MaxCountRate):
     _model = "Maximum Count Rate"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
+        super(MaxCountRate, self).__init__()
         self.stack = NMImageStack(path)
 
     def publish_pdf(
@@ -172,6 +173,7 @@ class LinaQASimpleSensitivity(SimpleSensitivity):
         background_path: str | Path | Dataset | None = None):
         # redefine init to take a dataset
 
+        super(SimpleSensitivity, self).__init__()
         if isinstance(phantom_path, Dataset):
             self.phantom_path = Path(phantom_path.filename)
             self.phantom_img = DicomImage.from_dataset(phantom_path)
@@ -264,6 +266,7 @@ class LinaQAPlanarUniformity(PlanarUniformity):
     _model = "Planar Uniformity"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
+        super(PlanarUniformity, self).__init__()
         self.stack = NMImageStack(path)
         # self.path = Path(path)
 
@@ -332,6 +335,7 @@ class LinaQAFourBarRes(FourBarResolution):
     _model = "Four Bar Spatial Resolution"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
+        super(FourBarResolution, self).__init__()
         self.stack = NMImageStack(path)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
@@ -400,6 +404,7 @@ class LinaQAQuadrantRes(QuadrantResolution):
     _model = "Quadrant Resolution"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
+        super(QuadrantResolution, self).__init__()
         self.stack = NMImageStack(path)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
@@ -466,6 +471,7 @@ class LinaQATomoUniformity(TomographicUniformity):
     mean_value: float
 
     def __init__(self, path: str | Path | list[Dataset], raw_pixels: bool) -> None:
+        super(TomographicUniformity, self).__init__()
         self.stack = NMImageStack(path, raw_pixels)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
@@ -584,6 +590,7 @@ class LinaQATomoResolution(TomographicResolution):
     _model = "Tomographic Resolution"
 
     def __init__(self, path: str | Path | list[Dataset], raw_pixels: bool = False) -> None:
+        super(TomographicResolution, self).__init__()
         self.stack = NMImageStack(path, raw_pixels)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
@@ -658,6 +665,7 @@ class LinaQACenterOfRotation(CenterOfRotation):
     _model = "Centre of Rotation"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
+        super(CenterOfRotation, self).__init__()
         self.stack = NMImageStack(path)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
@@ -725,6 +733,7 @@ class LinaQATomoContrast(TomographicContrast):
     _model = "Tomographic Contrast"
 
     def __init__(self, path: str | Path | list[Dataset]) -> None:
+        super(TomographicContrast, self).__init__()
         self.stack = NMImageStack(path)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
