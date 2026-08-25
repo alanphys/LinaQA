@@ -1285,8 +1285,8 @@ class LinaQA(QMainWindow):
                                                             type=float))
         self.show_results(sr)
 
-    @check_valid_image
-    @catch_nm_type_error
+#    @check_valid_image
+#    @catch_nm_type_error
     @show_wait_cursor
     def tomographic_uniformity(self):
         tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets, not self.imager.rescale)
@@ -1300,8 +1300,8 @@ class LinaQA(QMainWindow):
             window_size=self.settings.value("Tomographic Uniformity/Window size", 5, type=int))
         self.show_results(tu)
 
-    # @check_valid_image
-    # @catch_nm_type_error
+    @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def tomographic_resolution(self):
         tr = pylinac_subclasses.LinaQATomoResolution(self.imager.datasets, not self.imager.rescale)

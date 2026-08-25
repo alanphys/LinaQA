@@ -15,6 +15,7 @@ from collections.abc import Sequence
 from functools import cached_property
 from pathlib import Path
 from dataclasses import dataclass
+from threading import Lock
 
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
@@ -33,6 +34,7 @@ from pydicom import Dataset, dcmread
 # workaround I have at the moment.
 from pylinac.core.image import DicomImage, NMImageStack, _rescale_dicom_values
 from pylinac.core.geometry import Circle, direction_to_coords
+from pylinac.core.warnings import WarningCollectorMixin
 from pylinac.nuclear import sample_sphere, create_sphere_mask
 import functools
 
@@ -471,7 +473,12 @@ class LinaQATomoUniformity(TomographicUniformity):
     mean_value: float
 
     def __init__(self, path: str | Path | list[Dataset], raw_pixels: bool) -> None:
-        super(TomographicUniformity, self).__init__()
+        # Warning collector mixin init
+        self._captured_warnings: list[dict] = []
+        self._warnings_lock: Lock = Lock()
+        self._in_warning_capture: bool = False
+
+        # Planar uniformity init
         self.stack = NMImageStack(path, raw_pixels)
         if isinstance(path[0], Dataset):
             self.path = Path(path[0].filename)
