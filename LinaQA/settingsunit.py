@@ -6,6 +6,7 @@
    Back ported to PyQt5 and adapted by AC Chamberlain"""
 
 import os.path as path
+import sys
 import inspect
 from PyQt5.QtCore import (
      QByteArray, QDate, QDateTime, QEvent, QPoint,
@@ -25,7 +26,11 @@ from linaqa_types import (
      mean_area_def)
 from qt_subclasses import MyDoubleSpinBox
 
-sys_path = path.dirname(path.realpath(inspect.getframeinfo(inspect.currentframe()).filename))
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    # Running inside the PyInstaller executable bundle
+    sys_path = sys._MEIPASS
+else:
+    sys_path = path.dirname(path.realpath(inspect.getframeinfo(inspect.currentframe()).filename))
 logo_path = path.abspath(path.join(sys_path, "Icons", "LinacToolkit.png"))
 
 
