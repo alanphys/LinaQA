@@ -606,10 +606,15 @@ class LinaQA(QMainWindow):
             notes = self.ui.pte_notes.toPlainText().split("\n") if self.ui.pte_notes.toPlainText() != "" else None
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             QApplication.processEvents()
+            logo_file = self.settings.value("General/Logo", "", str)
+            # if logo file does not exist default to pylinac logo
+            if not osp.exists(logo_file):
+                logo_file = ''
+                self.ui.statusbar.status_warn("Logo file not found, defaulting to pylinac logo")
             test.publish_pdf(filename,
                              notes=notes,
                              metadata=self.settings.value("General/Metadata"),
-                             logo=self.settings.value("General/Logo"))
+                             logo=logo_file)
             QApplication.restoreOverrideCursor()
             QApplication.processEvents()
             if open_path(filename):
