@@ -17,7 +17,13 @@ import os.path as osp
 import os
 import io
 
-base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+# Detect if running inside a PyInstaller bundle or live script
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    # Running inside the PyInstaller executable bundle
+    base_dir = sys._MEIPASS
+else:
+    # Running normally in Miniconda / development
+    base_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(base_dir, 'PylinaQA'))
 
 import math
@@ -430,8 +436,13 @@ class LinaQA(QMainWindow):
 
     @staticmethod
     def linaqa_help():
-        rel_path = "../html/index.html"
-        path = os.path.join(os.path.dirname(__file__), rel_path)
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            # Running inside the PyInstaller executable bundle
+            rel_path = "html/index.html"
+        else:
+            # Running normally in Miniconda / development
+            rel_path = "../html/index.html"
+        path = osp.join(base_dir, rel_path)
         abs_path = osp.abspath(path)
         webbrowser.open(f"file://{abs_path}")
 
@@ -1285,8 +1296,8 @@ class LinaQA(QMainWindow):
                                                             type=float))
         self.show_results(sr)
 
-#    @check_valid_image
-#    @catch_nm_type_error
+    @check_valid_image
+    @catch_nm_type_error
     @show_wait_cursor
     def tomographic_uniformity(self):
         tu = pylinac_subclasses.LinaQATomoUniformity(self.imager.datasets, not self.imager.rescale)

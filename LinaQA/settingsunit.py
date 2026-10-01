@@ -26,7 +26,7 @@ from linaqa_types import (
 from qt_subclasses import MyDoubleSpinBox
 
 sys_path = path.dirname(path.realpath(inspect.getframeinfo(inspect.currentframe()).filename))
-logo_path = path.join(sys_path, "../Icons/LinacToolkit.png")
+logo_path = path.abspath(path.join(sys_path, "Icons", "LinacToolkit.png"))
 
 
 def set_default_settings(settings):

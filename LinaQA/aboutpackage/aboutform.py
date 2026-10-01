@@ -12,9 +12,10 @@ Show a tabbed help window displaying the readme, licence and credits
 from .aboutformui import Ui_AboutForm
 from PyQt5.QtWidgets import QDialog
 import os
+import sys
 from pathlib import Path
 
-version = "0.09.640"  # previous git commit 6fb222b3
+version = "0.09.650"  # previous git commit 621bcbae
 
 
 class About(QDialog):
@@ -25,7 +26,10 @@ class About(QDialog):
         self.setWindowTitle(f"About LinaQA v{version}")
 
         # walk up the directory tree until readme is found
-        current = Path(__file__).resolve()
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            current = Path(sys._MEIPASS)
+        else:
+            current = Path(os.path.dirname(os.path.abspath(__file__)))
         while not (current / "readme.txt").exists():
             parent = current.parent
             if parent == current:     # reached filesystem root
