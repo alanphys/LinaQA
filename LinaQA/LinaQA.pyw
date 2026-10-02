@@ -606,11 +606,16 @@ class LinaQA(QMainWindow):
             notes = self.ui.pte_notes.toPlainText().split("\n") if self.ui.pte_notes.toPlainText() != "" else None
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             QApplication.processEvents()
+
             logo_file = self.settings.value("General/Logo", "", str)
+            # if no logo defined try and load default toolkit logo
+            if logo_file == "":
+                logo_file = osp.abspath(osp.join(base_dir, "Icons", "LinacToolkit.png"))
             # if logo file does not exist default to pylinac logo
             if not osp.exists(logo_file):
                 logo_file = ''
                 self.ui.statusbar.status_warn("Logo file not found, defaulting to pylinac logo")
+
             test.publish_pdf(filename,
                              notes=notes,
                              metadata=self.settings.value("General/Metadata"),
