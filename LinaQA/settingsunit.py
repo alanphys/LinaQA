@@ -26,18 +26,11 @@ from linaqa_types import (
      mean_area_def)
 from qt_subclasses import MyDoubleSpinBox
 
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    # Running inside the PyInstaller executable bundle
-    sys_path = sys._MEIPASS
-else:
-    sys_path = path.dirname(path.realpath(inspect.getframeinfo(inspect.currentframe()).filename))
-logo_path = path.abspath(path.join(sys_path, "Icons", "LinacToolkit.png"))
-
 
 def set_default_settings(settings):
     settings.beginGroup("General")
     if not settings.contains("Logo"):
-        settings.setValue("Logo", logo_path)
+        settings.setValue("Logo", "")
     if not settings.contains("Metadata"):
         settings.setValue("Metadata", {"Physicist": "", "Linac": ""})
     settings.endGroup()
