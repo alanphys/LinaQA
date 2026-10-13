@@ -10,74 +10,25 @@ Please read the file Licence.txt. This means that if as a result of using this p
 3) System Requirements
 Currently tested on
 * Fedora 42/KDE 6.05/QT 5.15
-* Windows 10/Miniconda3
-Windows users will need to install a python stack (such as anaconda) and PyQT5/QT5.
+* Windows 11
 
-4) Dependencies
-* PyQt5
-* pylinac (tested with pylinac 3.35)
-* pydicom (tested with pydicom 3.0.1)
-* NumPy
-If you install pylinac it will automatically install pydicom and numpy.
+4) Installation
+From version 0.9 the Windows version of LinaQA is available as a one-file executable. Copy the LinaQA-0.X.xxx.exe file into an appropriate directory where X.xxx is the version number.
 
-LinaQA can read compressed images and save them uncompressed, but to do this it needs the additional libraries below which must be installed independently:
-* pylibjpeg
-* pylibjpeg-libjpeg
-* GDCM (optional depending on type of compression)
+LinaQA can still be installed in a Mini/Anaconda/python environment from Github.
 
-5) Installation
-This assumes the latest version of mini/anaconda or other python interpreter is installed.
-
-Install PyQt5
-Open miniconda prompt
->pip install PyQt5
-
-Test if PyQt5 is active
-At the minconda command prompt go into python
->python
-from the python prompt
->>>from PyQt5 import QtCore
-If does not give an error message your installation is active.
-Exit python
->>>quit()
-
-Install pylinac if it is not already installed. If it is installed consider upgrading to the latest version.
->pip install pylinac
-or
->pip install pylinac --upgrade
-
-
-Test pylinac install
-At the minconda command prompt go into python
->python
-from the python prompt
->>>from pylinac import DRGS
->>>DRGS.run_demo()
-if the DRGS demo windows appears pylinac is active
-Exit python
->>>quit()
-
-Install LinaQA
-Unzip LinaQA.zip into a suitable directory
-At the minconda command prompt navigate to the LinaQA directory
-start LinaQA by
->linaqa.bat (Windows) or linaqa.sh (Linux)
-
-This installation method is temporary and will be replaced by the conventional pip install when LinaQA is stable.
-
-6) Use
-From version 0.8 LinaQA is started from scripts. Open a console window, change to the above directory and run:
+5) Use
 For Windows:
-linaqa.bat
-or
-linaqa.bat \Path\to\DICOM\
+From version 0.9 LinaQA is started from the one-file executable. Execute by double clicking the file from File Explorer. Mini/Anaconda is no longer required. Alternatively if you did a virtual environment install, open a console window, change to the install directory and run:
 
-For Linux
+LinaQA-0.X.xxx.exe
+or
+LinaQA-0.X.xxx.exe \Path\to\DICOM\
+
+For Linux open a console in the install directory and run:
 linaqa.sh
 or
 linaqa.sh \Path\to\DICOM\
-
-Alternatively you can double click on the script from your file manager or create a shortcut.
 
 In LinaQA, open a file either from the menu or toolbar. Drag and drop from your favourite file manager is also supported. Note: For multiple files such as a CatPhan series the files must be selected in the file open dialog. You can use <ctrl>-A to select all files.
 
@@ -89,11 +40,11 @@ Click the relevant Test button.
 
 Non image files such as machine logs (BIN) currently will not be displayed, but the test can still be run.
 
-7) Release notes
+6) Release notes
 These detail new or changed functionality in LinaQA. Please see the History for bug fixes
 
 Current
-Pylinac has been incorporated as a submodule PylinaQA.
+The Windows version is available as a one-file executable containing all dependencies. Pylinac has been incorporated as a submodule PylinaQA.
 
 Version 0.08
 Documentation added. Error handling improved. Flip image left-right and up-down added. Toggable image display between raw pixels and real world value map, e.g. dose for EPID or activity concentration for NM/PET added. Quick set popup menus added to change parameters and analyses on the fly. DRCS added to VMAT analysis. SUV uptake analysis (EARL) added. Settings moved to Tab interface. Setting added to toggle toolbar icon text on/off. Script files added to automatically invoke python and start LinaQA. XIM image handling added. Raster images converted to DICOM on import. GE Helios Daily analysis added.
@@ -121,15 +72,13 @@ Version 0.01
 First draft based on PySide2
 Implemented DICOM Tags, CatPhan, Picket Fence, 2D phantoms, VMAT and Winston-Lutz
 
-8) History
+7) History
 See GIT log.
 
-9) To Do
-Restructure project
+8) To Do
 Use internal PDF viewer
-Use bundled pylinac
 Implement integrity checking
 Migrate to Pyside6
 
-10) Known issues
+9) Known issues
 DICOM sequences cannot be inserted, deleted or edited.
