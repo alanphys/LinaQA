@@ -332,6 +332,7 @@ class LinaQA(QMainWindow):
         self.working_dir = osp.dirname(osp.realpath(self.filenames[0]))
         force_open = self.settings.value("PyDicom/Force", False, type=bool)
         self.open_image(self.filenames, force_open)
+        self.is_changed = False
 
         # does the file have a recognised image format?
         if self.imager is not None and hasattr(self.imager.datasets[0], "PixelData"):
@@ -348,31 +349,36 @@ class LinaQA(QMainWindow):
             self.ui.statusbar.status_error("File is not a valid image or DICOM file!")
 
     def choose_file(self):
-        # set up ui
-        self.is_changed = False
-        self.ui.statusbar.status_clear()
+        # check if previous file was changed
+        reply = QMessageBox.Yes
+        if self.is_changed:
+            reply = QMessageBox.question(self, "Quit", "You have made changes. Are you sure you want to load another file?",
+                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        if reply == QMessageBox.Yes:
+            # set up ui
+            self.ui.statusbar.status_clear()
 
-        # get filename(s)
-        if len(self.filenames) > 0:
-            dirpath = osp.dirname(osp.realpath(self.filenames[0]))
-        else:
-            dirpath = self.working_dir
-        ostype = system()
-        if ostype == "Windows":
-            file_filter = ("DICOM files (*.dcm *.2 *.img *.ima);;"
-                           "ZIP files (*.zip);;"
-                           "XIM files (*.xim);;"
-                           "Machine log files (*.bin *.txt);;"
-                           "All files (*.*)")
-        else:
-            file_filter = ("DICOM files (*.dcm *.2 *.img *.ima);;"
-                           "ZIP files (*.zip);;"
-                           "XIM files (*.xim);;"
-                           "Machine log files (*.bin *.txt);;"
-                           "All files (*)")
-        self.filenames = QFileDialog.getOpenFileNames(self, "Open file", dirpath, file_filter)[0]
-        if len(self.filenames) > 0:
-            self.open_file()
+            # get filename(s)
+            if len(self.filenames) > 0:
+                dirpath = osp.dirname(osp.realpath(self.filenames[0]))
+            else:
+                dirpath = self.working_dir
+            ostype = system()
+            if ostype == "Windows":
+                file_filter = ("DICOM files (*.dcm *.2 *.img *.ima);;"
+                               "ZIP files (*.zip);;"
+                               "XIM files (*.xim);;"
+                               "Machine log files (*.bin *.txt);;"
+                               "All files (*.*)")
+            else:
+                file_filter = ("DICOM files (*.dcm *.2 *.img *.ima);;"
+                               "ZIP files (*.zip);;"
+                               "XIM files (*.xim);;"
+                               "Machine log files (*.bin *.txt);;"
+                               "All files (*)")
+            self.filenames = QFileDialog.getOpenFileNames(self, "Open file", dirpath, file_filter)[0]
+            if len(self.filenames) > 0:
+                self.open_file()
 
     def save_file(self):
         if self.imager:
