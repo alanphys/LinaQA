@@ -59,23 +59,6 @@ def create_popups(form):
     create_suv_uptake_popup(form)
 
 
-def initialize_popups(form):
-    initialize_3dphantom_popup(form)
-    initialize_mlc_popup(form)
-    initialize_vmat_popup(form)
-    initialize_2dphantom_popup(form)
-    initialize_scale_popup(form)
-    initialize_spatialres_popup(form)
-    initialize_tomouniformity_popup(form)
-    initialize_simplesens_popup(form)
-    # initialize_suv_uptake_popup(form)
-
-
-def update_popups(form):
-    if (form.imager is not None) and hasattr(form.imager, "datasets") and (form.imager.datasets[0].Modality == "PT"):
-        update_suv_uptake_popup(form)
-
-
 def create_3dphantom_popup(form):
     # create popup for the 3D phantom analysis
     form.ui.phantom3d_popup = PopupToolbar()
@@ -84,8 +67,10 @@ def create_3dphantom_popup(form):
     form.ui.phantom3d_popup.add_vcontrol("Select phantom:", form.ui.cbCatPhan)
     form.ui.cbCatPhan.addItems(phantom3D_list)
     form.ui.cbCatPhan.currentIndexChanged.connect(form.on_cbcatphan_changed)
-    replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_CatPhan, form.ui.phantom3d_popup)
-    replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_CatPhan, form.ui.phantom3d_popup)
+    button_rx = replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_CatPhan, form.ui.phantom3d_popup)
+    button_dx = replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_CatPhan, form.ui.phantom3d_popup)
+    button_rx.set_popup_initializer(lambda: initialize_3dphantom_popup(form))
+    button_dx.set_popup_initializer(lambda: initialize_3dphantom_popup(form))
 
 
 def initialize_3dphantom_popup(form):
@@ -105,7 +90,8 @@ def create_mlc_popup(form):
     form.ui.mlc_popup.add_vcontrol("Select MLC:", form.ui.cbMLC)
     form.ui.cbMLC.addItems(mlc_list)
     form.ui.cbMLC.currentIndexChanged.connect(form.on_cbmlc_changed)
-    replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_Picket_Fence, form.ui.mlc_popup)
+    button = replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_Picket_Fence, form.ui.mlc_popup)
+    button.set_popup_initializer(lambda: initialize_mlc_popup(form))
 
 
 def initialize_mlc_popup(form):
@@ -125,8 +111,9 @@ def create_vmat_popup(form):
     form.ui.vmat_popup.add_vcontrol("Select VMAT test:", form.ui.cbVMAT)
     form.ui.cbVMAT.addItems(vmat_list)
     form.ui.cbVMAT.currentIndexChanged.connect(form.on_cbvmat_changed)
-    replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_VMAT, form.ui.vmat_popup)
+    button = replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_VMAT, form.ui.vmat_popup)
     form.on_cbvmat_changed(form.ui.cbVMAT.currentIndex())
+    button.set_popup_initializer(lambda: initialize_vmat_popup(form))
 
 
 def initialize_vmat_popup(form):
@@ -162,8 +149,10 @@ def create_2dphantom_popup(form):
     form.ui.phantom2d_popup.add_hcontrol("X", form.ui.sbCentreX)
     form.ui.phantom2d_popup.add_hcontrol("Y", form.ui.sbCentreY)
 
-    replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_2DPhantoms, form.ui.phantom2d_popup)
-    replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_2DPhantoms, form.ui.phantom2d_popup)
+    button_rx = replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_2DPhantoms, form.ui.phantom2d_popup)
+    button_dx = replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_2DPhantoms, form.ui.phantom2d_popup)
+    button_rx.set_popup_initializer(lambda: initialize_2dphantom_popup(form))
+    button_dx.set_popup_initializer(lambda: initialize_2dphantom_popup(form))
 
 
 def initialize_2dphantom_popup(form):
@@ -185,7 +174,8 @@ def create_scale_popup(form):
     form.ui.dsbScaleFactor = MyDoubleSpinBox()
     form.ui.dsbScaleFactor.setSingleStep(0.01)
     form.ui.scale_popup.add_hcontrol("Scale Factor:", form.ui.dsbScaleFactor)
-    replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_Scale_Image, form.ui.scale_popup)
+    button = replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_Scale_Image, form.ui.scale_popup)
+    button.set_popup_initializer(lambda: initialize_scale_popup(form))
 
 
 def initialize_scale_popup(form):
@@ -199,7 +189,8 @@ def create_spatialres_popup(form):
     form.ui.spatialres_popup.add_vcontrol("Select spatial resolution test:", form.ui.cbSpatialRes)
     form.ui.cbSpatialRes.addItems(spatial_res_list)
     form.ui.cbSpatialRes.currentIndexChanged.connect(form.on_spatialres_changed)
-    replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Spatial_Res, form.ui.spatialres_popup)
+    button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Spatial_Res, form.ui.spatialres_popup)
+    button.set_popup_initializer(lambda: initialize_spatialres_popup(form))
 
 
 def initialize_spatialres_popup(form):
@@ -232,7 +223,8 @@ def create_simplesens_popup(form):
     form.ui.dsbSimpleSensActivity = MyDoubleSpinBox()
     form.ui.dsbSimpleSensActivity.setSingleStep(0.01)
     form.ui.simplesens_popup.add_hcontrol("Activity (MBq):", form.ui.dsbSimpleSensActivity)
-    replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Simple_Sens, form.ui.simplesens_popup)
+    button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Simple_Sens, form.ui.simplesens_popup)
+    button.set_popup_initializer(lambda: initialize_simplesens_popup(form))
 
 
 def initialize_simplesens_popup(form):
@@ -242,6 +234,7 @@ def initialize_simplesens_popup(form):
 def create_suv_uptake_popup(form):
     # create a popup for the EARL contrast analysis
     form.ui.earl_popup = PopupToolbar()
+    form.ui.earl_popup.initialized = False
 
     form.ui.earl_popup.add_hcontrol("Background compartment")
     form.ui.sbBgndVol = QSpinBox()
@@ -292,10 +285,10 @@ def create_suv_uptake_popup(form):
     form.ui.cbMeanDef.addItems(mean_area_def)
 
     button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_SUV_Uptake, form.ui.earl_popup)
-    # button.set_popup_initializer(lambda: initialize_suv_uptake_popup(form))
+    button.set_popup_initializer(lambda: initialize_suv_uptake_popup(form))
 
 
-def update_suv_uptake_popup(form):
+def initialize_suv_uptake_popup(form):
     """Load values according to
     https://qibawiki.rsna.org/images/6/62/SUV_vendorneutral_pseudocode_happypathonly_20180626_DAC.pdf"""
     if form.imager is not None:
@@ -345,4 +338,5 @@ def update_suv_uptake_popup(form):
             form.ui.cbMeanDef.setCurrentIndex(index)
         else:
             raise Exception("Invalid setting in SUV Uptake/Mean area")
+        form.ui.earl_popup.initialized = True
 

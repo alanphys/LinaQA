@@ -68,7 +68,7 @@ from misc_utils import (
     text_to_tag,
     dataset_to_stream,
     datasets_to_stream)
-from popups import create_popups, initialize_popups, update_popups
+from popups import create_popups, initialize_suv_uptake_popup
 import pylinac_subclasses
 from import_routines import is_similar_image, read_dicom, read_xim, read_tiff
 from tablemodel import TableModel
@@ -132,7 +132,6 @@ class LinaQA(QMainWindow):
 
         # create popups for tool buttons
         create_popups(self)
-        initialize_popups(self)
 
         # we have to insert the Exit action into the main menu manually
         action_close = QAction("action_menu_Exit", self.ui.menubar)
@@ -338,7 +337,7 @@ class LinaQA(QMainWindow):
         if self.imager is not None and hasattr(self.imager.datasets[0], "PixelData"):
             self.tab_changed(0)
             self.edit_pixel_data()
-            update_popups(self)
+            # update_popups(self)
         # else show DICOM tags
         elif self.imager is not None:
             self.ui.tabWidget.setTabVisible(0, False)
@@ -558,8 +557,8 @@ class LinaQA(QMainWindow):
         if index != 1:
             self.ui.action_DICOM_tags.setChecked(False)
             self.show_dicom_toolbar()
-        if index != 5 and self.old_tab == 5:
-            update_popups(self)
+        # if index != 5 and self.old_tab == 5:
+        #     update_popups(self)
         if self.imager:
             if (index == 0) and (self.imager is not None):
                 if self.old_tab == 3:
@@ -1358,6 +1357,8 @@ class LinaQA(QMainWindow):
     @catch_nm_type_error
     @show_wait_cursor
     def suv_uptake(self):
+        if not self.ui.earl_popup.initialized:
+            initialize_suv_uptake_popup(self)
         su = pylinac_subclasses.SUVUptake(self.imager.datasets)
         sphere_diam_str = self.settings.value("SUV Uptake/Sphere diameters mm",
                                               "(37.0, 28.0, 22.0, 17.0, 13.0, 10.0)",

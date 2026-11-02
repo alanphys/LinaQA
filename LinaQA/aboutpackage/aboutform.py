@@ -15,7 +15,7 @@ import os
 import sys
 from pathlib import Path
 
-version = "0.09.660"  # previous git commit 66df3b9d
+version = "0.09.674"  # previous git commit 83a29f5e
 
 
 class About(QDialog):
