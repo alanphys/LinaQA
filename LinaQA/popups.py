@@ -71,6 +71,7 @@ def create_3dphantom_popup(form):
     button_dx = replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_CatPhan, form.ui.phantom3d_popup)
     button_rx.set_popup_initializer(lambda: initialize_3dphantom_popup(form))
     button_dx.set_popup_initializer(lambda: initialize_3dphantom_popup(form))
+    initialize_3dphantom_popup(form)
 
 
 def initialize_3dphantom_popup(form):
@@ -92,6 +93,7 @@ def create_mlc_popup(form):
     form.ui.cbMLC.currentIndexChanged.connect(form.on_cbmlc_changed)
     button = replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_Picket_Fence, form.ui.mlc_popup)
     button.set_popup_initializer(lambda: initialize_mlc_popup(form))
+    initialize_mlc_popup(form)
 
 
 def initialize_mlc_popup(form):
@@ -114,6 +116,7 @@ def create_vmat_popup(form):
     button = replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_VMAT, form.ui.vmat_popup)
     form.on_cbvmat_changed(form.ui.cbVMAT.currentIndex())
     button.set_popup_initializer(lambda: initialize_vmat_popup(form))
+    initialize_vmat_popup(form)
 
 
 def initialize_vmat_popup(form):
@@ -153,6 +156,7 @@ def create_2dphantom_popup(form):
     button_dx = replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_2DPhantoms, form.ui.phantom2d_popup)
     button_rx.set_popup_initializer(lambda: initialize_2dphantom_popup(form))
     button_dx.set_popup_initializer(lambda: initialize_2dphantom_popup(form))
+    initialize_2dphantom_popup(form)
 
 
 def initialize_2dphantom_popup(form):
@@ -176,6 +180,7 @@ def create_scale_popup(form):
     form.ui.scale_popup.add_hcontrol("Scale Factor:", form.ui.dsbScaleFactor)
     button = replace_action_with_long_press(form.ui.toolBar_Dx, form.ui.action_Scale_Image, form.ui.scale_popup)
     button.set_popup_initializer(lambda: initialize_scale_popup(form))
+    initialize_scale_popup(form)
 
 
 def initialize_scale_popup(form):
@@ -191,6 +196,7 @@ def create_spatialres_popup(form):
     form.ui.cbSpatialRes.currentIndexChanged.connect(form.on_spatialres_changed)
     button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Spatial_Res, form.ui.spatialres_popup)
     button.set_popup_initializer(lambda: initialize_spatialres_popup(form))
+    initialize_spatialres_popup(form)
 
 
 def initialize_spatialres_popup(form):
@@ -209,7 +215,9 @@ def create_tomouniformity_popup(form):
     form.ui.tomouniformity_popup.add_hcontrol("First frame", form.ui.sbFirstFrame)
     form.ui.sbLastFrame = QSpinBox()
     form.ui.tomouniformity_popup.add_hcontrol("Last frame", form.ui.sbLastFrame)
-    replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Tomo_Uni, form.ui.tomouniformity_popup)
+    button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Tomo_Uni, form.ui.tomouniformity_popup)
+    button.set_popup_initializer(lambda: initialize_tomouniformity_popup(form))
+    initialize_tomouniformity_popup(form)
 
 
 def initialize_tomouniformity_popup(form):
@@ -225,6 +233,7 @@ def create_simplesens_popup(form):
     form.ui.simplesens_popup.add_hcontrol("Activity (MBq):", form.ui.dsbSimpleSensActivity)
     button = replace_action_with_long_press(form.ui.toolBar_NM, form.ui.action_Simple_Sens, form.ui.simplesens_popup)
     button.set_popup_initializer(lambda: initialize_simplesens_popup(form))
+    initialize_simplesens_popup(form)
 
 
 def initialize_simplesens_popup(form):
