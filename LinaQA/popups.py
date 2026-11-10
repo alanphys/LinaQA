@@ -17,7 +17,7 @@ from linaqa_types import (
     mean_area_def)
 from qt_subclasses import MyDoubleSpinBox, PopupToolbar, LongPressToolButton
 
-from PyQt5.QtWidgets import QToolBar, QAction, QComboBox, QSpinBox, QTimeEdit
+from PyQt5.QtWidgets import QToolBar, QAction, QComboBox, QSpinBox, QTimeEdit, QCheckBox
 from PyQt5.QtCore import QPoint, QTime
 
 
@@ -52,6 +52,7 @@ def create_popups(form):
     create_mlc_popup(form)
     create_vmat_popup(form)
     create_2dphantom_popup(form)
+    create_wl_popup(form)
     create_scale_popup(form)
     create_spatialres_popup(form)
     create_tomouniformity_popup(form)
@@ -170,6 +171,23 @@ def initialize_2dphantom_popup(form):
     point = form.settings.value("2D Phantoms/Center override", QPoint(0, 0), type=QPoint)
     form.ui.sbCentreX.setValue(point.x())
     form.ui.sbCentreY.setValue(point.y())
+
+
+def create_wl_popup(form):
+    form.ui.wl_popup = PopupToolbar()
+    form.ui.sbBBSize = QSpinBox()
+    form.ui.sbBBSize.setRange(1, 20)
+    form.ui.wl_popup.add_hcontrol("BB Size", form.ui.sbBBSize)
+    form.ui.xbLowDensityBB = QCheckBox()
+    form.ui.wl_popup.add_hcontrol("Low density BB", form.ui.xbLowDensityBB)
+    button = replace_action_with_long_press(form.ui.toolBar_Rx, form.ui.action_Winston_Lutz, form.ui.wl_popup)
+    button.set_popup_initializer(lambda: initialize_wl_popup(form))
+    initialize_wl_popup(form)
+
+
+def initialize_wl_popup(form):
+    form.ui.sbBBSize.setValue(form.settings.value("Winston-Lutz/BB Size", 5, int))
+    form.ui.xbLowDensityBB.setChecked(form.settings.value("Winston-Lutz/Low density BB", False, bool))
 
 
 def create_scale_popup(form):

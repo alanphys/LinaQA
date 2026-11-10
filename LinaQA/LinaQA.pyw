@@ -1008,9 +1008,9 @@ class LinaQA(QMainWindow):
         if self.imager.invflag:
             for im in wl.images:
                 im.invert()
-        wl.analyze(bb_size_mm=float(self.settings.value("Winston-Lutz/BB Size")),
+        wl.analyze(bb_size_mm=float(self.ui.sbBBSize.value()),
                    open_field=self.settings.value("Winston-Lutz/Open field", False, type=bool),
-                   low_density_bb=self.settings.value("Winston-Lutz/Low density BB", False, type=bool))
+                   low_density_bb=self.ui.xbLowDensityBB.isChecked())
         self.show_results(wl)
 
     @check_valid_image
