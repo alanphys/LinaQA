@@ -17,6 +17,15 @@ import os.path as osp
 import os
 import io
 
+# Detect if running inside a PyInstaller bundle or live script
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    # Running inside the PyInstaller executable bundle
+    base_dir = sys._MEIPASS
+else:
+    # Running normally in Miniconda / development
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(base_dir, 'PylinaQA'))
+
 import math
 from platform import system
 from PyQt5.QtWidgets import (
@@ -65,16 +74,6 @@ from import_routines import is_similar_image, read_dicom, read_xim, read_tiff
 from tablemodel import TableModel
 
 import pydicom
-
-# Detect if running inside a PyInstaller bundle or live script
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    # Running inside the PyInstaller executable bundle
-    base_dir = sys._MEIPASS
-else:
-    # Running normally in Miniconda / development
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(base_dir, 'PylinaQA'))
-
 from pylinac.core.io import TemporaryZipDirectory
 from pylinac.core import pdf
 from pylinac.core.image import DicomImageStack
