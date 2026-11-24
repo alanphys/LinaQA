@@ -15,15 +15,27 @@ Currently tested on
 4) Installation
 From version 0.9 the Windows version of LinaQA is available as a one-file executable. Copy the LinaQA-0.X.xxx.exe file into an appropriate directory where X.xxx is the version number.
 
-LinaQA can still be installed in a Mini/Anaconda/python environment from Github.
+LinaQA can still be installed in a Mini/Anaconda/python environment from Github using:
+
+git clone --recurse-submodules https://github.com/alanphys/LinaQA.git
+
+If already cloned use:
+
+git submodule update --init --recursive
 
 5) Use
 For Windows:
-From version 0.9 LinaQA is started from the one-file executable. Execute by double clicking the file from File Explorer. Mini/Anaconda is no longer required. Alternatively if you did a virtual environment install, open a console window, change to the install directory and run:
+From version 0.9 LinaQA is started from the one-file executable. Execute by double clicking the file LinaQA-0.X.xxx.exe from File Explorer. Mini/Anaconda is no longer required. Alternatively, open a console window, change to the install directory and run:
 
 LinaQA-0.X.xxx.exe
 or
 LinaQA-0.X.xxx.exe \Path\to\DICOM\
+
+If you have a development version in a virtual environment such as Mini/Anaconda use:
+
+linaqa.bat
+or
+linaqa.bat \Path\to\DICOM\
 
 For Linux open a console in the install directory and run:
 linaqa.sh
